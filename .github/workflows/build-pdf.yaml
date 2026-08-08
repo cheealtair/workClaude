@@ -195,6 +195,17 @@ jobs:
             </div>
             -->
 
+<div class="support">
+  <p>If you found this book useful:</p>
+
+  <a class="button"
+     href="https://ko-fi.com/learningclaudecode"
+     target="_blank"
+     rel="noopener noreferrer">
+    ? Support this book
+  </a>
+</div>
+
             <footer>
               Generated automatically from Learning.md
             </footer>

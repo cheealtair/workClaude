@@ -83,6 +83,16 @@
 
 **Claude** is Anthropic's AI assistant — a large language model trained to be helpful, harmless, and honest. It understands natural language, writes and reasons about code, analyzes documents, and handles complex multi-step tasks. Claude is the intelligence behind all Anthropic products: whether you're chatting in a browser, running commands in a terminal, or calling an API, the same underlying model is doing the thinking. The products built around it — Claude Desktop, Claude Code, the Claude API — are different interfaces to the same brain, each optimized for a different workflow.
 
+## Quotes
+
+Boris - Creator of Claude Code
+> "It's a power tool, so you can use it for a lot of things, but also because it can do so much, we don't try to guide you towards a particular workflow."
+
+Ref: [Anthropic Claude Code Prompt Engineering in 27 Min](https://www.youtube.com/watch?v=lazK8un1bdw)
+
+Amelia Earhart - Aviation Pioneer
+> "Preparation, I have often said, is rightly two-thirds of any venture."
+
 ## Chapter 1: Claude Desktop vs Claude Code
 
 ### Claude Desktop

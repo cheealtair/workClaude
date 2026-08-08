@@ -9,7 +9,7 @@ on:
       - "images/**"
       - ".github/workflows/build-pdf.yaml"
 
-  # Allows you to rebuild manually from the Actions tab
+  # Allows manual rebuilding from the Actions tab
   workflow_dispatch:
 
 permissions:
@@ -18,28 +18,84 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
-      - name: Install Pandoc and LaTeX
+      - name: Install Pandoc, LaTeX and fonts
         run: |
           sudo apt-get update
           sudo apt-get install -y \
             pandoc \
             texlive-xetex \
             texlive-latex-extra \
-            fonts-noto-cjk
+            fonts-noto-cjk \
+            fonts-dejavu-core
 
       - name: Create publishing directory
         run: mkdir -p _site
+
+      # Learning.md has lists nested beyond LaTeX's normal limit.
+      - name: Configure deep nested lists
+        run: |
+          cat > deep-lists.tex <<'EOF'
+          \usepackage{enumitem}
+
+          \setlistdepth{9}
+
+          \renewlist{itemize}{itemize}{9}
+          \setlist[itemize]{label=\textbullet,leftmargin=*}
+
+          \renewlist{enumerate}{enumerate}{9}
+          \setlist[enumerate,1]{label=\arabic*.}
+          \setlist[enumerate,2]{label=\alph*.}
+          \setlist[enumerate,3]{label=\roman*.}
+          \setlist[enumerate,4]{label=\arabic*.}
+          \setlist[enumerate,5]{label=\alph*.}
+          \setlist[enumerate,6]{label=\roman*.}
+          \setlist[enumerate,7]{label=\arabic*.}
+          \setlist[enumerate,8]{label=\alph*.}
+          \setlist[enumerate,9]{label=\roman*.}
+          EOF
+
+      # Learning.md contains its own GitHub-friendly Table of Contents.
+      # Remove that section only during PDF generation, because Pandoc
+      # generates a cleaner PDF TOC automatically.
+      - name: Create PDF TOC filter
+        run: |
+          cat > strip-manual-toc.lua <<'EOF'
+          function Pandoc(doc)
+            local out = {}
+            local skipping = false
+
+            for _, block in ipairs(doc.blocks) do
+              if block.t == 'Header'
+                 and block.level == 2
+                 and pandoc.utils.stringify(block.content) == 'Table of Contents'
+              then
+                skipping = true
+
+              elseif skipping and block.t == 'HorizontalRule' then
+                skipping = false
+
+              elseif not skipping then
+                table.insert(out, block)
+              end
+            end
+
+            return pandoc.Pandoc(out, doc.meta)
+          end
+          EOF
 
       - name: Build Learning.pdf
         run: |
@@ -47,20 +103,26 @@ jobs:
             -o _site/Learning.pdf \
             --pdf-engine=xelatex \
             --toc \
+            --toc-depth=4 \
             --number-sections \
+            --lua-filter=strip-manual-toc.lua \
+            --include-in-header=deep-lists.tex \
+            --resource-path=.:images \
             -V geometry:margin=2cm \
-            -V mainfont="Noto Serif CJK KR"
+            -V mainfont="Noto Serif CJK KR" \
+            -V monofont="DejaVu Sans Mono"
 
       - name: Create public download page
         run: |
           cat > _site/index.html <<'EOF'
           <!DOCTYPE html>
           <html lang="en">
+
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-            <title>Learning</title>
+            <title>Learning Claude Code</title>
 
             <style>
               body {
@@ -110,7 +172,7 @@ jobs:
 
           <body>
 
-            <h1>Learning</h1>
+            <h1>Learning Claude Code</h1>
 
             <p>
               The latest edition is automatically generated
@@ -122,18 +184,13 @@ jobs:
             </a>
 
             <!--
-            Optional contribution link.
+            Optional support section:
 
-            Replace YOURNAME below with your Ko-fi name,
-            or replace the whole URL with Buy Me a Coffee.
-            -->
-
-            <!--
             <div class="support">
               <p>If you found this book useful:</p>
 
               <a href="https://ko-fi.com/YOURNAME">
-                ? Support this book
+                Support this book
               </a>
             </div>
             -->
@@ -147,10 +204,10 @@ jobs:
           EOF
 
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           path: "_site"
 
@@ -165,4 +222,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

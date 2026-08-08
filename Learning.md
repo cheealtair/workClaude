@@ -1,4 +1,9 @@
-# Learning Claude
+---
+title:  "Learning Claude Code"
+author: "Clinton Chee (PhD)"
+---
+
+<h1 align="center"> Learning Claude Code </h1>
 
 ## Table of Contents
 

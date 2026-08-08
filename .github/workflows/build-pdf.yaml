@@ -9,7 +9,7 @@ on:
       - "images/**"
       - ".github/workflows/build-pdf.yaml"
 
-  # Allows manual rebuilding from the Actions tab
+  # Allows manual rebuilding from the GitHub Actions tab
   workflow_dispatch:
 
 permissions:
@@ -22,19 +22,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
+
+      # ------------------------------------------------------------
+      # Checkout repository
+      # ------------------------------------------------------------
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:
           persist-credentials: false
 
+      # ------------------------------------------------------------
+      # Install PDF build dependencies
+      # ------------------------------------------------------------
+
       - name: Install Pandoc, LaTeX and fonts
         run: |
           sudo apt-get update
+
           sudo apt-get install -y \
             pandoc \
             texlive-xetex \
@@ -42,10 +53,21 @@ jobs:
             fonts-noto-cjk \
             fonts-dejavu-core
 
-      - name: Create publishing directory
-        run: mkdir -p _site
+      # ------------------------------------------------------------
+      # Create output directory
+      # ------------------------------------------------------------
 
-      # Learning.md has lists nested beyond LaTeX's normal limit.
+      - name: Create publishing directory
+        run: |
+          mkdir -p _site
+
+      # ------------------------------------------------------------
+      # Allow deeply nested Markdown lists
+      #
+      # This protects the build if deeply nested lists are added
+      # to Learning.md in the future.
+      # ------------------------------------------------------------
+
       - name: Configure deep nested lists
         run: |
           cat > deep-lists.tex <<'EOF'
@@ -68,34 +90,72 @@ jobs:
           \setlist[enumerate,9]{label=\roman*.}
           EOF
 
-      # Learning.md contains its own GitHub-friendly Table of Contents.
-      # Remove that section only during PDF generation, because Pandoc
-      # generates a cleaner PDF TOC automatically.
+      # ------------------------------------------------------------
+      # Remove the manually written GitHub TOC from PDF builds.
+      #
+      # Learning.md keeps its manual TOC for GitHub readers.
+      # Pandoc generates a proper PDF TOC instead.
+      #
+      # The filter removes:
+      #
+      #   ## Table of Contents
+      #   ...
+      #
+      # and stops when the first Markdown # heading is reached.
+      # ------------------------------------------------------------
+
       - name: Create PDF TOC filter
         run: |
           cat > strip-manual-toc.lua <<'EOF'
           function Pandoc(doc)
             local out = {}
             local skipping = false
+            local removed = false
 
             for _, block in ipairs(doc.blocks) do
-              if block.t == 'Header'
+
+              if not removed
+                 and block.t == 'Header'
                  and block.level == 2
                  and pandoc.utils.stringify(block.content) == 'Table of Contents'
               then
                 skipping = true
+                removed = true
 
-              elseif skipping and block.t == 'HorizontalRule' then
+              elseif skipping
+                 and block.t == 'Header'
+                 and block.level == 1
+              then
                 skipping = false
+                table.insert(out, block)
 
               elseif not skipping then
                 table.insert(out, block)
               end
+
             end
 
             return pandoc.Pandoc(out, doc.meta)
           end
           EOF
+
+      # ------------------------------------------------------------
+      # Build PDF
+      #
+      # YAML front matter in Learning.md supplies:
+      #
+      #   title:  Learning Claude Code
+      #   author: Clinton Chee (PhD)
+      #
+      # Heading hierarchy is preserved exactly:
+      #
+      #   #     Part
+      #   ##    Chapter
+      #   ###   Section
+      #   ####  Subsection
+      #
+      # No heading-shifting Lua filter is required.
+      # ------------------------------------------------------------
 
       - name: Build Learning.pdf
         run: |
@@ -104,13 +164,26 @@ jobs:
             --pdf-engine=xelatex \
             --toc \
             --toc-depth=4 \
-            --number-sections \
             --lua-filter=strip-manual-toc.lua \
             --include-in-header=deep-lists.tex \
             --resource-path=.:images \
             -V geometry:margin=2cm \
             -V mainfont="Noto Serif CJK KR" \
             -V monofont="DejaVu Sans Mono"
+
+      # ------------------------------------------------------------
+      # Verify that PDF was actually created
+      # ------------------------------------------------------------
+
+      - name: Verify PDF
+        run: |
+          test -s _site/Learning.pdf
+          echo "Learning.pdf created successfully."
+          ls -lh _site/Learning.pdf
+
+      # ------------------------------------------------------------
+      # Create GitHub Pages landing page
+      # ------------------------------------------------------------
 
       - name: Create public download page
         run: |
@@ -119,12 +192,18 @@ jobs:
           <html lang="en">
 
           <head>
+
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            >
 
             <title>Learning Claude Code</title>
 
             <style>
+
               body {
                 font-family: Arial, sans-serif;
                 max-width: 700px;
@@ -145,7 +224,7 @@ jobs:
 
               .button {
                 display: inline-block;
-                margin-top: 25px;
+                margin: 15px 8px;
                 padding: 14px 28px;
                 background: #222;
                 color: white;
@@ -159,7 +238,7 @@ jobs:
               }
 
               .support {
-                margin-top: 40px;
+                margin-top: 35px;
               }
 
               footer {
@@ -167,7 +246,9 @@ jobs:
                 color: #888;
                 font-size: 14px;
               }
+
             </style>
+
           </head>
 
           <body>
@@ -179,31 +260,28 @@ jobs:
               from the Markdown source on GitHub.
             </p>
 
-            <a class="button" href="Learning.pdf">
+            <a
+              class="button"
+              href="Learning.pdf"
+            >
               Download PDF
             </a>
 
-            <!--
-            Optional support section:
-
             <div class="support">
-              <p>If you found this book useful:</p>
 
-              <a href="https://ko-fi.com/YOURNAME">
-                Support this book
+              <p>
+                If you found this book useful:
+              </p>
+
+              <a
+                class="button"
+                href="https://ko-fi.com/learningclaudecode"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ? Support this book
               </a>
-            </div>
-            -->
 
-            <div class="support">
-              <p>If you found this book useful:</p>
-
-              <a class="button"
-                 href="https://ko-fi.com/learningclaudecode"
-                 target="_blank"
-                 rel="noopener noreferrer">
-                ☕ Support this book
-              </a>
             </div>
 
             <footer>
@@ -211,8 +289,13 @@ jobs:
             </footer>
 
           </body>
+
           </html>
           EOF
+
+      # ------------------------------------------------------------
+      # Prepare GitHub Pages
+      # ------------------------------------------------------------
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v6
@@ -222,7 +305,13 @@ jobs:
         with:
           path: "_site"
 
+
+  # --------------------------------------------------------------
+  # Deploy GitHub Pages
+  # --------------------------------------------------------------
+
   deploy:
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -231,6 +320,7 @@ jobs:
     needs: build
 
     steps:
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5

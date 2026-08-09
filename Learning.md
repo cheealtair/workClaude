@@ -5,6 +5,36 @@ author: "C. Chee"
 
 <h1 align="center"> Learning Claude Code </h1>
 
+---
+
+## Copyright and Publication Information
+
+**Learning Claude Code**
+
+Copyright © 2026 Clinton Chee
+All rights reserved.
+
+**Author:** Clinton Chee (PhD)
+**Publisher:** Clinton Chee
+**Edition:** First Edition, 2026  
+**Place of Publication:** Sydney, Australia  
+**Website:** https://cheealtair.github.io/workClaude/
+
+This publication is made available as an independently published ebook.
+
+No part of this publication may be reproduced, distributed, modified, or republished for commercial purposes without prior written permission from the copyright holder, except for brief quotations used for review, commentary, education, or other uses permitted by law.
+
+The information in this book is provided for educational and informational purposes. Technologies, software products, commands, services, interfaces, pricing, licensing arrangements, and features discussed in this book may change over time. Readers should verify current information with the relevant official documentation before relying on technical instructions.
+
+Product names, trademarks, service marks, and registered trademarks mentioned in this publication remain the property of their respective owners. Their use in this book is for identification and educational purposes only and does not imply endorsement or affiliation.
+
+**ISBN:** Not assigned
+
+---
+
+
+
+
 ## Table of Contents
 
 - [Part 1: Vibe Coding with Claude](#part-1-vibe-coding-with-claude)

@@ -7,6 +7,8 @@ author: "C. Chee"
 
 ---
 
+\newpage
+
 ## Copyright and Publication Information
 
 **Learning Claude Code**
@@ -32,12 +34,71 @@ Product names, trademarks, service marks, and registered trademarks mentioned in
 
 ---
 
+\newpage
 
+## Preface
 
+This book began as notes.
+
+Every session with Claude Code produced something worth keeping — a pattern that worked, a
+misconception corrected, a moment where the tool did something surprising. The notes grew.
+At some point they became a document. At some point the document became this book.
+
+The subject is Claude Code: Anthropic's agentic coding assistant that runs in your terminal.
+But this book is not a manual. Anthropic's documentation covers the commands. What the
+documentation cannot cover is the texture of working with this kind of tool every day —
+how to think about it, how to structure your instructions, where it earns your trust and
+where it needs supervision.
+
+That is what this book is about.
+
+**Who this is for**
+
+This book is written for practitioners. You do not need to be a software engineer, but you
+should be comfortable working in a terminal and curious about how AI tools fit into real
+workflows. If you are evaluating Claude Code for your organisation, or already using it
+and want to go deeper, this book is for you.
+
+**What you will find here**
+
+The tool is powerful precisely because it is open-ended. Boris Cherny, one of its creators,
+put it plainly: "It's a power tool — we don't try to guide you towards a particular workflow."
+That freedom is the point. But freedom without orientation is just noise. This book is the
+orientation.
+
+Part 1 covers the fundamentals: the difference between Claude Desktop and Claude Code, how
+to set it up in both individual and enterprise environments, the core concepts that govern
+how it works, and a practical framework for getting results. Part 2 applies these ideas to
+building applications with Claude Code as a collaborator rather than just a tool.
+
+The appendices collect anecdotes — real moments from real sessions that illuminate things
+that are difficult to explain in the abstract.
+
+**What this book is not**
+
+This is not an academic treatment of large language models. It does not cover training,
+fine-tuning, or model internals. The focus is entirely on use: what Claude Code does,
+how to work with it effectively, and what to expect.
+
+**A note on currency**
+
+Claude Code moves fast — commands that didn't exist six months ago are now central to the
+workflow. Where possible, this book focuses on principles rather than syntax, because
+principles age better. For the latest command reference, the official documentation is
+always the authoritative source.
+
+**Finally**
+
+This book was written with Claude Code. That seemed appropriate.
+
+— Clinton Chee
+Sydney, Australia, 2026
+
+\newpage
 
 ## Table of Contents
 
-- [Part 1: Vibe Coding with Claude](#part-1-vibe-coding-with-claude)
+- [Part 1: ~~Vibe Coding~~ Intent Crafting with Claude](#part-1-vibe-coding-intent-crafting-with-claude)
   - [Chapter 1: Claude Desktop vs Claude Code](#chapter-1-claude-desktop-vs-claude-code)
     - [Claude Desktop](#claude-desktop)
     - [Claude Code (Terminal)](#claude-code-terminal)
@@ -105,18 +166,19 @@ Product names, trademarks, service marks, and registered trademarks mentioned in
     - [Stage 5: Verify](#stage-5-verify)
     - [Stage 6: Ship](#stage-6-ship)
     - [Stage 7: Accumulate](#stage-7-accumulate)
-- [Part 2: Graph Studio and Lakehouse](#part-2-graph-studio-and-lakehouse)
-  - [Chapter 7: Open Source Technologies](#chapter-7-open-source-technologies)
-- [Appendix](#appendix)
-  - [Chapter 8: Anecdotes](#chapter-8-anecdotes)
+- [Part 2: Building Applications](#part-2-building-applications)
+- [Appendices](#appendices)
+  - [Appendix A: Anecdotes](#appendix-a-anecdotes)
 
 ---
 
-# Part 1: Vibe Coding with Claude
+# Part 1: ~~Vibe Coding~~ Intent Crafting with Claude
 
 *Intent-Driven System Crafting / Intent Orchestration / IntentFlow*
 
 **Claude** is Anthropic's AI assistant — a large language model trained to be helpful, harmless, and honest. It understands natural language, writes and reasons about code, analyzes documents, and handles complex multi-step tasks. Claude is the intelligence behind all Anthropic products: whether you're chatting in a browser, running commands in a terminal, or calling an API, the same underlying model is doing the thinking. The products built around it — Claude Desktop, Claude Code, the Claude API — are different interfaces to the same brain, each optimized for a different workflow.
+
+\newpage
 
 ## Quotes
 
@@ -127,6 +189,8 @@ Ref: [Anthropic Claude Code Prompt Engineering in 27 Min](https://www.youtube.co
 
 Amelia Earhart - Aviation Pioneer
 > "Preparation, I have often said, is rightly two-thirds of any venture."
+
+\newpage
 
 ## Chapter 1: Claude Desktop vs Claude Code
 
@@ -177,6 +241,8 @@ This is the core distinction: an agent doesn't wait to be told what to do next. 
 Neither is a strict subset of the other. Claude Code is purpose-built for software engineering workflows; Claude Desktop is a more general-purpose assistant with a richer visual interface.
 
 ---
+
+\newpage
 
 ## Chapter 2: Setting Up Claude Code
 
@@ -545,6 +611,8 @@ To set a default mode, add to `.claude/settings.json`:
 
 ---
 
+\newpage
+
 ## Chapter 3: Claude Concepts
 
 This chapter covers key concepts in how Claude Code thinks and works — the mental models and mechanisms that shape how Claude approaches tasks. Understanding these helps you collaborate with Claude more effectively.
@@ -870,6 +938,8 @@ When a skill invocation (e.g., `/code-review`) touches a file in a project with 
 **Practical implication:** The more your instructions are spread across all four systems, the harder it is to reason about what Claude will actually do in any given situation. Consolidate where possible; treat CLAUDE.md as the most reliable anchor.
 
 ---
+
+\newpage
 
 ## Chapter 4: The Agent Harness
 
@@ -1297,6 +1367,8 @@ Without the harness, the model is a text transformer. With it, the model becomes
 ---
 
 
+\newpage
+
 ## Chapter 5: CLAUDE.md
 
 **CLAUDE.md** is a markdown file that gives Claude Code persistent, project-specific instructions that are loaded automatically at the start of every session — no need to repeat context each time.
@@ -1426,6 +1498,8 @@ paths: "**/{auth,security,config}/**/*.{ts,js,py}"
 - This keeps context usage efficient — Claude only sees relevant rules for the files it's working with
 
 ---
+
+\newpage
 
 ## Chapter 6: Working with Claude Code
 
@@ -1661,40 +1735,18 @@ This is the compounding advantage of Claude Code over one-shot AI tools. Each se
 
 ---
 
-# Part 2: Graph Studio and Lakehouse
+# Part 2: Building Applications
 
-## Chapter 7: Open Source Technologies
+\newpage
 
-| # | Abbreviation | Full Name | One-Sentence Explanation |
-|---|---|---|---|
-| 1 | RDF | Resource Description Framework | The foundational W3C data model where every fact is stored as a subject-predicate-object triple, forming the basis of the entire knowledge graph. |
-| 2 | OWL | Web Ontology Language | The W3C standard used to define ontologies — formal models of entity types, classes, properties, and their relationships within a domain. |
-| 3 | SPARQL | SPARQL Protocol and RDF Query Language | The W3C query and transformation language used for everything in Graph Studio: querying, linking, enriching, updating, and powering AI agents. |
-| 4 | SHACL | Shapes Constraint Language | The W3C standard used as a built-in validation step in the graphmart pipeline to enforce data quality rules and shape conformance. |
-| 5 | RDFS | RDF Schema | The W3C vocabulary extension to RDF that enables class hierarchies, subclass/subproperty inference, and domain/range declarations (used in RDFS+ inference). |
-| 6 | IRI | Internationalized Resource Identifier | The web-style unique identifier assigned to every entity, class, and property in the graph, eliminating ambiguity across source systems. |
-| 7 | XSD | XML Schema Definition | The W3C type system used to define typed literals in RDF (e.g., xsd:int, xsd:dateTime, xsd:string) for all data properties in the graph. |
-| 8 | JSON-LD | JavaScript Object Notation for Linked Data | An open RDF serialization format supported for both read and write, designed to be API-friendly and interoperable with web applications. |
-| 9 | TTL | Turtle (Terse RDF Triple Language) | An open RDF serialization format used as the default export format for file-based datasets written to cloud storage. |
-| 10 | JDBC | Java Database Connectivity | The open standard API used by GDI to connect Graph Studio to any relational database or data warehouse as a data source. |
-| 11 | MCP | Model Context Protocol | The open protocol (pioneered by Anthropic, now industry-standard) used to connect AI agents and LLMs to Graph Studio for autonomous querying, ontology management, and graph building. |
-| 12 | CSV | Comma-Separated Values | A ubiquitous open file format supported by GDI for ingesting tabular data directly into the knowledge graph via SPARQL. |
-| 13 | XML | Extensible Markup Language | An open data format supported by GDI for file-based ingestion, and the basis of the TCXML Teamcenter export format loaded natively by Graph Lakehouse. |
-| 14 | JSON | JavaScript Object Notation | An open lightweight data-interchange format supported by GDI for file-based ingestion from APIs and data lake sources. |
-| 15 | NDJSON | Newline-Delimited JSON | An open streaming-friendly variant of JSON supported by GDI for bulk file ingestion of large datasets. |
-| 16 | TSV | Tab-Separated Values | An open tabular file format supported by GDI alongside CSV for flat-file data ingestion into the knowledge graph. |
-| 17 | REST | Representational State Transfer | The open architectural style for HTTP APIs, used by GDI to federate queries against external REST endpoints as live data sources. |
-| 18 | GraphQL | Graph Query Language | The open API query language used by source systems (e.g., ERP, CRM) that Graph Studio can connect to as a data source via GDI. |
-| 19 | SKOS | Simple Knowledge Organization System | A W3C open standard for representing vocabularies and taxonomies that can be loaded as RDF graphs and interpreted via SPARQL in graphmarts. |
-| 20 | Parquet | Apache Parquet | The open columnar storage file format (from the Apache ecosystem) supported by GDI for high-performance bulk ingestion from data lakes. |
-| 21 | SQL | Structured Query Language | The open standard query language of relational databases, which Graph Studio complements (not replaces) by connecting via JDBC to SQL-based sources. |
-| 22 | MPP | Massively Parallel Processing | The open architectural pattern (not a single standard, but a broadly adopted open computing paradigm) implemented in Graph Lakehouse to parallelize SPARQL queries across multiple nodes at enterprise scale. |
 
 ---
 
-# Appendix
+# Appendices
 
-## Chapter 8: Anecdotes
+\newpage
+
+## Appendix A: Anecdotes
 
 ### "Why did you choose PowerShell to start with?"
 

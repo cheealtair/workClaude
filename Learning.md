@@ -1,6 +1,6 @@
 ---
 title:  "Learning Claude Code"
-author: "Clinton Chee (PhD)"
+author: "C. Chee"
 ---
 
 <h1 align="center"> Learning Claude Code </h1>

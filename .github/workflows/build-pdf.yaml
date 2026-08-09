@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "Learning.md"
+      - "Cover.png"
       - "images/**"
       - ".github/workflows/build-pdf.yaml"
 
@@ -50,6 +51,7 @@ jobs:
             pandoc \
             texlive-xetex \
             texlive-latex-extra \
+            poppler-utils \
             fonts-noto-cjk \
             fonts-dejavu-core
 
@@ -174,6 +176,37 @@ jobs:
             -V geometry:margin=2cm \
             -V mainfont="Noto Serif CJK KR" \
             -V monofont="DejaVu Sans Mono"
+
+      - name: Prepend Cover.png to Learning.pdf
+        run: |
+          cat > cover-page.tex <<'EOF'
+          \documentclass{article}
+          \usepackage[paperwidth=6in,paperheight=9in,margin=0pt]{geometry}
+          \usepackage{graphicx}
+          \usepackage{eso-pic}
+          \pagestyle{empty}
+
+          \begin{document}
+          \AddToShipoutPictureBG*{%
+            \AtPageLowerLeft{%
+              \includegraphics[width=\paperwidth,height=\paperheight]{Cover.png}%
+            }%
+          }
+          \null
+          \end{document}
+          EOF
+
+          xelatex \
+            -interaction=nonstopmode \
+            -halt-on-error \
+            cover-page.tex
+
+          pdfunite \
+            cover-page.pdf \
+            _site/Learning.pdf \
+            _site/Learning-with-cover.pdf
+
+          mv _site/Learning-with-cover.pdf _site/Learning.pdf
 
       # ------------------------------------------------------------
       # Verify that PDF was actually created

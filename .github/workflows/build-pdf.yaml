@@ -61,6 +61,10 @@ jobs:
         run: |
           mkdir -p _site
 
+      - name: Copy cover image to website
+        run: |
+          cp Cover.png _site/Cover.png
+
       # ------------------------------------------------------------
       # Allow deeply nested Markdown lists
       #
@@ -247,6 +251,18 @@ jobs:
                 font-size: 14px;
               }
 
+              .cover {
+                margin: 40px auto;
+              }
+
+              .cover img {
+                width: 100%;
+                max-width: 360px;
+                height: auto;
+                border-radius: 6px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+              }
+
             </style>
 
           </head>
@@ -266,6 +282,13 @@ jobs:
             >
               Download PDF
             </a>
+            
+            <div class="cover">
+            <img
+                src="Cover.png"
+                alt="Learning Claude Code book cover"
+            >
+            </div>
 
             <div class="support">
 

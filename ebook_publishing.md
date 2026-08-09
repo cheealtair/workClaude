@@ -144,6 +144,186 @@ Leanpub does not offer hard DRM. Copy protection on the distributed files works 
 
 Delivery fee of $0.15/MB is deducted from 70% royalties — keep file size small.
 
+
+## GitHub Self-Publishing — Automated PDF + GitHub Pages
+
+GitHub provides a third approach to ebook publishing that is quite different from platforms such as Leanpub and Amazon KDP. Rather than uploading a finished book to a publishing service, the author can use GitHub as both the source repository and the foundation of an automated publishing system.
+
+In this model, the Markdown manuscript remains the single source of truth. Changes are made directly to the Markdown file, committed to Git, and pushed to GitHub. From that point, GitHub Actions can automatically convert the manuscript into a PDF and publish the latest version through GitHub Pages.
+
+This approach is particularly well suited to technical books that evolve continuously. Instead of manually rebuilding and uploading a new PDF every time the content changes, the publishing process becomes part of the normal Git workflow.
+
+### Publishing Architecture
+
+The publishing pipeline consists of a small number of components:
+
+- `Learning.md` — the master manuscript
+- `Cover.png` — the front cover
+- `build-pdf.yaml` — the GitHub Actions workflow
+- Pandoc — converts Markdown into the book format
+- XeLaTeX — produces the final PDF
+- GitHub Pages — hosts the public download page
+- Ko-fi — provides optional reader contributions
+
+The basic flow is:
+
+```text
+Learning.md
+     ↓
+git push
+     ↓
+GitHub Actions
+     ↓
+Pandoc + XeLaTeX
+     ↓
+Learning.pdf
+     ↓
+GitHub Pages
+```
+
+The author therefore spends most of their time working with the Markdown source rather than managing the publishing process itself.
+
+### Markdown as the Book Source
+
+The Markdown document can retain a conventional book hierarchy while remaining easy to read directly on GitHub. YAML metadata at the beginning of the document stores information such as the title and author, while Markdown heading levels represent the structure of the book.
+
+For example:
+
+```text
+YAML metadata   Book title and author
+#               Part
+##              Chapter
+###             Section
+####            Subsection
+```
+
+This allows the same source file to serve two purposes. It remains readable as Markdown on GitHub, while Pandoc interprets the structure when generating the PDF.
+
+A manually maintained table of contents can also remain in the Markdown version for GitHub readers. During the PDF build, that table of contents can be removed automatically and replaced with Pandoc's generated PDF table of contents.
+
+### Automated PDF Generation
+
+The automation is handled by GitHub Actions. The workflow can be configured to run whenever the manuscript, cover, images, or publishing workflow itself changes.
+
+A normal publishing cycle therefore becomes very simple:
+
+- Edit `Learning.md`
+- Commit the changes
+- Push them to GitHub
+- GitHub Actions rebuilds the PDF
+- GitHub Pages publishes the updated edition
+
+No separate manual conversion or upload process is required.
+
+The same workflow can also include safeguards needed for larger technical documents, including:
+
+- Unicode and Korean font support
+- Monospace fonts for code and text diagrams
+- Support for deeply nested Markdown lists
+- Automatic PDF table of contents
+- Preservation of the intended heading hierarchy
+- Handling of images and other book assets
+
+### Book Cover
+
+The front cover can be stored as `Cover.png` alongside the Markdown manuscript. It does not need to be inserted into `Learning.md`.
+
+During the automated build, the cover image can be converted into the first page of the final PDF and combined with the generated book body.
+
+The resulting document follows this structure:
+
+```text
+Page 1     Front cover
+Page 2+    Ebook content
+```
+
+The same `Cover.png` can also be copied into the GitHub Pages site and displayed on the ebook's public landing page. This means one image asset serves both the downloadable book and its online presentation.
+
+### Publishing Through GitHub Pages
+
+GitHub Pages provides the public-facing part of the system. After a successful build, GitHub Actions deploys the generated files to the Pages website.
+
+A simple ebook landing page can contain:
+
+- Book title
+- Download PDF button
+- Front-cover image
+- Short description
+- Ko-fi support button
+
+The PDF has a stable public URL. When a new edition is generated, the file at that address is replaced by the latest version, so previously shared links continue to work.
+
+### Optional Reader Contributions
+
+The book does not have to be sold in order to accept financial support. A Ko-fi link can be placed on the GitHub Pages website while keeping the PDF freely available.
+
+This creates a simple model:
+
+> Read or download the book for free. If it was useful, optionally support the author.
+
+Ko-fi can be connected to PayPal, making it suitable when the objective is voluntary contribution rather than a conventional checkout process.
+
+### Zero-Upfront-Cost Publishing
+
+One of the main advantages of this approach is that the core publishing infrastructure can operate without an upfront publishing fee.
+
+The main components are:
+
+- GitHub repository
+- GitHub Actions
+- GitHub Pages
+- Pandoc
+- XeLaTeX
+- Ko-fi
+
+There is no requirement to use an ebook marketplace or traditional publishing platform simply to make the book publicly available.
+
+### Advantages and Limitations
+
+The model provides considerable control to the author.
+
+**Advantages include:**
+
+- Markdown remains the single source of truth
+- Publishing is integrated with Git
+- New editions can be generated automatically
+- No manual PDF conversion is required
+- The author controls the public website
+- Readers can obtain the book free of charge
+- Optional financial support can be added
+- Particularly suitable for frequently updated technical material
+
+There are also trade-offs.
+
+**Limitations include:**
+
+- A public repository exposes its contents and history
+- There is no built-in DRM
+- There is no per-reader watermarking
+- GitHub does not provide Amazon-style marketplace discovery
+- Marketing remains the author's responsibility
+- GitHub Pages is a distribution mechanism rather than an ebook marketplace
+
+### Security Considerations
+
+Before making a repository public, the complete repository and its history should be reviewed carefully. Public Git repositories should never contain credentials, private keys, API tokens, `.env` files, confidential material, or other sensitive information.
+
+Deleting a secret from the current version of a file is not necessarily sufficient because the value may remain in earlier Git commits.
+
+For a public ebook repository, it is safest to treat everything committed to Git as potentially visible to readers.
+
+### Position Alongside Leanpub and Amazon KDP
+
+GitHub self-publishing does not necessarily replace Leanpub or Amazon KDP. It can instead become the foundation of a broader publishing strategy.
+
+GitHub can provide the continuously updated free edition, while Leanpub can support pay-what-you-want technical publishing and Amazon KDP can provide access to the much larger Kindle marketplace.
+
+The Markdown manuscript can remain the authoritative source regardless of which additional distribution channels are used later.
+
+
+
+
+
 ## Payment Methods for Non-US / Non-Local Bank Authors
 
 ### Amazon KDP
@@ -249,3 +429,6 @@ fiction. Skipping Select to stay multi-platform is usually the right trade-off.
   receive updates and must request them via Amazon customer service
 - Maintain your master manuscript in one place (e.g. private GitHub repo) and export
   to each platform's required format from there
+
+
+

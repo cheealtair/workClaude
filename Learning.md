@@ -98,6 +98,7 @@ Sydney, Australia, 2026
 
 ## Table of Contents
 
+- [Preface](#preface)
 - [Part 1: ~~Vibe Coding~~ Intent Crafting with Claude](#part-1-vibe-coding-intent-crafting-with-claude)
   - [Chapter 1: Claude Desktop vs Claude Code](#chapter-1-claude-desktop-vs-claude-code)
     - [Claude Desktop](#claude-desktop)

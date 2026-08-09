@@ -146,6 +146,50 @@ jobs:
           EOF
 
       # ------------------------------------------------------------
+      # Fix the Chapter 2 Individual vs Enterprise table widths.
+      # This targets only that specific table.
+      # ------------------------------------------------------------
+      - name: Configure Chapter 2 table widths
+        run: |
+          cat > fix-individual-enterprise-table.lua <<'EOF'
+          local function cell_text(cell)
+            return pandoc.utils.stringify(cell.contents)
+          end
+
+          function Table(tbl)
+            if #tbl.colspecs ~= 3 then
+              return tbl
+            end
+
+            if not tbl.head or #tbl.head.rows == 0 then
+              return tbl
+            end
+
+            local cells = tbl.head.rows[1].cells
+            if #cells ~= 3 then
+              return tbl
+            end
+
+            local c1 = cell_text(cells[1])
+            local c2 = cell_text(cells[2])
+            local c3 = cell_text(cells[3])
+
+            if c1 == 'Aspect'
+               and c2 == 'Individual (personal account)'
+               and c3 == 'Enterprise (corporate gateway)'
+            then
+              tbl.colspecs = {
+                { pandoc.AlignDefault, 0.22 },
+                { pandoc.AlignDefault, 0.39 },
+                { pandoc.AlignDefault, 0.39 }
+              }
+            end
+
+            return tbl
+          end
+          EOF
+
+      # ------------------------------------------------------------
       # Build PDF
       #
       # YAML front matter in Learning.md supplies:
@@ -171,6 +215,7 @@ jobs:
             --toc \
             --toc-depth=4 \
             --lua-filter=strip-manual-toc.lua \
+            --lua-filter=fix-individual-enterprise-table.lua \
             --include-in-header=deep-lists.tex \
             --resource-path=.:images \
             -V geometry:margin=2cm \

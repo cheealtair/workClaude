@@ -1,18 +1,62 @@
 # Ebook Publishing from Markdown
 
-## Can You Publish a .md File as an Ebook?
+## Table of Contents
+
+- [General](#general)
+  - [Can You Publish a .md File as an Ebook?](#can-you-publish-a-md-file-as-an-ebook)
+  - [Converting MD to Ebook Format](#converting-md-to-ebook-format)
+  - [Publishing Platforms](#publishing-platforms)
+  - [Royalty Clarification](#royalty-clarification)
+  - [Monetization Options](#monetization-options)
+  - [Recommendation](#recommendation)
+- [Leanpub (Manuscript Already Written)](#leanpub-manuscript-already-written)
+  - [Publishing Steps](#publishing-steps)
+  - [Copy Protection on Leanpub](#copy-protection-on-leanpub-markdown-source)
+  - [Payment Methods for Non-US / Non-Local Bank Authors](#payment-methods-for-non-us--non-local-bank-authors)
+- [Amazon KDP Publishing (Manuscript Already Written)](#amazon-kdp-publishing-manuscript-already-written)
+  - [Steps to Publish](#steps-to-publish)
+  - [Royalty Reference](#royalty-reference)
+  - [Payment Methods for Non-US / Non-Local Bank Authors](#payment-methods-for-non-us--non-local-bank-authors-1)
+  - [Copy Protection](#copy-protection)
+  - [Practical Recommendation for Indie Authors on KDP](#practical-recommendation-for-indie-authors-on-kdp)
+- [GitHub Self-Publishing — Automated PDF + GitHub Pages](#github-self-publishing--automated-pdf--github-pages)
+  - [Publishing Architecture](#publishing-architecture)
+  - [Markdown as the Book Source](#markdown-as-the-book-source)
+  - [Automated PDF Generation](#automated-pdf-generation)
+  - [Book Cover](#book-cover)
+  - [Publishing Through GitHub Pages](#publishing-through-github-pages)
+  - [Optional Reader Contributions](#optional-reader-contributions)
+  - [Zero-Upfront-Cost Publishing](#zero-upfront-cost-publishing)
+  - [Copy Protection](#copy-protection-1)
+  - [Advantages and Limitations](#advantages-and-limitations)
+  - [Security Considerations](#security-considerations)
+  - [Position Alongside Leanpub and Amazon KDP](#position-alongside-leanpub-and-amazon-kdp)
+- [Multi-Platform Strategy — Publishing on Amazon and Leanpub Simultaneously](#multi-platform-strategy--publishing-on-amazon-and-leanpub-simultaneously)
+  - [Are They Mutually Exclusive?](#are-they-mutually-exclusive)
+  - [What You Give Up by Skipping KDP Select](#what-you-give-up-by-skipping-kdp-select)
+  - [Recommended Split for Technical Authors](#recommended-split-for-technical-authors)
+  - [Pricing Strategy Across Platforms](#pricing-strategy-across-platforms)
+  - [Updating Your Book](#updating-your-book)
+
+\newpage
+
+## General
+
+### Can You Publish a .md File as an Ebook?
 
 Yes. Markdown must first be converted to a distribution format, then uploaded to a platform.
 
-## Converting MD to Ebook Format
+
+### Converting MD to Ebook Format
 
 Use **Pandoc** for conversion:
 
 - **EPUB** (universal — Kindle, Apple Books, Kobo): `pandoc book.md -o book.epub`
 - **PDF**: `pandoc book.md -o book.pdf`
-- **MOBI**: Use Calibre, or submit EPUB directly to Amazon
+- **MOBI**: Deprecated by Amazon (2022) — submit EPUB directly to KDP instead
 
-## Publishing Platforms
+
+### Publishing Platforms
 
 | Platform | Format | You Keep |
 |---|---|---|
@@ -21,13 +65,17 @@ Use **Pandoc** for conversion:
 | Leanpub | Markdown natively | 80% |
 | Payhip | PDF/EPUB | 95% |
 | Draft2Digital | EPUB | Distributes to many retailers |
+| GitHub Pages | PDF | 100% — free distribution; optional Ko-fi contributions |
 
-## Royalty Clarification
+
+### Royalty Clarification
 
 - **Leanpub 80%** — you keep 80%, they take 20%
 - **Amazon KDP 70%** — you keep 70%, they take 30% (must price $2.99–$9.99 in select countries; otherwise 35% tier applies)
+- **GitHub Pages 100%** — free distribution; no royalty split; reader contributions optional via Ko-fi
 
-## Monetization Options
+
+### Monetization Options
 
 - One-time purchase
 - Pay-what-you-want (Gumroad/Leanpub)
@@ -35,12 +83,22 @@ Use **Pandoc** for conversion:
 - Bundle with a course (Teachable/Podia)
 - Newsletter upsell — free sample, paid full version
 
-## Recommendation
+
+### Recommendation
 
 - **Technical/niche book**: Leanpub (Markdown-native, 80% royalty) or Gumroad (simple, low friction)
 - **Broad retail reach**: Amazon KDP via Pandoc-generated EPUB
+- **Continuously updated / free distribution**: GitHub Pages — zero cost, fully automated, ideal for books that evolve frequently
 
-## Leanpub Publishing Steps (Manuscript Already Written)
+
+
+
+
+\newpage
+
+## Leanpub (Manuscript Already Written)
+
+### Publishing Steps 
 
 1. Create a Leanpub account and start a new book project
 2. Connect your manuscript — Dropbox folder, GitHub repo, or direct upload of `.md` files
@@ -52,13 +110,13 @@ Use **Pandoc** for conversion:
 
 Full process from account creation to live book: under an hour.
 
-## Copy Protection on Leanpub (Markdown Source)
+### Copy Protection on Leanpub (Markdown Source)
 
-### Source Markdown
+Source Markdown   
 Readers never see your `.md` source files. The Leanpub build pipeline reads from your private
 Dropbox folder or private GitHub repo — keep it private and only Leanpub's system can access it.
 
-### Output Files (PDF/EPUB)
+Output Files (PDF/EPUB)   
 Leanpub does not offer hard DRM. Copy protection on the distributed files works as follows:
 
 - **Buyer watermarking (default)** — Leanpub embeds the buyer's name and email into every
@@ -68,30 +126,51 @@ Leanpub does not offer hard DRM. Copy protection on the distributed files works 
 - **Honor system + watermark** — The standard model for technical books on Leanpub. Most
   buyers are professionals who will not pirate a low-priced technical book.
 
-### Practical Advice
+Practical Advice    
 - Leave watermarking enabled (it is on by default).
 - Price reasonably — low friction pricing reduces the motivation to pirate.
 - Accept residual risk; no distribution platform eliminates it entirely.
 
-## Amazon KDP Publishing Steps (Manuscript Already Written)
+### Payment Methods for Non-US / Non-Local Bank Authors
 
-### Step 1 — Convert Your Manuscript
+Leanpub pays via Stripe or PayPal. Minimum payout threshold is $50.
+
+| Method | Works? | Notes |
+|---|---|---|
+| PayPal | Yes | Supported in most PayPal-enabled countries; 0-2% receipt fee |
+| Stripe | Yes | Connect a local bank account to Stripe; broader country support than PayPal in some regions |
+| Wise (via Stripe) | Yes (workaround) | Link a Wise virtual bank account to your Stripe account if your country is not natively supported |
+| Wire transfer | No | Not offered by Leanpub |
+
+**Recommended for non-US authors on Leanpub:** PayPal if available in your country; Stripe +
+Wise virtual account as fallback.
+
+
+
+
+\newpage
+
+## Amazon KDP Publishing (Manuscript Already Written)
+
+### Steps to Publish
+
+Step 1 — Convert Your Manuscript
 - Use Pandoc to generate EPUB: `pandoc book.md -o book.epub`
 - Or convert to DOCX: `pandoc book.md -o book.docx`
 - EPUB is preferred; KDP accepts both but renders EPUB more reliably.
 - For PDF (print-on-demand only), format to 6x9 inches with 0.5in margins.
 
-### Step 2 — Prepare Your Cover Image
+Step 2 — Prepare Your Cover Image
 - Minimum 1000px on shortest side; recommended 2560 x 1600px (1.6:1 ratio)
 - JPEG or TIFF, RGB color space
 - KDP provides a free Cover Creator tool if you don't have a design
 
-### Step 3 — Create a KDP Account
+Step 3 — Create a KDP Account
 - Go to kdp.amazon.com and sign in with your Amazon account
 - Complete tax interview (W-9 for US; W-8BEN for non-US) — required before any royalties paid
 - Add a bank account for direct deposit
 
-### Step 4 — Create a New Kindle eBook Title
+Step 4 — Create a New Kindle eBook Title
 1. Click **Create** > **Kindle eBook**
 2. Fill in **Book Details**:
    - Language, title, subtitle, series (if any)
@@ -116,19 +195,19 @@ Leanpub does not offer hard DRM. Copy protection on the distributed files works 
    - Set price; Amazon shows equivalent prices in other currencies automatically
    - Matchbook / lending — optional features
 
-### Step 5 — Publish
+Step 5 — Publish
 - Click **Publish Your Kindle eBook**
 - Review takes 24–72 hours; you receive an email when live
 - Your book appears on Amazon.com (and other Amazon stores) once approved
 
-### Step 6 — Print-on-Demand (Optional — KDP Paperback)
+Step 6 — Print-on-Demand (Optional — KDP Paperback)
 - After publishing the eBook, click **Create Paperback**
 - Upload a print-ready PDF (6x9 recommended for technical books)
 - Upload a cover via KDP's cover calculator (spine width depends on page count)
 - Set paperback price — royalty is 60% minus printing cost (varies by page count and market)
 - Paperback and eBook listings auto-link on Amazon's product page
 
-### Step 7 — Ongoing Management
+Step 7 — Ongoing Management
 - Monitor sales and royalties in **KDP Reports** (updated daily)
 - Update manuscript anytime — upload new file, click publish; buyers do not get auto-updates
   (unlike Leanpub), but can request the update via Amazon customer service
@@ -144,6 +223,63 @@ Leanpub does not offer hard DRM. Copy protection on the distributed files works 
 
 Delivery fee of $0.15/MB is deducted from 70% royalties — keep file size small.
 
+
+### Payment Methods for Non-US / Non-Local Bank Authors
+
+Amazon's preferred payout method is direct bank transfer (EFT). Supported countries are listed
+in KDP account settings — many are covered, but not all.
+
+| Method | Works? | Notes |
+|---|---|---|
+| Direct bank transfer (EFT) | Yes, where supported | Check KDP's supported country list |
+| Wire transfer | Yes (fallback) | ~$15 fee per payment; $100 minimum threshold |
+| PayPal | No | Not supported by KDP for royalty payments |
+| Wise (virtual bank account) | Yes (workaround) | Get a Wise US/UK/EU virtual account; register it in KDP as a local bank account |
+| Payoneer (virtual bank account) | Yes (workaround) | Same approach as Wise; KDP treats it as domestic |
+
+**Recommended for unsupported countries:** Wise first (lower fees, better exchange rates),
+Payoneer second. Both provide virtual US/UK/EU bank details that KDP accepts as local accounts.
+
+
+
+### Copy Protection
+
+Amazon's approach differs significantly from Leanpub's watermarking model.
+
+DRM (Digital Rights Management)  
+- Enabled via a checkbox during Step 4 (Kindle eBook Content) at publish time
+- Locks the file to the buyer's registered Kindle devices and apps
+- Prevents opening on non-Amazon readers without stripping the DRM
+- **Cannot be reversed after publishing** — enabling then disabling DRM requires unpublishing
+  and republishing as a new title; existing buyers keep the DRM version
+
+DRM Limitations   
+- Determined pirates can strip Kindle DRM using freely available tools (e.g. Calibre + DeDRM plugin)
+- DRM deters casual copying but not motivated bad actors
+- Amazon does not embed buyer identity into the file — leaked copies cannot be traced to a
+  specific buyer (unlike Leanpub's watermarking)
+
+Third-Party Watermarking Options   
+If you want Leanpub-style buyer traceability on files sold via KDP or directly:
+
+| Tool | Type | Notes |
+|---|---|---|
+| Booxtream | Commercial service | Embeds invisible forensic watermarks per buyer; aimed at publishers |
+| Digimarc | Commercial service | Enterprise-level invisible watermarking; expensive |
+| Pressbooks | Platform | Generates watermarked EPUBs per buyer — requires selling outside KDP |
+| Calibre + plugin | DIY | Manual watermarking before upload; not per-buyer without scripting |
+
+### Practical Recommendation for Indie Authors on KDP
+1. Enable DRM at publish time — deters casual sharing
+2. Keep file size small (reduces delivery fee and piracy appeal of large bundles)
+3. Price reasonably — low prices reduce motivation to pirate
+4. Accept that per-buyer traceability is not available natively on KDP
+5. Commercial watermarking services are cost-effective only at publisher scale
+
+
+
+
+\newpage
 
 ## GitHub Self-Publishing — Automated PDF + GitHub Pages
 
@@ -278,6 +414,18 @@ The main components are:
 
 There is no requirement to use an ebook marketplace or traditional publishing platform simply to make the book publicly available.
 
+### Copy Protection
+
+GitHub Pages offers no copy protection — this is by design.
+
+- **No DRM** — the PDF is a plain downloadable file, open to anyone
+- **No watermarking** — there is no buyer identity to embed; the book is free
+- **No access control** — the public URL is open by design
+
+The only indirect protection is keeping the source repository private — the Markdown manuscript remains hidden while the built PDF is publicly accessible.
+
+This is a deliberate trade-off. The GitHub model assumes that free availability is itself the distribution strategy, with Ko-fi as optional reader support rather than a paywall. Copy protection is not the objective.
+
 ### Advantages and Limitations
 
 The model provides considerable control to the author.
@@ -324,71 +472,7 @@ The Markdown manuscript can remain the authoritative source regardless of which 
 
 
 
-## Payment Methods for Non-US / Non-Local Bank Authors
-
-### Amazon KDP
-
-Amazon's preferred payout method is direct bank transfer (EFT). Supported countries are listed
-in KDP account settings — many are covered, but not all.
-
-| Method | Works? | Notes |
-|---|---|---|
-| Direct bank transfer (EFT) | Yes, where supported | Check KDP's supported country list |
-| Wire transfer | Yes (fallback) | ~$15 fee per payment; $100 minimum threshold |
-| PayPal | No | Not supported by KDP for royalty payments |
-| Wise (virtual bank account) | Yes (workaround) | Get a Wise US/UK/EU virtual account; register it in KDP as a local bank account |
-| Payoneer (virtual bank account) | Yes (workaround) | Same approach as Wise; KDP treats it as domestic |
-
-**Recommended for unsupported countries:** Wise first (lower fees, better exchange rates),
-Payoneer second. Both provide virtual US/UK/EU bank details that KDP accepts as local accounts.
-
-### Leanpub
-
-Leanpub pays via Stripe or PayPal. Minimum payout threshold is $50.
-
-| Method | Works? | Notes |
-|---|---|---|
-| PayPal | Yes | Supported in most PayPal-enabled countries; 0-2% receipt fee |
-| Stripe | Yes | Connect a local bank account to Stripe; broader country support than PayPal in some regions |
-| Wise (via Stripe) | Yes (workaround) | Link a Wise virtual bank account to your Stripe account if your country is not natively supported |
-| Wire transfer | No | Not offered by Leanpub |
-
-**Recommended for non-US authors on Leanpub:** PayPal if available in your country; Stripe +
-Wise virtual account as fallback.
-
-## Amazon KDP — Copy Protection
-
-Amazon's approach differs significantly from Leanpub's watermarking model.
-
-### DRM (Digital Rights Management)
-- Enabled via a checkbox during Step 4 (Kindle eBook Content) at publish time
-- Locks the file to the buyer's registered Kindle devices and apps
-- Prevents opening on non-Amazon readers without stripping the DRM
-- **Cannot be reversed after publishing** — enabling then disabling DRM requires unpublishing
-  and republishing as a new title; existing buyers keep the DRM version
-
-### DRM Limitations
-- Determined pirates can strip Kindle DRM using freely available tools (e.g. Calibre + DeDRM plugin)
-- DRM deters casual copying but not motivated bad actors
-- Amazon does not embed buyer identity into the file — leaked copies cannot be traced to a
-  specific buyer (unlike Leanpub's watermarking)
-
-### Third-Party Watermarking Options
-If you want Leanpub-style buyer traceability on files sold via KDP or directly:
-
-| Tool | Type | Notes |
-|---|---|---|
-| Booxtream | Commercial service | Embeds invisible forensic watermarks per buyer; aimed at publishers |
-| Digimarc | Commercial service | Enterprise-level invisible watermarking; expensive |
-| Pressbooks | Platform | Generates watermarked EPUBs per buyer — requires selling outside KDP |
-| Calibre + plugin | DIY | Manual watermarking before upload; not per-buyer without scripting |
-
-### Practical Recommendation for Indie Authors on KDP
-1. Enable DRM at publish time — deters casual sharing
-2. Keep file size small (reduces delivery fee and piracy appeal of large bundles)
-3. Price reasonably — low prices reduce motivation to pirate
-4. Accept that per-buyer traceability is not available natively on KDP
-5. Commercial watermarking services are cost-effective only at publisher scale
+\newpage
 
 ## Multi-Platform Strategy — Publishing on Amazon and Leanpub Simultaneously
 
@@ -415,6 +499,8 @@ fiction. Skipping Select to stay multi-platform is usually the right trade-off.
   pay-what-you-want pricing, and direct author-reader relationship
 - **Amazon KDP** (without Select) — retail discoverability; reaches Kindle readers who
   would never find Leanpub
+- **GitHub Pages** — free continuously updated edition; serves as the public-facing version
+  and drives awareness to the paid channels
 
 ### Pricing Strategy Across Platforms
 - Price Leanpub slightly lower or offer a bundle (book + files/code) — gives buyers a
@@ -427,6 +513,8 @@ fiction. Skipping Select to stay multi-platform is usually the right trade-off.
   download the update immediately
 - **Amazon KDP** — upload a new file and republish; existing buyers do NOT automatically
   receive updates and must request them via Amazon customer service
+- **GitHub Pages** — push to Git and the PDF rebuilds automatically; readers always
+  get the latest version at the same stable URL; no manual republishing required
 - Maintain your master manuscript in one place (e.g. private GitHub repo) and export
   to each platform's required format from there
 

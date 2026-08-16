@@ -54,7 +54,7 @@ This section documents the hardware configurations used for testing and developm
 
 | Spec | Desktop | Laptop (HP ZBook Fury 16) |
 |------|---------|---------------------------|
-| CPU | — | Intel Core Ultra 9 |
+| CPU | AMD Ryzen 5 5600X 6-Core | Intel Core Ultra 9 |
 | GPU | RTX 3060 | RTX PRO 4000 Blackwell |
 | VRAM | 12GB | 16GB |
 | System RAM | 32GB | 64GB |
@@ -69,10 +69,13 @@ This table lists all models discussed in this guide, their architecture types, p
 | Gemma 4 12B | Dense | 11.9B | ~7.6 GB | Fast, good daily assistant *(defined)* |
 | Gemma 4 26B A4B (MoE) | MoE (8/128 experts) | 25.2B / 3.8B active | ~18 GB | Efficient MoE architecture *(defined)* |
 | Gemma 4 31B | Dense | 30.7B | ~20 GB | Highest quality Gemma 4 *(defined)* |
+| Gemma 3 12B IT Q4_K_M | Dense (IT) | 12B | ~7 GB | Mature general-purpose; writing, summarisation, reasoning, multilingual, vision, function calling, structured output, long context *(defined)* |
 | Qwen3 30B-A3B | MoE (8/128 experts) | 30B / 3.3B active | ~18.6 GB | Strong coding, document analysis, enterprise work *(defined)* |
 | Qwen3-Coder 30B-A3B | MoE | 30B / 3.3B active | ~19 GB | Coding-focused, 256K context *(defined)* |
 | Qwen3 32B | Dense | 32B | ~20 GB | Strong reasoning; 40% on Aider coding benchmark (best open local) *(defined)* |
-| Qwen 3.5 9B | Dense (hybrid DeltaNet+Attention) | 9B | ~5.7 GB | Multimodal (text+image+video), 256K context, 201 languages *(defined)* |
+| Qwen 3.5 9B Q5_K_M | Dense (hybrid DeltaNet+Attention) | 9B | ~6.6 GB | **Default model**; Multimodal (text+image+video), 256K context, 201 languages; coding, reasoning, agents, React/Node dev, Python, Linux admin, tool calling *(defined)* |
+| Qwen 3.5 9B Q6_K | Dense (hybrid DeltaNet+Attention) | 9B | ~7.7 GB | **Higher-fidelity quantisation**; same model as Q5_K_M but slightly less quantisation loss; use for benchmarking or when maximum Qwen3.5 quality is preferred over VRAM/context headroom *(defined)* |
+| Qwen3 8B Q5_K_M | Dense | 8B | ~5.9 GB | **Fast model**; established Qwen series; leaves more VRAM headroom (~6GB) for KV cache and longer contexts; quick coding questions, shell commands, simple code generation *(defined)* |
 | Devstral 24B | Dense | 24B | ~14 GB | Agentic coding; 46.8% SWE-Bench; beats DeepSeek-V3 671B on coding evals. Apache 2.0. *(defined)* |
 | DeepSeek-R1 14B (distill) | Dense (distilled) | 14.8B | ~9 GB | Reasoning/math; distilled from full R1; MIT license *(defined)* |
 | DeepSeek-R1 8B (distill) | Dense (distilled) | 8B | ~5 GB | Lightweight reasoning; fits comfortably in 12GB VRAM *(defined)* |
@@ -81,14 +84,17 @@ This table lists all models discussed in this guide, their architecture types, p
 
 - The original notes referenced "Gemma 4 27B" — this model does not exist. Gemma 4 ships as 12B, 26B (MoE), and 31B (Dense). "27B" is a Gemma 3 model.
 - DeepSeek-R1 full model (671B) is not locally runnable. Only the distilled variants (8B, 14B, 32B, 70B) are practical for local use.
+- **Qwen 3.5 9B** is available in two quantizations: Q5_K_M (~6.6 GB, recommended default) and Q6_K (~7.7 GB, higher fidelity). Q5_K_M is the better practical choice on a 12GB RTX 3060 for everyday use; Q6_K is useful for benchmarking or when maximum quality is preferred.
+- **Gemma 3 12B IT** is the predecessor to Gemma 4 and serves as a mature, stable general-purpose backup model with strong support for vision, function calling, structured output, and long context.
 
 ### [INTEGRATION] 1.3 Model-to-Hardware Fit
 
 This matrix shows how each model performs on the two hardware configurations. VRAM-resident models run faster and more efficiently than those requiring RAM offload.
 
-| Model | Q4 Size | Desktop (RTX 3060 12GB VRAM, 32GB RAM) | Laptop (RTX PRO 4000 16GB VRAM, 64GB RAM) |
-|-------|---------|---------------------------------------|------------------------------------------|
+| Model | Q4/Q5/Q6 Size | Desktop (RTX 3060 12GB VRAM, 32GB RAM) | Laptop (RTX PRO 4000 16GB VRAM, 64GB RAM) |
+|-------|---------------|---------------------------------------|------------------------------------------|
 | Gemma 4 12B | ~7.6 GB | Fits in VRAM — runs well *(defined)* | Fits in VRAM — runs well *(defined)* |
+| Gemma 3 12B IT Q4_K_M | ~7 GB | Fits in VRAM — runs well; stable general-purpose backup *(defined)* | Fits in VRAM — runs well *(defined)* |
 | Gemma 4 26B (MoE) | ~18 GB | Too large for VRAM; slow with RAM offload on 32GB | Needs partial RAM offload (~2GB spill); usable *(in-progress)* |
 | Gemma 4 31B (Dense) | ~20 GB | Won't run well — exceeds VRAM + limited RAM | Needs significant RAM offload; marginal *(pending)* |
 | Qwen3 30B-A3B | ~18.6 GB | Too large for VRAM; tight on 32GB RAM | Needs partial RAM offload; usable — lower active params help *(in-progress)* |
@@ -97,31 +103,40 @@ This matrix shows how each model performs on the two hardware configurations. VR
 | Devstral 24B | ~14 GB | Exceeds VRAM; usable with RAM offload (plenty of 32GB headroom) | Fits in VRAM — runs well *(defined)* |
 | DeepSeek-R1 14B (distill) | ~9 GB | Fits in VRAM — runs well *(defined)* | Fits in VRAM — runs well *(defined)* |
 | DeepSeek-R1 8B (distill) | ~5 GB | Fits in VRAM — runs well *(defined)* | Fits in VRAM — runs well *(defined)* |
-| Qwen 3.5 9B | ~5.7 GB | Fits in VRAM — runs well *(defined)* | Fits in VRAM — runs well *(defined)* |
+| Qwen 3.5 9B Q5_K_M | ~6.6 GB | Fits in VRAM — **recommended default**; excellent for coding, reasoning, agents *(defined)* | Fits in VRAM — runs well; leaves ~5GB headroom *(defined)* |
+| Qwen 3.5 9B Q6_K | ~7.7 GB | Fits in VRAM — higher fidelity; slightly less VRAM headroom *(defined)* | Fits in VRAM — for benchmarking or maximum quality needs *(defined)* |
+| Qwen3 8B Q5_K_M | ~5.9 GB | **Fits comfortably**; leaves ~6GB VRAM headroom for longer contexts and KV cache *(defined)* | Fits in VRAM with significant headroom; fastest option *(defined)* |
 
 ### [RECOMMENDATION] 1.4 Desktop-Optimised Models (RTX 3060 12GB)
 
-These models fit comfortably in 12GB VRAM at Q4 quantization and run fully on-GPU without RAM offloading, providing optimal performance for desktop use.
+These models fit comfortably in 12GB VRAM at Q4/Q5 quantization and run fully on-GPU without RAM offloading, providing optimal performance for desktop use.
 
-| Model | Q4 Size | Strengths | Ollama tag |
-|-------|---------|-----------|------------|
-| Gemma 4 12B | ~7.6 GB | Fast general assistant; strong daily tasks | `gemma4:12b` *(defined)* |
-| Qwen 3.5 9B | ~5.7 GB | Multimodal (text+image+video), 256K context, 201 languages | `qwen3.5:9b` *(defined)* |
-| DeepSeek-R1 8B (distill) | ~5 GB | Reasoning and math; MIT license | `deepseek-r1:8b` *(defined)* |
-| DeepSeek-R1 14B (distill) | ~9 GB | Better reasoning; still fits in 12GB VRAM | `deepseek-r1:14b` *(defined)* |
+| Model | Quantisation | Size | Strengths | Ollama tag |
+|-------|--------------|------|-----------|------------|
+| **Qwen 3.5 9B Q5_K_M** | Q5_K_M | ~6.6 GB | **Default model**; coding, reasoning, agents, React/Node dev, Python, Linux admin, tool calling, general questions | `qwen3.5:9b` *(defined)* |
+| Gemma 4 12B | Q4_K_M | ~7.6 GB | Fast general assistant; strong daily tasks; good multimodal support | `gemma4:12b` *(defined)* |
+| Qwen3 8B Q5_K_M | Q5_K_M | ~5.9 GB | **Fastest**; established Qwen series; leaves ~6GB VRAM headroom for KV cache and longer contexts; quick coding questions, shell commands, simple code generation | `qwen3:8b` *(defined)* |
+| DeepSeek-R1 8B (distill) | Q4_K_M | ~5 GB | Reasoning and math; MIT license; lightest option | `deepseek-r1:8b` *(defined)* |
+| DeepSeek-R1 14B (distill) | Q4_K_M | ~9 GB | Better reasoning; still fits in 12GB VRAM | `deepseek-r1:14b` *(defined)* |
 
 For the desktop, avoid models larger than ~11GB Q4 unless you are comfortable with partial RAM offloading. The `-ngl` flag in llama.cpp controls layer split between GPU and CPU. Devstral 24B (~14GB) spills approximately 2GB into RAM — still functional on 32GB system RAM but not fully GPU-resident.
 
+**Qwen 3.5 9B Quantisation Note:** The Q5_K_M version (~6.6 GB) is the recommended default for everyday use. The Q6_K version (~7.7 GB) offers slightly higher fidelity with less quantisation loss but uses more VRAM. On a 12GB RTX 3060, Q5_K_M is generally the better practical choice, leaving more headroom for context and KV cache.
+
 ### [RECOMMENDATION] 1.5 Additional Recommended Models (Laptop)
 
-These models fit within 16GB VRAM at Q4 quantization without offloading, making them ideal for the laptop configuration.
+These models fit within 16GB VRAM at Q4/Q5 quantization without offloading, making them ideal for the laptop configuration.
 
-| Model | Params | Q4 Size | Best For | Why Add |
-|-------|--------|---------|----------|---------|
-| Devstral 24B | 24B | ~14 GB | Coding, agentic tasks | Mistral's agentic coding model; 46.8% SWE-Bench (beats DeepSeek-V3 671B on coding evals); 128K context; Apache 2.0. Fits in 16GB VRAM. Ollama: `devstral:24b` *(defined)* |
-| DeepSeek-R1 14B | 14.8B | ~9 GB | Reasoning, math, code | Distilled from full R1; adds dedicated reasoning capability. MIT license. Also fits in RTX 3060 12GB. Ollama: `deepseek-r1:14b` *(defined)* |
-| Qwen3 32B | 32B | ~20 GB | Reasoning, coding | Dense model; 40% on Aider coding benchmark (best open local); needs partial RAM offload even on 16GB VRAM but 64GB system RAM gives plenty of headroom *(in-progress)* |
-| Qwen 3.5 9B | 9B | ~5.7 GB | General + vision + reasoning | Multimodal (text+image+video), hybrid DeltaNet architecture, 256K native context (up to 1M). Apache 2.0. *(defined)* |
+| Model | Params | Quantisation | Size | Best For | Why Add |
+|-------|--------|--------------|------|----------|---------|
+| Devstral 24B | 24B | Q4_K_M | ~14 GB | Coding, agentic tasks | Mistral's agentic coding model; 46.8% SWE-Bench (beats DeepSeek-V3 671B on coding evals); 128K context; Apache 2.0. Fits in 16GB VRAM. Ollama: `devstral:24b` *(defined)* |
+| Qwen3 8B Q5_K_M | 8B | Q5_K_M | ~5.9 GB | Fast coding, shell commands, quick questions | Leaves significant VRAM headroom (~10GB) for longer contexts and KV cache; fastest option on laptop. Ollama: `qwen3:8b` *(defined)* |
+| DeepSeek-R1 14B | 14.8B | Q4_K_M | ~9 GB | Reasoning, math, code | Distilled from full R1; adds dedicated reasoning capability. MIT license. Also fits in RTX 3060 12GB. Ollama: `deepseek-r1:14b` *(defined)* |
+| Qwen 3.5 9B Q5_K_M | 9B | Q5_K_M | ~6.6 GB | **Default**; General + vision + reasoning + agents | Multimodal (text+image+video), hybrid DeltaNet architecture, 256K native context (up to 1M). Apache 2.0. Excellent balance of quality and speed. Ollama: `qwen3.5:9b` *(defined)* |
+| Qwen 3.5 9B Q6_K | 9B | Q6_K | ~7.7 GB | Higher-fidelity generations, benchmarking | Same model as Q5_K_M but with less quantisation loss; use when maximum Qwen3.5 quality is preferred over VRAM headroom. Ollama: `qwen3.5:9b` *(defined)* |
+| Gemma 4 12B | 12B | Q4_K_M | ~7.6 GB | Harder reasoning, complex documents, multimodal experiments | Stronger general reasoning than Qwen3.5; handles images/audio well. Good for comparison experiments. Ollama: `gemma4:12b` *(defined)* |
+| Gemma 3 12B IT Q4_K_M | 12B | Q4_K_M | ~7 GB | Writing, summarisation, stable backup | Mature general-purpose model with support for vision, function calling, structured output, long context, and multilingual workloads. Ollama: `gemma3:12b-it` *(defined)* |
+| Qwen3 32B | 32B | Q4_K_M | ~20 GB | Reasoning, coding (needs RAM offload) | Dense model; 40% on Aider coding benchmark (best open local); needs partial RAM offload but 64GB system RAM gives plenty of headroom *(in-progress)* |
 
 ### [INTEGRATION] 1.6 Inference Engines
 
@@ -134,6 +149,8 @@ Comparison of popular inference engines for running local LLMs:
 | Performance | Slight overhead | Moderate | **Highest** *(defined)* |
 | Memory efficiency | Good | Good | **Best** *(defined)* |
 | Best for | Quick start | Experimentation | Power users *(defined)* |
+
+**Quantisation Notes:** llama.cpp supports multiple quantization schemes. Q4_K_M offers the best balance of size and quality (~4-bit). Q5_K_M provides slightly higher fidelity at the cost of ~1GB more VRAM. Q6_K is even higher quality but may exceed VRAM on smaller GPUs. For a 12GB RTX 3060, Q5_K_M for Qwen3.5 9B and Q4_K_M for Gemma 4 12B are recommended defaults.
 
 **Recommendation:** Use llama.cpp for maximum performance and memory efficiency.
 
@@ -163,17 +180,21 @@ This table outlines four deployment phases with increasing levels of integration
 
 This is the recommended configuration for a balanced setup leveraging both cloud and local capabilities:
 
-| Component | Choice |
-|-----------|--------|
-| Primary model | Qwen3 30B-A3B Q4_K_M (laptop) / Gemma 4 12B or DeepSeek-R1 14B (desktop) *(defined)* |
-| Primary engine | llama.cpp *(defined)* |
-| Planning & architecture | Claude Code with Claude Sonnet *(defined)* |
-| Local coding assistant (cloud) | Aider → LiteLLM → Claude Sonnet *(pending)* |
-| Local coding assistant (offline) | Crush → llama.cpp → Devstral 24B or Qwen3 30B *(defined)* |
-| Local heavy work | Qwen3 30B-A3B (laptop) / DeepSeek-R1 14B (desktop) *(defined)* |
-| Optional UI | Open WebUI *(pending)* |
-| Avoid initially | Ollama, LM Studio (less control) *(pending)* |
-| Avoid | OpenCode (archived September 2025) *(validated)* |
+| Component | Choice | Notes |
+|-----------|--------|-------|
+| Primary model | Qwen 3.5 9B Q5_K_M (Desktop / Laptop) | **Default for everyday coding**; Qwen 3.5 9B for general AI work, Qwen3 8B for fast tasks with more context headroom *(defined)* |
+| Primary engine | llama.cpp *(defined)* | Use `-ngl 999` for full GPU offloading; supports multiple quantizations *(Q4_K_M, Q5_K_M, Q6_K)* |
+| Planning & architecture | Claude Code with Claude Sonnet *(defined)* | For complex planning and requirements gathering |
+| Local coding assistant (cloud) | Aider → LiteLLM → Claude Sonnet *(pending)* | For tasks requiring cloud model capabilities |
+| Local coding assistant (offline) | Crush → llama.cpp → Devstral 24B or Qwen3 30B-A3B *(defined)* | For agentic workflows without cloud dependency |
+| Alternative multimodal model | Gemma 4 12B Q4_K_M | Harder reasoning, complex documents, image/audio understanding *(defined)* |
+| Stable backup model | Gemma 3 12B IT Q4_K_M | Mature general-purpose; writing, summarisation, multilingual tasks *(defined)* |
+| Fast lightweight model | Qwen3 8B Q5_K_M | Quick coding questions, shell commands, leaves more VRAM for context *(defined)* |
+| Higher-fidelity option | Qwen 3.5 9B Q6_K | When maximum quality is preferred over speed/VRAM headroom *(defined)* |
+| Local heavy work | Qwen3 30B-A3B (laptop) / DeepSeek-R1 14B (desktop) | Document analysis, reasoning, math; fits in VRAM on both *(defined)* |
+| Optional UI | Open WebUI *(pending)* | Richer interface with conversation history and model switching |
+| Avoid initially | Ollama, LM Studio (less control) *(pending)* | Use llama.cpp for best performance and memory efficiency |
+| Avoid | OpenCode (archived September 2025) *(validated)* | Crush is its successor |
 
 \newpage
 
@@ -711,20 +732,37 @@ crush
 
 Crush auto-detects the running model from llama.cpp's `/v1/models` endpoint — you may not need to set `model` explicitly if only one is loaded.
 
-#### Models for Path A — Desktop vs Laptop
+#### Models for Path A — Desktop vs Laptop (Updated)
 
 llama.cpp loads one model at a time. Choose based on your machine configuration:
 
-**Models that run on both machines (fit in 12GB desktop VRAM):**
+**Desktop-Optimised Models (fit in 12GB VRAM):**
 
-| Model | Q4 Size | Notes |
-|---|---|---|
-| Gemma 4 12B | ~7.6 GB | Fits both cleanly *(defined)* |
-| DeepSeek-R1 14B | ~9 GB | Good reasoning + code; fits both *(defined)* |
-| DeepSeek-R1 8B | ~5 GB | Lightest option *(defined)* |
-| Qwen 3.5 9B | ~5.7 GB | Fits both *(defined)* |
+| Model | Quantisation | Size | Strengths | Ollama tag |
+|---|---|---|-----------|------------|
+| Qwen3 8B Q5_K_M | Q5_K_M | ~5.9 GB | **Fastest**; leaves ~6GB VRAM headroom; quick coding, shell commands | `qwen3:8b` *(defined)* |
+| Gemma 4 12B | Q4_K_M | ~7.6 GB | Strong general reasoning; multimodal support | `gemma4:12b` *(defined)* |
+| DeepSeek-R1 14B | Q4_K_M | ~9 GB | Good reasoning + code generation | `deepseek-r1:14b` *(defined)* |
+| DeepSeek-R1 8B | Q4_K_M | ~5 GB | Lightest option; fastest inference | `deepseek-r1:8b` *(defined)* |
+| Qwen 3.5 9B Q5_K_M | Q5_K_M | ~6.6 GB | **Recommended default**; coding, reasoning, agents, multimodal | `qwen3.5:9b` *(defined)* |
+| Gemma 3 12B IT | Q4_K_M | ~7 GB | Stable backup; writing, summarisation, multilingual | `gemma3:12b-it` *(defined)* |
 
-Devstral 24B (~14GB) works on both but spills approximately 2GB into RAM on the desktop — functional but not fully GPU-resident.
+**Laptop-Optimised Models (fit in 16GB VRAM):**
+
+| Model | Quantisation | Size | Strengths |
+|---|---|---|-----------|
+| Devstral 24B | Q4_K_M | ~14 GB | Agentic coding; 46.8% SWE-Bench; fits in VRAM *(defined)* |
+| Qwen3 8B Q5_K_M | Q5_K_M | ~5.9 GB | Leaves ~10GB VRAM headroom; fastest option *(defined)* |
+| Qwen 3.5 9B Q5_K_M | Q5_K_M | ~6.6 GB | **Default**; excellent balance of quality and speed *(defined)* |
+| DeepSeek-R1 14B | Q4_K_M | ~9 GB | Reasoning, math, code generation *(defined)* |
+| Gemma 4 12B | Q4_K_M | ~7.6 GB | Harder reasoning, multimodal experiments *(defined)* |
+
+**Quantisation Guidance:**
+- **Q4_K_M**: Best balance of size and quality. Recommended for Gemma models and DeepSeek-R1 variants.
+- **Q5_K_M**: Slightly higher fidelity with ~1GB more VRAM. Recommended for Qwen3.5 9B (default) and Qwen3 8B.
+- **Q6_K**: Highest quality; use for Qwen3.5 9B when benchmarking or maximum quality is preferred over speed/VRAM headroom.
+
+Devstral 24B (~14GB) works on both machines but spills approximately 2GB into RAM on the desktop — functional but not fully GPU-resident.
 
 #### Downloading GGUF Models
 
@@ -737,33 +775,58 @@ Yes — it is as simple as going to Hugging Face and downloading the `.gguf` fil
 
 **Direct searches on HuggingFace for recommended models:**
 
-| Model | HuggingFace repo to search |
-|---|---|
-| DeepSeek-R1 14B | `bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF` *(defined)* |
-| DeepSeek-R1 8B | `bartowski/DeepSeek-R1-Distill-Qwen-8B-GGUF` *(defined)* |
-| Gemma 4 12B | `bartowski/gemma-3-12b-it-GGUF` *(defined)* |
-| Devstral 24B | `bartowski/Devstral-Small-2505-GGUF` *(defined)* |
-| Qwen 3.5 9B | `bartowski/Qwen2.5-7B-Instruct-GGUF` *(defined)* |
+| Model | HuggingFace repo to search | Notes |
+|---|---|-------|
+| DeepSeek-R1 14B | `bartowski/DeepSeek-R1-Distill-Qwen-14B-GGUF` *(defined)* | Good reasoning + code; fits in 12GB VRAM |
+| DeepSeek-R1 8B | `bartowski/DeepSeek-R1-Distill-Qwen-8B-GGUF` *(defined)* | Lightest option; fastest on desktop |
+| Gemma 4 12B | `bartowski/gemma-3-12b-it-GGUF` *(defined)* | Strong general reasoning and multimodal support |
+| Gemma 3 12B IT | `bartowski/gemma-3-12b-it-GGUF` *(defined)* | Mature backup model; writing, summarisation, multilingual |
+| Devstral 24B | `bartowski/Devstral-Small-2505-GGUF` *(defined)* | Agentic coding; fits in 16GB VRAM (laptop) |
+| Qwen 3.5 9B Q5_K_M | `bartowski/Qwen3.5-9B-Instruct-Q5_K_M-GGUF` | **Recommended default**; coding, reasoning, agents |
+| Qwen 3.5 9B Q6_K | `bartowski/Qwen3.5-9B-Instruct-Q6_K-GGUF` | Higher fidelity; use for benchmarking or max quality |
+| Qwen3 8B Q5_K_M | `bartowski/Qwen3-8B-Instruct-Q5_K_M-GGUF` | **Fast model**; leaves most VRAM headroom |
 
 Download only the single `.gguf` file — no other files needed for llama.cpp.
+
+**Recommended GGUF Quantizations:**
+- **Q4_K_M**: Best balance of size and quality (~4-bit). Recommended for Gemma 4 12B, DeepSeek-R1 variants, Devstral 24B.
+- **Q5_K_M**: Slightly higher fidelity with ~1GB more VRAM usage. Recommended for Qwen3.5 9B (default) and Qwen3 8B.
+- **Q6_K**: Highest quality among common quantizations (~6-bit). Use for Qwen3.5 9B when maximum quality is preferred over VRAM headroom.
+
+**Note on Gemma 4 vs Gemma 3:** The HuggingFace repos may still use the `gemma-3-12b-it` naming even for Gemma 4 models. Look for the latest model version or check the model card for release date.
 
 **To switch models:** stop the server, restart with a different `-m` flag, update `model` in `.crush.json` to match:
 
 ```powershell
-# Desktop -- DeepSeek-R1 14B (fits in 12GB VRAM)
-.\llama-server.exe -m C:\models\DeepSeek-R1-14B-Q4_K_M.gguf -ngl 999 -c 32768
+# Desktop -- Qwen3 8B (fastest, leaves most VRAM)
+.\llama-server.exe -m C:\models\Qwen3-8B-Q5_K_M.gguf -ngl 999 -c 32768
 
-# Laptop -- Devstral 24B (fits in 16GB VRAM)
+# Desktop -- Qwen3.5 9B (recommended default for coding)
+.\llama-server.exe -m C:\models\Qwen3.5-9B-Q5_K_M.gguf -ngl 999 -c 32768
+
+# Desktop -- Gemma 4 12B (multimodal, strong reasoning)
+.\llama-server.exe -m C:\models\Gemma-4-12B-Q4_K_M.gguf -ngl 999 -c 32768
+
+# Laptop -- Devstral 24B (agentic coding, fits in VRAM)
 .\llama-server.exe -m C:\models\Devstral-24B-Q4_K_M.gguf -ngl 999 -c 32768
+
+# Laptop -- Qwen3 8B (fastest with most context headroom)
+.\llama-server.exe -m C:\models\Qwen3-8B-Q5_K_M.gguf -ngl 999 -c 32768
 ```
 
 Update `.crush.json` model field to match:
 
 ```json
-"model": "llamacpp/DeepSeek-R1-14B-Q4_K_M"
+"model": "llamacpp/Qwen3-8B-Q5_K_M"
 ```
 
 Crush auto-detects from `/v1/models` — if only one model is loaded you may not need to set this explicitly.
+
+**Model switching workflow:**
+1. Stop the current llama.cpp server (Ctrl+C)
+2. Start new server with different `-m` flag pointing to desired `.gguf` file
+3. Update `model` field in `.crush.json` to match the new model name (optional if Crush auto-detects)
+4. Restart Crush to pick up the new configuration
 
 #### Path B: Crush → LiteLLM → llama.cpp (use when you want model switching)
 

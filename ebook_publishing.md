@@ -301,6 +301,10 @@ The publishing pipeline consists of a small number of components:
 - GitHub Pages — hosts the public download page
 - Ko-fi — provides optional reader contributions
 
+The workflow file `build-pdf.yaml` is not provided by GitHub. It must be authored by the person setting up the repository and placed at `.github/workflows/build-pdf.yaml`. This file instructs GitHub Actions what to do when a push occurs — which tools to install, how to run Pandoc and XeLaTeX, and how to assemble and deploy the final PDF.
+
+Because the workflow file is written in YAML and can run complex multi-step shell commands, it is well suited to being drafted with the help of a large language model. The author describes what the build should do — font requirements, cover page handling, TOC behaviour, table formatting — and the LLM generates the corresponding YAML. The resulting file is then committed to the repository alongside the manuscript.
+
 The basic flow is:
 
 ```text
@@ -351,6 +355,8 @@ A normal publishing cycle therefore becomes very simple:
 
 No separate manual conversion or upload process is required.
 
+It is important to understand where this work actually happens. When a push reaches GitHub, GitHub's own servers — not the author's local machine — take over. A fresh virtual machine running Ubuntu Linux is provisioned automatically in GitHub's cloud infrastructure. That machine installs the required tools (Pandoc, XeLaTeX, fonts), runs the build, generates the PDF, and deploys it to GitHub Pages. Once the push is made, the author's computer is no longer involved. The author does not need to have Pandoc or XeLaTeX installed locally.
+
 The same workflow can also include safeguards needed for larger technical documents, including:
 
 - Unicode and Korean font support
@@ -359,6 +365,22 @@ The same workflow can also include safeguards needed for larger technical docume
 - Automatic PDF table of contents
 - Preservation of the intended heading hierarchy
 - Handling of images and other book assets
+
+### Setting Up the Workflow File
+
+GitHub Actions looks for workflow definitions in a specific location within the repository: the `.github/workflows/` folder. Any `.yaml` file placed there is treated as a workflow by GitHub.
+
+For this publishing pipeline, the file is named `build-pdf.yaml` and placed at `.github/workflows/build-pdf.yaml`. Once committed and pushed, GitHub detects it automatically — no registration or configuration inside the GitHub interface is required.
+
+The workflow file specifies:
+
+- Which events trigger the build (such as a push to `main` that touches `Learning.md`)
+- What environment to use (`ubuntu-latest` — a fresh Linux virtual machine)
+- Which tools to install (Pandoc, XeLaTeX, fonts)
+- The exact commands to run in sequence
+- Where to deploy the output (GitHub Pages)
+
+The file is committed to the repository like any other source file and evolves alongside the manuscript. Changes to the build process — adding a new Lua filter, adjusting fonts, modifying the cover step — are made by editing `build-pdf.yaml` and pushing the update.
 
 ### Book Cover
 

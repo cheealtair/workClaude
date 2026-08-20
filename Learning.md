@@ -125,6 +125,8 @@ Sydney, Australia, 2026
     - [Skills](#skills)
     - [Comparing the Four Systems](#comparing-the-four-systems)
   - [Chapter 4: The Agent Harness](#chapter-4-the-agent-harness)
+    - [Harness Engineering as a Discipline](#harness-engineering-as-a-discipline)
+    - [Do You Need to Build a Harness?](#do-you-need-to-build-a-harness)
     - [What Is a Harness?](#what-is-a-harness)
     - [Core Responsibilities of the Harness](#core-responsibilities-of-the-harness)
       - [1. The Agent Loop](#1-the-agent-loop)
@@ -135,7 +137,7 @@ Sydney, Australia, 2026
         - [Strategies](#strategies)
         - [What gets injected every turn regardless of compression:](#what-gets-injected-every-turn-regardless-of-compression)
         - [What gets compressed:](#what-gets-compressed)
-      - [6. Memory and Persistence](#6-memory-and-persistence)
+      - [6. State, Memory, and Persistence](#6-state-memory-and-persistence)
       - [7. Hooks — Harness-Level Side Effects](#7-hooks--harness-level-side-effects)
         - [Event Types](#event-types)
         - [What Makes Hooks Powerful](#what-makes-hooks-powerful)
@@ -146,6 +148,8 @@ Sydney, Australia, 2026
         - [Key Workflow Primitives](#key-workflow-primitives)
       - [9. Structured Output — Harness-Enforced Schema](#9-structured-output--harness-enforced-schema)
       - [10. Isolation — Worktrees and Sandboxes](#10-isolation--worktrees-and-sandboxes)
+      - [11. Observability and Evaluation](#11-observability-and-evaluation)
+      - [12. Self-improvement and Recursive Self-improvement](#12-self-improvement-and-recursive-self-improvement)
     - [Model vs. Harness — Definitive Responsibility Table](#model-vs-harness--definitive-responsibility-table)
     - [The Harness in Other LLM Coding Agents](#the-harness-in-other-llm-coding-agents)
     - [The Fundamental Tensions Every Harness Must Navigate](#the-fundamental-tensions-every-harness-must-navigate)
@@ -948,6 +952,18 @@ A comprehensive reference on the Harness concept as it applies to Claude Code an
 
 ---
 
+### Harness Engineering as a Discipline
+
+A few years ago, the defining skill in AI was **prompt engineering** — crafting the right instructions to get useful output from a model. Then came **context engineering**: the practice of assembling the perfect input context to send to an agent, positioning it for the best possible outcome.
+
+Harness engineering is what comes next. It is context engineering and a whole lot more. Where context engineering focuses on what you put into the model, harness engineering is about the entire scaffolding built around the model — the infrastructure that equips it with tools, puts it in a loop, and orients it toward achieving a goal.
+
+An agent is an LLM that is in a harness. The harness equips it with tools, puts it in a loop, and drives it toward a goal — repeatedly calling it until it decides the goal is met. The harness is the scaffolding that allows the LLM to take on harder problems and have better outcomes.
+
+Some of this scaffolding comes built into the agent products you use. If you use Claude Code or Open Code, many harness responsibilities are handled for you — but not all. How you manage state across a long task, whether you use sandboxing, whether you build in self-improvement — these are choices left to the practitioner. Configuring and tuning that scaffolding is the activity called **harness engineering**.
+
+---
+
 ### Do You Need to Build a Harness?
 
 Before diving into what a harness is and how it works, a practical question worth addressing
@@ -1177,9 +1193,13 @@ The tension: **more context = better reasoning, but costs tokens and slows respo
 
 ---
 
-#### 6. Memory and Persistence
+#### 6. State, Memory, and Persistence
 
-The harness manages state that persists across conversations:
+The harness manages two related but distinct things: *state* (what is happening right now) and *memory* (what the agent knows across sessions).
+
+**State** is the runtime record of where a task stands. In coding agents especially, state is commonly managed through markdown files — the agent writes progress notes, to-do lists, and intermediate decisions into files it can read back on the next loop iteration. This makes state persistent within a run even if the context window is compressed, and it survives a restart. A `process.md` tracking which phases are complete is a state mechanism. So is a to-do list the agent maintains and ticks off as it works.
+
+**Memory** is what persists across separate sessions:
 
 - **Memory files** — loaded into context at the start of a session
 - **CLAUDE.md** — project-level instructions injected into system prompt
@@ -1222,6 +1242,12 @@ The hook runs as a **shell command in the harness process** — not as a model-g
 ---
 
 #### 8. Multi-Agent Orchestration
+
+Two distinct patterns exist for breaking work across multiple agents:
+
+**Sub-agents** — hierarchical delegation. An orchestrator agent spawns a specialist and waits for its result. The sub-agent is scoped, focused, and typically given restricted permissions (for example, a reviewer sub-agent that can read but not write files). Powerful but can become complex if overused.
+
+**Agent teams** — collaborative parallel loops. Multiple agents run independently on different parts of a problem, each with its own context and loop, coordinated by the harness rather than by another agent. More flexible for problems that decompose cleanly into parallel workstreams.
 
 When one agent spawns another, the harness manages a **tree of agent contexts**:
 
@@ -1290,6 +1316,55 @@ When multiple agents write files in parallel, they would conflict on a shared fi
 
 This is filesystem-level isolation managed entirely by the harness. The model inside each agent just sees its own clean working directory and writes files normally — it is unaware of the isolation layer.
 
+A second, heavier form of isolation is **environment sandboxing** via containers (e.g., VS Code dev containers running in Docker). Where git worktrees isolate agents from each other at the filesystem level, a dev container isolates the entire agent process from the host system at the OS level — controlling what networks it can reach, what system commands it can run, and what software is available to it. This is appropriate when the agent needs to install dependencies, run servers, or test its own output in a browser, while keeping the host machine protected.
+
+The two isolation mechanisms serve different purposes and can be combined:
+
+- **Worktrees** — protect parallel agents from each other
+- **Dev containers** — protect the host from the agent
+
+---
+
+#### 11. Observability and Evaluation
+
+A harness that can only act is incomplete. A well-engineered harness also **watches** — providing visibility into what the agent is doing and a mechanism for measuring whether it did it well.
+
+**Observability** means being able to follow the agent's actions as they happen: which tools it called, what it decided, where it got stuck. This is what audit logs, progress displays, and session transcripts provide.
+
+**Evaluation** goes further: giving the agent the ability to quantitatively assess its own output. This can be as simple as a sub-agent spawned after the main build that tries out the product and reports back, or as sophisticated as a scoring function the agent uses to compare outputs across multiple attempts.
+
+The evaluation loop is a harness design choice. A common pattern:
+
+```
+Main agent builds --> Reviewer sub-agent tests --> Feedback injected back --> Main agent revises
+```
+
+The reviewer sub-agent is typically given read-only permissions — it can observe and report, but cannot modify the work it is reviewing. This keeps the evaluation honest and prevents the reviewer from entangling itself with the builder's work.
+
+Quantitative self-evaluation is one of the most reliable levers for improving agent output quality. An agent that can measure its own results can iterate on them; an agent that cannot is flying blind.
+
+---
+
+#### 12. Self-improvement and Recursive Self-improvement
+
+The most advanced harness designs go beyond evaluation — they use what the agent learns to improve the harness itself.
+
+**Self-improvement** means the agent updates its own process file after completing a task. It looks back at what it built, what challenges it encountered, what feedback it received from the reviewer, and then rewrites its `process.md` to incorporate those learnings. The next run starts with a better process than the last.
+
+**Recursive self-improvement** takes this one level further: the agent also updates its *improvement instructions* — the file that tells it how to reflect and self-improve. The instruction to do this might read:
+
+> "Update this very file so that you are more effective at improving yourself in the future. Improve the way you improve yourself."
+
+This is sometimes called "getting better at getting better." The agent is not just improving its outputs; it is improving its capacity to improve. Each run produces a better process *and* a better self-improvement procedure.
+
+In practice, the self-improvement step is appended to the end of the agent's workflow, after the reviewer sub-agent has run and its feedback has been incorporated:
+
+```
+Build --> Reviewer evaluates --> Feedback incorporated --> Self-improve process.md --> Recursive: improve self-improve.md
+```
+
+This is a harness design choice, not a model capability. The model does the reflection, but the harness structures when it happens, what files it reads, and what it is permitted to write.
+
 ---
 
 ### Model vs. Harness — Definitive Responsibility Table
@@ -1309,6 +1384,8 @@ This is filesystem-level isolation managed entirely by the harness. The model in
 | Schema validation and retry | | ✓ |
 | Filesystem isolation | | ✓ |
 | Loop termination detection | | ✓ |
+| Observability / evaluation | | ✓ |
+| Self-improvement structuring | | ✓ |
 
 ---
 
@@ -1362,8 +1439,10 @@ The harness is the infrastructure layer between a raw LLM and a working agent. I
 8. **Multi-agent orchestration** — managing trees of independent agent contexts
 9. **Structured output** — enforcing typed schemas on model responses
 10. **Isolation** — filesystem-level separation for parallel agents
+11. **Observability and evaluation** — watching agent behavior and measuring output quality
+12. **Self-improvement** — structuring when and how the agent updates its own process
 
-Without the harness, the model is a text transformer. With it, the model becomes an agent that can read, write, reason, and act in a real software environment.
+Without the harness, the model is a text transformer. With it, the model becomes an agent that can read, write, reason, and act in a real software environment — and, in the most advanced designs, one that improves its own process each time it runs.
 
 ---
 

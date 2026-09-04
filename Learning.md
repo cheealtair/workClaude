@@ -624,6 +624,7 @@ This chapter covers key concepts in how Claude Code thinks and works — the men
 
 ### Key concepts at a glance
 
+- **Intent Documents** (`intent.md`) — a human-authored document that captures the *why*, constraints, and success criteria for a feature before Claude writes a single line. The human's north star; Claude's briefing document.
 - **Workplans** — structured plan files Claude writes before complex tasks, serving as a roadmap for implementation and a reference that survives context compression.
 - **Context Window & Compression** — Claude has a finite memory within a session. In long conversations, earlier messages are silently compressed or dropped. Workplans and memory files persist beyond this limit.
 - **Memory** — persistent files stored in `~/.claude/projects/` that carry knowledge across sessions. Stores user preferences, feedback, project context, and references. The context window is short-term; memory is long-term.
@@ -872,6 +873,94 @@ Don't create a skill for:
 - One-off tasks — just prompt Claude directly
 - Simple single-command operations — use a hook or alias
 - Rules and conventions — use CLAUDE.md or `.claude/rules/`
+
+---
+
+### Intent Documents (intent.md)
+
+An `intent.md` is a human-authored document that captures what you want to build and why — before Claude writes a single line of code. It is not a technical specification and not a workplan. It is the upstream artifact that feeds both.
+
+Think of it as the bridge between a vague idea in your head and a structured plan Claude can act on. Where a workplan is Claude's output, `intent.md` is yours.
+
+#### What an intent.md contains
+
+A well-formed `intent.md` follows this structure:
+
+```markdown
+---
+author: Your Name
+date: 2026-09-04
+status: draft
+---
+
+## Objective
+One paragraph: what are we building and why does it matter?
+
+## Rationale
+The problem we are solving. What breaks or is missing without this?
+
+## Functional Requirements
+What the system must do. Verb-noun pairs: "Export graph as CSV", "Retry on timeout".
+
+## Non-Functional Requirements
+Performance, security, compatibility constraints: "Must handle 1,000 queries/sec", "Python 3.9 compatible".
+
+## Constraints
+Explicit no-go zones: "No external libraries", "Do not modify the auth module".
+
+## Out of Scope
+What we are deliberately not doing. This kills scope creep.
+
+## Success Criteria
+How we know we have won: "Test suite passes at 90% coverage", "Export completes in under 2 seconds".
+```
+
+#### The responsibility split
+
+The human writes `intent.md`. Claude critiques it, then builds from it. The division of labour is clear:
+
+| Responsibility | Human | Claude |
+|---|---|---|
+| Vision — the "Why" | 100% | 0% |
+| Constraints and no-go zones | 100% | 0% |
+| Edge cases — identifying them | 50% | 50% |
+| Spec and plan generation | 0% | 100% |
+| Final adjudication on conflicts | 100% | 0% |
+| Verification | 50% | 50% |
+
+If the intent is weak, the code will be weak. The AI provides the muscle and the syntax; the human provides the soul and the direction.
+
+#### How Claude uses it
+
+Point Claude at the file in plan mode before any implementation begins:
+
+```
+Claude, read intent.md and tell me if there are any gaps in my logic before you start coding.
+```
+
+Claude will act as a product thinking partner — not just accepting your intent, but challenging it. It might surface conflicts: *"Your intent to use Library X conflicts with your constraint for minimal bundle size."* Your job is to adjudicate. You own the final decision.
+
+#### The intent-to-execution loop
+
+In an agentic workflow, `intent.md` is the first step in a structured loop:
+
+1. **Intent** — you write `intent.md`
+2. **Spec** — Claude generates a technical spec based on your intent
+3. **Plan** — Claude creates a step-by-step workplan
+4. **Execution** — code is written and tested
+
+This loop prevents Claude from building something technically correct but directionally wrong. The intent document is the anchor.
+
+#### When to write one
+
+Not every task needs an `intent.md`. Write one when:
+
+- The feature is non-trivial and touches multiple systems
+- Multiple people are involved and alignment matters
+- You want Claude to challenge your assumptions before implementation
+- The "why" is not obvious from the code or CLAUDE.md alone
+
+Skip it for small bug fixes, one-liners, or tasks where the requirement is already unambiguous.
 
 ---
 
@@ -1290,6 +1379,134 @@ const combined = results.flat().filter(Boolean)
 
 ---
 
+##### Spawning Agents in Practice
+
+Understanding the architecture is one thing; knowing which mechanism to reach for is another. In a Claude Code terminal session, there are three distinct ways to create independent agents:
+
+**1. Agent tool (recommended for ad-hoc parallel work)**
+
+The primary mechanism. The master agent — your current conversation — calls the Agent tool, which spawns a subagent with its own isolated context window. Crucially, if you need two agents to run simultaneously, both calls must appear in a single response. A second call made after the first has already returned runs serially, not in parallel.
+
+```
+Your conversation  <- Master Agent
+    |
+    +-- Agent("list files...")      <- Sub-agent 1  (parallel)
+    +-- Agent("summarize context")  <- Sub-agent 2  (parallel)
+         |                    |
+    returns file list    returns summary
+         |                    |
+         +--------+----------+
+                  |
+          Master presents both
+```
+
+Each subagent is a full independent agent loop. The parent does not share its context with children; it communicates through structured return values. When a subagent finishes, the master receives its output as text (or a typed object if a schema was specified).
+
+**2. Workflow tool (recommended for scripted, repeatable orchestration)**
+
+When the fan-out pattern is repeatable, resumable, or involves many agents (tens or more), the Workflow tool is the right choice. You supply a JavaScript script that uses harness primitives (`agent()`, `parallel()`, `pipeline()`) as the orchestration layer. The harness executes the script deterministically; the model only runs inside `agent()` calls.
+
+```js
+phase('Gather')
+const [files, ctx] = await parallel([
+  () => agent("List files in working directory"),
+  () => agent("Summarize context usage")
+])
+phase('Present')
+return { files, ctx }
+```
+
+Workflows are resumable: if a run fails mid-way, re-launching with the same `resumeFromRunId` replays cached agent results instantly up to the failure point, then continues from there.
+
+**3. Multiple terminal sessions (manual isolation only)**
+
+Opening a second `claude` terminal session creates a fully independent conversation with no native coordination channel. There is no built-in way to pass results between sessions — you copy-paste manually. Use this only when you want two genuinely independent workstreams that do not need to be synthesised.
+
+| Scenario | Mechanism |
+|---|---|
+| Ad-hoc parallel tasks (2-5 agents) | Agent tool, parallel calls in one message |
+| Repeatable scripted orchestration | Workflow tool |
+| Fully isolated independent work | Multiple terminals (manual) |
+
+---
+
+##### Loop Engineering
+
+Loops in Claude Code are not native language constructs — Claude does not maintain a running process between turns. Instead, two mechanisms simulate iterative behavior:
+
+**Mechanism 1: `/loop` skill with `ScheduleWakeup` (time-driven)**
+
+The `/loop` skill instructs Claude to re-arm itself at the end of each turn using `ScheduleWakeup`. Claude wakes up on a schedule, executes the loop body, then calls `ScheduleWakeup` again to re-arm the next iteration.
+
+```
+Wake up (ScheduleWakeup fires)
+    |
+[Loop body executes]
+    |
+Check condition
+    |
+  YES --> spawn Agent (do work) --> wait --> call ScheduleWakeup
+   NO -->                                   call ScheduleWakeup
+```
+
+This is appropriate for time-based monitoring — "check every five minutes whether a deploy has finished." The iteration boundary is wall-clock time, not computation. The maximum lifetime of a recurring job is seven days, after which it fires a final time and is deleted.
+
+**Mechanism 2: Workflow script loop (iteration-driven)**
+
+When the loop condition is computational (check a value, compare a threshold, count results), the Workflow tool is the right choice. The script body is plain JavaScript, so `for`, `while`, and `if` are available as first-class control flow. The `budget` object exposes real token consumption, enabling condition checks against actual context usage:
+
+```js
+export const meta = {
+  name: 'context-monitor-loop',
+  description: 'Poll context usage; list files when usage exceeds 50%',
+  phases: [
+    { title: 'Check Context' },
+    { title: 'List Files' },
+  ]
+}
+
+const THRESHOLD = 0.50
+const ITERATIONS = 10
+
+for (let i = 0; i < ITERATIONS; i++) {
+  phase('Check Context')
+
+  const usageFraction = budget.total
+    ? budget.spent() / budget.total
+    : 0
+
+  log(`Iteration ${i+1}: context at ${Math.round(usageFraction * 100)}%`)
+
+  if (usageFraction > THRESHOLD) {
+    phase('List Files')
+    const files = await agent(
+      'List all files in the current working directory. Return as a plain list.',
+      { label: `list-files-iter-${i}` }
+    )
+    log(`Files found:\n${files}`)
+  }
+}
+
+return { message: 'Monitoring complete' }
+```
+
+Key engineering points:
+
+- `budget.spent() / budget.total` gives the real token fraction — not a guess
+- The loop bound (`ITERATIONS`) must be explicit; the harness enforces a hard cap of 1000 total agents per workflow as a runaway backstop
+- The conditional `agent()` call inside the `if` block only fires (and only costs tokens) when the threshold is actually exceeded
+- If the workflow fails mid-run, re-launching with `resumeFromRunId` replays completed iterations from cache
+
+| Property | `/loop` + ScheduleWakeup | Workflow script loop |
+|---|---|---|
+| Loop control | Time-based (interval) | Iteration-based (for/while) |
+| Context access | Inferred or approximate | `budget.spent()` -- exact token count |
+| Conditional agent | Claude decides | `if` statement -- deterministic |
+| Survives session close | Yes (if durable=true) | No (session-bound) |
+| Resume on failure | No | Yes (resumeFromRunId) |
+
+---
+
 #### 9. Structured Output — Harness-Enforced Schema
 
 When a harness needs reliable structured data from a model (not freeform text), it uses **forced tool calls with JSON schema validation**:
@@ -1638,7 +1855,19 @@ Before your first real prompt on a project, invest a few minutes in configuratio
 
 ### Stage 2: Orient
 
-Before writing any code, let Claude understand the codebase. This is especially important when you're working on an unfamiliar project or tackling a problem you haven't fully scoped.
+Before writing any code, let Claude understand the codebase — and let Claude understand *you*. This stage has two parts: what the human brings, and what Claude discovers.
+
+**Write an intent.md first (for non-trivial work).** Before you ask Claude to explore anything, write a short `intent.md` in your project directory. Capture the objective, the constraints, and the success criteria in plain language. This gives Claude a briefing document — a north star it can orient around rather than guessing your direction from a one-line prompt.
+
+Once you have it, open plan mode and hand it over:
+
+```
+Claude, read intent.md and tell me if there are any gaps in my logic before you start coding.
+```
+
+Claude will review your intent and challenge weak assumptions. It might surface conflicts you hadn't noticed. Adjudicate them now — it is far cheaper than adjudicating them after implementation. Only when the intent is solid do you move forward.
+
+See Chapter 3 for a full treatment of `intent.md` structure and the human responsibility split.
 
 **Use plan mode.** Press `Shift+Tab` to cycle to plan mode, or start with `/plan`. In this mode, Claude can read files, search code, and run commands — but cannot edit anything. This is safe exploration.
 
@@ -1660,6 +1889,8 @@ Before writing any code, let Claude understand the codebase. This is especially 
 ### Stage 3: Plan
 
 For non-trivial work — anything touching more than two or three files, involving design decisions, or solvable multiple ways — ask Claude to produce a workplan before writing code.
+
+**Reference your intent.md.** If you wrote an `intent.md` during Stage 2, make it Claude's input for the workplan: `"Use my intent.md to generate the workplan."` Claude will draw on your stated objectives, constraints, and success criteria rather than inferring them from the prompt alone.
 
 **Trigger planning explicitly.** Claude won't always plan on its own. Use phrases like:
 
@@ -1705,7 +1936,7 @@ This is where code gets written. Claude uses its built-in tools to implement the
 | **Grep** | Search file contents with regex patterns |
 | **Glob** | Find files by name patterns (e.g., `**/*.tsx`) |
 
-**Subagents for parallel work.** For large tasks, Claude can spawn subagents — isolated workers with their own context window. An Explore agent searches while a Plan agent designs. They run independently and return summaries, keeping your main conversation clean. You can request this: `"Use a subagent to research the auth library options while you work on the data model."`
+**Spawning agents for parallel work.** For large or decomposable tasks, Claude can spawn subagents — isolated workers with their own context window and tool permissions. To run two agents simultaneously, request both in a single prompt; a second request issued after the first returns runs serially. For repeatable or large-scale fan-outs (tens of agents or more), use the Workflow tool — a JavaScript script where `parallel()`, `pipeline()`, and `agent()` are harness primitives that run deterministically outside the model. For complete isolation with no coordination, open a second terminal session and treat it as an independent conversation. See Chapter 4, Section 8 for a full comparison of all three mechanisms and a practical guide to loop engineering with the Workflow tool.
 
 **Task tracking.** For multi-step implementations, Claude creates a task list visible to both of you. Each task is marked pending → in progress → completed as work proceeds. This keeps both sides aligned, especially in long sessions.
 

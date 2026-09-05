@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<!-- saved from url=(0137)file:///Users/maurits.visser/Library/CloudStorage/OneDrive-SiemensAG/AI-Presales-Workspace/personal-brand/post-ideas/post2-reel/reel.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI engineering, the reel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./AI-engineering-short_files/css2" rel="stylesheet">
+<style>
+
+:root{
+  --deepblue:#000028;
+  --petrol:#009999; --lpetrol:#00C1B6; --orange:#FF9000; --blue:#5AA5FF; --red:#E1503F;
+  --n950:#04050c; --n900:#0a0c18; --n800:#141930; --n700:#252b45;
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,"PingFang TC","Noto Sans TC",monospace;
+  --dur:300ms; --ease:cubic-bezier(.2,.7,.3,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:var(--font);background:#000;color:#fff;-webkit-font-smoothing:antialiased}
+
+/* ══ FIXED CANVAS, SCALED TO FIT ══
+   Everything is authored against a 1600x900 stage and scaled as one block.
+   Nothing can overflow, and it never renders small in a large window. */
+#stage{position:absolute;top:50%;left:50%;width:1600px;height:900px;transform-origin:center center}
+
+.slide{position:absolute;inset:0;opacity:0;pointer-events:none;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+  padding:76px 96px 60px;overflow:hidden;
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease);transform:translateY(20px)}
+.slide.active{opacity:1;pointer-events:auto;transform:translateY(0)}
+.slide.out{opacity:0;transform:translateY(-20px)}
+.slide.cover{justify-content:center}
+
+/* ── chrome ── */
+#bar{position:fixed;top:0;left:0;height:4px;background:var(--lpetrol);width:0%;transition:width .4s var(--ease);z-index:100}
+#dots{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:100}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:background .2s,transform .2s}
+.dot.on{background:#fff;transform:scale(1.4)}
+.arr{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.5);font-size:20px;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(6px)}
+.arr:hover{background:rgba(255,255,255,.16);color:#fff}
+#prev{left:16px}#next{right:16px}
+#srail{position:fixed;bottom:16px;left:18px;z-index:100;display:flex;align-items:center;gap:7px;
+  padding:6px 12px;border-radius:9px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(8px);opacity:0;transition:opacity .35s ease;pointer-events:none}
+#srail.on{opacity:1}
+#srail .sd{font-family:var(--mono);font-size:13px;font-weight:700;color:rgba(255,255,255,.26);
+  width:19px;height:19px;display:grid;place-items:center;border-radius:5px;transition:all .3s ease}
+#srail .sd.done{color:rgba(255,255,255,.5)}
+#srail .sd.now{color:var(--deepblue);background:var(--lpetrol);transform:scale(1.18)}
+#snum{position:fixed;bottom:16px;right:18px;z-index:100;font-family:var(--mono);font-size:15px;
+  font-weight:700;letter-spacing:.06em;color:var(--lpetrol);background:rgba(0,0,0,.5);
+  border:1px solid rgba(0,193,182,.35);padding:6px 14px;border-radius:9px;backdrop-filter:blur(8px)}
+#snum .of{color:rgba(255,255,255,.4);font-weight:400}
+
+/* ── backgrounds ── */
+.bg-dark{background:var(--n950)}
+.bg-mesh{background:#03040a;background-image:radial-gradient(ellipse 62% 52% at 18% 38%,rgba(0,153,153,.26) 0%,transparent 70%),radial-gradient(ellipse 52% 60% at 84% 62%,rgba(90,165,255,.14) 0%,transparent 70%)}
+.bg-grid{background:#05060e;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:56px 56px}
+.bg-warm{background:linear-gradient(135deg,#17120a 0%,#04050c 62%)}
+.bg-steel{background:linear-gradient(160deg,#000028 0%,#04050c 70%)}
+
+/* ── type (fixed px: the stage scales, not the text) ── */
+.label{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--lpetrol);margin-bottom:8px}
+.label.a{color:var(--orange)} .label.b{color:var(--blue)}
+.h1{font-size:42px;font-weight:700;line-height:1.14;letter-spacing:-.022em}
+.h3{font-size:20px;font-weight:650;line-height:1.3}
+.body{font-size:22px;line-height:1.66;color:rgba(255,255,255,.78)}
+.sm{font-size:18.5px;line-height:1.58;color:rgba(255,255,255,.66)}
+.xs{font-size:16px;line-height:1.5;color:rgba(255,255,255,.5)}
+em{font-style:normal;color:var(--lpetrol)}
+.orange{color:var(--orange)} .blue{color:var(--blue)} .red{color:var(--red)} .teal{color:var(--lpetrol)}
+strong{font-weight:700;color:rgba(255,255,255,.95)}
+code{font-size:16px;background:rgba(255,255,255,.1);padding:2px 8px;border-radius:5px;font-family:var(--mono)}
+.divider{width:56px;height:3px;background:var(--petrol);border-radius:2px;margin:18px 0}
+.div-c{margin:18px auto}
+
+/* ── layout ── */
+.wide{width:100%;max-width:1320px}
+.col{display:flex;flex-direction:column}
+.row{display:flex;align-items:flex-start}
+.center{text-align:center;display:flex;flex-direction:column;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px}
+.slide:not(.cover) > .col.wide{gap:20px}
+
+/* ── cards ── */
+.card{background:rgba(255,255,255,.065);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:26px 30px;backdrop-filter:blur(4px)}
+.card-t{border-color:rgba(0,193,182,.5);background:rgba(0,193,182,.1)}
+.card-a{border-color:rgba(255,144,0,.44);background:rgba(255,144,0,.085)}
+.card-b{border-color:rgba(90,165,255,.4);background:rgba(90,165,255,.075)}
+.card-r{border-color:rgba(225,80,63,.42);background:rgba(225,80,63,.075)}
+
+/* ── pills ── */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 15px;border-radius:999px}
+.pill-t{background:var(--petrol);color:#02120f}
+.pill-d{background:rgba(255,255,255,.11);color:rgba(255,255,255,.72)}
+.pill-a{background:rgba(255,144,0,.22);color:var(--orange);border:1px solid rgba(255,144,0,.42)}
+.pill-r{background:rgba(225,80,63,.2);color:var(--red);border:1px solid rgba(225,80,63,.44)}
+
+/* ── checklist ── */
+.checks{list-style:none;display:flex;flex-direction:column;gap:11px}
+.checks li{display:flex;align-items:flex-start;gap:12px;font-size:18.5px;line-height:1.5;color:rgba(255,255,255,.78)}
+.checks li::before{content:'✓';color:var(--lpetrol);font-weight:800;flex-shrink:0}
+.checks li.x::before{content:'→';color:var(--orange)}
+
+/* ── pipeline ── */
+.pipeline{display:flex;align-items:flex-start;width:100%;margin-top:4px}
+.pstep{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+.pstep+.pstep::before{content:'';position:absolute;top:27px;left:-50%;width:100%;height:1.5px;background:rgba(255,255,255,.16)}
+.pnode{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;border:2.5px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);position:relative;z-index:1;color:rgba(255,255,255,.6);font-family:var(--mono)}
+.pnode.done{border-color:var(--petrol);background:rgba(0,153,153,.18);color:var(--lpetrol)}
+.pnode.hot{border-color:var(--orange);background:rgba(255,144,0,.18);color:var(--orange)}
+.pnode.blue{border-color:var(--blue);background:rgba(90,165,255,.14);color:var(--blue)}
+.plabel{margin-top:12px;font-size:17px;font-weight:650;text-align:center;color:rgba(255,255,255,.8)}
+.psub{font-size:14.5px;color:rgba(255,255,255,.4);text-align:center;margin-top:5px}
+
+/* ── wiring ladder ── */
+.ladder{display:flex;flex-direction:column;width:100%;position:relative}
+.hop{display:flex;align-items:stretch;gap:22px;position:relative;padding-bottom:12px}
+.hop:last-child{padding-bottom:0}
+.hop .spine{width:40px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative}
+.hop:not(:last-child) .spine::after{content:'';position:absolute;top:40px;bottom:-12px;width:2px;background:rgba(255,255,255,.16)}
+.hnum{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:16px;font-weight:800;background:rgba(255,255,255,.07);
+  border:2px solid rgba(255,255,255,.18);color:rgba(255,255,255,.55);position:relative;z-index:1}
+.hbody{flex:1;min-width:0;display:flex;gap:14px;align-items:stretch}
+.wbox{border-radius:12px;padding:13px 18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  display:flex;flex-direction:column;justify-content:center;min-width:0;flex:1}
+.wbox .n{font-family:var(--mono);font-size:16.5px;font-weight:650;color:#fff;line-height:1.25;word-break:break-word}
+.wbox .d{font-size:15px;color:rgba(255,255,255,.55);margin-top:5px;line-height:1.4}
+.wbox.agent{background:rgba(0,193,182,.14);border-color:rgba(0,193,182,.55)}
+.wbox.agent .n{color:var(--lpetrol)}
+.wbox.skill{background:rgba(90,165,255,.11);border-color:rgba(90,165,255,.42)}
+.wbox.skill .n{color:var(--blue)}
+.wbox.art{background:rgba(255,144,0,.09);border-color:rgba(255,144,0,.38)}
+.wbox.art .n{color:var(--orange)}
+.wbox.gate{background:rgba(225,80,63,.09);border-color:rgba(225,80,63,.4)}
+.wbox.gate .n{color:var(--red)}
+.htag{width:104px;flex-shrink:0;display:flex;align-items:center;font-size:12px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.34)}
+.legend{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.lg{display:flex;align-items:center;gap:8px;font-size:14.5px;color:rgba(255,255,255,.6)}
+.lgs{width:13px;height:13px;border-radius:4px;border:1px solid}
+
+/* ── brief excerpt ── */
+.brief{flex:1;min-width:0;border-radius:12px;padding:12px 20px;background:rgba(0,0,0,.35);
+  border:1px dashed rgba(255,144,0,.4);display:flex;flex-direction:column;justify-content:center;gap:2px}
+.bl{font-family:var(--mono);font-size:15px;line-height:1.5;color:rgba(255,255,255,.82);white-space:pre}
+.bk{color:var(--orange)}
+
+/* ── gate strip ── */
+.gatestrip{display:flex;align-items:center;gap:11px;flex-wrap:wrap;width:100%;margin-top:12px;
+  padding:14px 22px;border-radius:13px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11)}
+.gs{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.34);margin-right:6px}
+.gp{font-family:var(--mono);font-size:16px;font-weight:650;color:var(--red)}
+.gp.t{color:var(--lpetrol)}
+.gd{font-size:15.5px;color:rgba(255,255,255,.58)}
+.gsep{color:rgba(255,255,255,.24);font-size:18px;margin:0 6px}
+
+/* ── stage header ── */
+.sthead{display:flex;gap:20px;align-items:center;width:100%;margin-bottom:12px}
+.stop{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--red);border:1px solid rgba(225,80,63,.5);background:rgba(225,80,63,.12);
+  padding:5px 13px;border-radius:999px;margin-left:14px;vertical-align:middle}
+
+/* ── gate bar ── */
+.gatebar{display:flex;align-items:center;gap:18px;width:100%;padding:15px 24px;border-radius:13px;
+  background:rgba(0,193,182,.09);border:1px solid rgba(0,193,182,.35)}
+.gatebar.hard{background:rgba(225,80,63,.09);border-color:rgba(225,80,63,.42)}
+.gatebar .gl{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--lpetrol);flex-shrink:0;width:118px}
+.gatebar.hard .gl{color:var(--red)}
+.gatebar .gt{font-size:17.5px;line-height:1.45;color:rgba(255,255,255,.8);flex:1}
+.surf{font-family:var(--mono);font-size:14px;color:var(--blue);background:rgba(90,165,255,.12);
+  border:1px solid rgba(90,165,255,.3);padding:5px 12px;border-radius:8px;flex-shrink:0}
+
+/* ── term chips ── */
+.terms{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:100%}
+.term{padding:12px 16px;border-radius:11px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11)}
+.term .tt{font-family:var(--mono);font-size:15px;color:var(--orange);line-height:1.25;word-break:break-word}
+.term .td{font-size:14px;color:rgba(255,255,255,.56);margin-top:5px;line-height:1.4}
+
+/* ── decision chips ── */
+.decs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%}
+.dec{display:flex;gap:11px;align-items:flex-start;padding:12px 15px;border-radius:11px;
+  background:rgba(255,144,0,.08);border:1px solid rgba(255,144,0,.32);
+  font-size:15px;line-height:1.35;color:rgba(255,255,255,.8)}
+.dec.red{background:rgba(225,80,63,.08);border-color:rgba(225,80,63,.34)}
+.dec.red .dn{color:var(--red)}
+.dec .dn{font-family:var(--mono);font-size:14px;font-weight:800;color:var(--orange);flex-shrink:0}
+.dec .dx{font-size:15px;line-height:1.35;color:rgba(255,255,255,.8)}
+
+/* ── file tree, two sources ── */
+.tree{display:grid;grid-template-columns:1fr 1fr;gap:34px;width:100%}
+.tcap{font-family:var(--mono);font-size:15px;color:var(--lpetrol);letter-spacing:.03em;
+  padding-bottom:10px;margin-bottom:4px;border-bottom:1px solid rgba(0,193,182,.3)}
+.fl{display:flex;align-items:baseline;gap:16px;padding:9px 0}
+.fl .fn{font-family:var(--mono);font-size:17px;color:#fff;min-width:200px;flex-shrink:0}
+.fl .fd{font-size:15px;line-height:1.4;color:rgba(255,255,255,.5)}
+
+/* ── warning strip ── */
+.warn{display:flex;gap:14px;align-items:center;width:100%;padding:15px 22px;border-radius:12px;
+  background:rgba(225,80,63,.09);border:1px solid rgba(225,80,63,.34)}
+.warn .wt{font-size:16px;line-height:1.45;color:rgba(255,255,255,.82)}
+
+/* ── lifetime rows ── */
+.lifes{display:flex;flex-direction:column;gap:11px;width:100%}
+.life{display:grid;grid-template-columns:250px 1fr 210px;gap:22px;align-items:center;
+  padding:17px 24px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.life .ln{font-family:var(--mono);font-size:17px;color:#fff}
+.life .lj{font-size:16px;line-height:1.4;color:rgba(255,255,255,.7)}
+.life .lt{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;text-align:right}
+
+/* ── agent role rows ── */
+.roles{display:flex;flex-direction:column;gap:10px;width:100%}
+.role{display:grid;grid-template-columns:200px 1fr;gap:22px;align-items:center;
+  padding:15px 24px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.role .rn{font-family:var(--mono);font-size:17px;font-weight:700;color:#fff}
+.role .rd{font-size:16px;line-height:1.4;color:rgba(255,255,255,.72)}
+.role.hot{border-color:rgba(255,255,255,.09)}
+
+/* ── where it lives: paths ── */
+.paths{display:flex;flex-direction:column;gap:12px;width:100%}
+.pth{display:grid;grid-template-columns:1fr 300px;gap:26px;align-items:center;
+  padding:17px 24px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.pth .pp{font-family:var(--mono);font-size:18px;color:#fff}
+.pth .pw{font-size:15px;line-height:1.4;color:rgba(255,255,255,.55);text-align:right}
+
+/* ── varies by stack ── */
+.stacks{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+.stk{display:flex;flex-direction:column;gap:9px;padding:20px 24px;border-radius:12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.stk .sn{font-size:19px;font-weight:700;color:#fff}
+.stk .sf{font-family:var(--mono);font-size:15px;color:var(--blue);line-height:1.7}
+.stk .sx{font-size:15px;line-height:1.4;color:rgba(255,255,255,.5)}
+
+/* ── exercise interstitial ── */
+.exlab{font-family:var(--mono);font-size:16px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+.exh{font-size:50px;line-height:1.15;font-weight:700;color:#fff;letter-spacing:-.01em}
+.exsteps{display:flex;flex-direction:column;gap:16px;width:100%;max-width:1180px;margin-top:10px}
+.exstep{display:grid;grid-template-columns:46px 1fr;gap:18px;align-items:baseline}
+.exstep .en{font-family:var(--mono);font-size:20px;font-weight:800;color:var(--orange)}
+.exstep .et{font-size:21px;line-height:1.45;color:rgba(255,255,255,.85)}
+.exback{margin-top:14px;padding:18px 24px;border-radius:12px;background:rgba(0,193,182,.08);
+  border:1px solid rgba(0,193,182,.32);font-size:18px;line-height:1.45;color:rgba(255,255,255,.82);max-width:1180px}
+
+/* ── who-acts timeline ── */
+.tlv{display:flex;flex-direction:column;width:100%;max-width:1230px}
+.tlr{display:grid;grid-template-columns:112px 1fr;gap:0;align-items:start}
+.tlw{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;text-align:right;
+  padding:3px 24px 0 0;color:rgba(255,255,255,.32)}
+.tlw.you{color:var(--orange)}
+.tlc{position:relative;padding:0 0 24px 36px;border-left:2px solid rgba(255,255,255,.12)}
+.tlr:last-child .tlc{border-left-color:transparent;padding-bottom:0}
+.tlc::before{content:'';position:absolute;left:-9px;top:4px;width:16px;height:16px;border-radius:50%;
+  background:#0a0f1c;border:2px solid rgba(255,255,255,.32)}
+.tlc.you::before{border-color:var(--orange);background:var(--orange)}
+.tlt{font-size:20px;font-weight:650;color:#fff;line-height:1.3;margin-top:-4px}
+.tld{font-size:16px;line-height:1.45;color:rgba(255,255,255,.55);margin-top:5px}
+
+/* ── the four moves ── */
+.moves{display:grid;grid-template-columns:repeat(4,1fr);gap:0;width:100%}
+.mv{position:relative;padding:22px 26px 22px 0}
+.mv+.mv{padding-left:26px;border-left:1px solid rgba(255,255,255,.11)}
+.mvw{font-size:13px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.32)}
+.mvw.you{color:var(--orange)}
+.mvt{font-size:22px;font-weight:650;color:#fff;line-height:1.25;margin-top:9px}
+.mvd{font-size:16px;line-height:1.45;color:rgba(255,255,255,.55);margin-top:8px}
+
+/* ── ordered chain ── */
+.chain{display:flex;align-items:center;gap:9px;flex-wrap:wrap;width:100%}
+.cl{padding:10px 15px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.13);
+  font-size:15.5px;color:rgba(255,255,255,.82);white-space:nowrap}
+.cl.acc{background:rgba(0,193,182,.12);border-color:rgba(0,193,182,.45);color:var(--lpetrol)}
+.ca{color:rgba(255,255,255,.28);font-size:17px}
+
+/* ── tier strip ── */
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
+.tier{padding:14px 18px;border-radius:12px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);display:flex;flex-direction:column;gap:6px}
+.tier.no{background:rgba(225,80,63,.08);border-color:rgba(225,80,63,.38)}
+.tier .tn{font-size:17px;font-weight:650;color:#fff}
+.tier .tv{font-size:14.5px;color:rgba(255,255,255,.55);line-height:1.4}
+.tier .tf{font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--lpetrol);margin-top:2px}
+.tier.no .tf{color:var(--red)}
+
+/* ── verdict rows, with a worked example on each ── */
+.vrds{display:flex;flex-direction:column;gap:9px;width:100%}
+.vrd{display:grid;grid-template-columns:190px 1fr 1.25fr;gap:24px;align-items:center;
+  padding:15px 24px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.vrd.no{background:rgba(225,80,63,.07);border-color:rgba(225,80,63,.3)}
+.vrd .vn{display:flex;align-items:center;gap:11px;font-size:18px;font-weight:700;color:#fff}
+.vrd.no .vn{color:var(--red)}
+.vrd .vi{font-size:20px}
+.vrd .vm{font-size:15.5px;line-height:1.4;color:rgba(255,255,255,.55)}
+.vrd .ve{font-size:15.5px;line-height:1.4;color:rgba(255,255,255,.8)}
+.vrd .ve b{font-weight:650;color:var(--lpetrol)}
+
+/* ── folder rows, with what actually lands there ── */
+.plist{display:flex;flex-direction:column;gap:12px;width:100%}
+.pr{display:grid;grid-template-columns:34px 292px 1fr;gap:20px;align-items:center;
+  padding:18px 26px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.pr .pi{font-size:22px}
+.pr .pn{font-family:var(--mono);font-size:17px;color:#fff;word-break:break-word}
+.pr .pe{font-size:15.5px;line-height:1.4;color:rgba(255,255,255,.6)}
+.pr .pe b{font-weight:650;color:rgba(255,255,255,.85)}
+
+/* ── context window bar ── */
+.winbar{width:100%;display:flex;flex-direction:column;gap:9px}
+.winlab{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.wintrack{display:flex;width:100%;height:52px;border-radius:11px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.13)}
+.wseg{display:flex;align-items:center;justify-content:center;height:100%;overflow:hidden}
+.wseg.s1{background:rgba(225,80,63,.3)}
+.wseg.s2{background:rgba(255,255,255,.07)}
+.wsl{font-family:var(--mono);font-size:14.5px;color:rgba(255,255,255,.88);white-space:nowrap;padding:0 12px}
+.winfoot{font-size:16px;line-height:1.45;color:rgba(255,255,255,.62)}
+
+/* ── interlude label ── */
+.ilab{display:inline-block;align-self:flex-start;font-size:12px;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--orange);border:1px solid rgba(255,144,0,.4);
+  background:rgba(255,144,0,.09);border-radius:999px;padding:5px 14px}
+
+/* ── horizontal bars ── */
+.bars{display:flex;flex-direction:column;gap:11px;width:100%}
+.bar{display:grid;grid-template-columns:186px 1fr 78px;gap:20px;align-items:center}
+.bar .bn{font-family:var(--mono);font-size:16.5px;color:#fff}
+.bar .btrack{height:26px;background:rgba(255,255,255,.05);border-radius:7px;
+  border:1px solid rgba(255,255,255,.08);overflow:hidden;display:block}
+.bar .bfill{display:block;height:100%;border-radius:6px;
+  background:linear-gradient(90deg,var(--lpetrol),rgba(0,153,153,.55))}
+.bar.zero .bfill{background:var(--red)}
+.bar .bv{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--lpetrol);text-align:right}
+.bar .bv.red{color:var(--red)}
+
+/* ── levers ── */
+.lev{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.lv{display:flex;flex-direction:column;gap:7px;padding:22px 24px;border-radius:13px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.lv.big{background:rgba(0,193,182,.09);border-color:rgba(0,193,182,.36)}
+.lv .lvn{font-family:var(--mono);font-size:44px;font-weight:800;line-height:1;color:rgba(255,255,255,.45)}
+.lv.big .lvn{color:var(--lpetrol)}
+.lv .lvt{font-size:18px;font-weight:700;color:#fff}
+.lv .lvd{font-size:15px;line-height:1.42;color:rgba(255,255,255,.6)}
+
+/* ── machine diagram ── */
+.mach{position:relative;width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;
+  padding:34px 30px 26px;background:rgba(255,255,255,.025);display:flex;flex-direction:column;gap:22px}
+.machlab{position:absolute;top:-11px;left:28px;padding:2px 12px;background:#05060e;
+  font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.machrow{display:grid;grid-template-columns:1fr 118px 1.28fr;align-items:center;gap:0}
+.mbox{border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:9px}
+.mbox.tool{background:rgba(0,193,182,.07);border:1px solid rgba(0,193,182,.34)}
+.mbox.proj{background:rgba(255,144,0,.07);border:1px solid rgba(255,144,0,.38)}
+.mbh{display:flex;align-items:center;gap:11px}
+.mbi{font-size:21px}
+.mbn{font-family:var(--mono);font-size:18px;font-weight:700;color:#fff}
+.mbs{font-size:15px;line-height:1.42;color:rgba(255,255,255,.6)}
+.mbf{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.mbf span{font-family:var(--mono);font-size:13.5px;color:var(--blue);
+  background:rgba(90,165,255,.1);border:1px solid rgba(90,165,255,.24);border-radius:6px;padding:3px 9px}
+.mbf span.hot{color:var(--orange);background:rgba(255,144,0,.12);border-color:rgba(255,144,0,.38)}
+.marrow{display:flex;flex-direction:column;align-items:center;gap:5px}
+.mal{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+.marrow .mline{width:100%;height:1px;background:linear-gradient(90deg,rgba(0,193,182,.5),rgba(255,144,0,.5));position:relative;top:-1px}
+.mah{color:var(--orange);font-size:11px;margin-top:-14px;margin-left:auto;margin-right:-2px}
+.machfoot{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;
+  border-top:1px solid rgba(255,255,255,.1);padding-top:19px}
+.mf{display:grid;grid-template-columns:26px 1fr;grid-template-rows:auto auto;gap:2px 10px;align-items:baseline}
+.mfi{font-size:19px;grid-row:1/3}
+.mfn{font-family:var(--mono);font-size:16px;font-weight:700;color:#fff}
+.mfd{font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.55)}
+.offbox{display:flex;align-items:center;gap:16px;width:100%;padding:15px 22px;border-radius:12px;
+  background:rgba(0,193,182,.07);border:1px solid rgba(0,193,182,.28)}
+.offi{font-size:20px;flex-shrink:0}
+.offt{font-size:17px;line-height:1.45;color:rgba(255,255,255,.8)}
+
+/* ── section intro ── */
+.secnum{font-family:var(--mono);font-size:132px;font-weight:800;line-height:.88;
+  color:rgba(255,255,255,.11);letter-spacing:-.04em}
+.sech{font-size:62px;font-weight:700;color:#fff;line-height:1.05;letter-spacing:-.02em}
+.secsub{font-size:22px;line-height:1.5;color:rgba(255,255,255,.6);max-width:940px}
+.getlist{display:flex;flex-direction:column;gap:13px;width:100%;max-width:1020px;margin-top:10px}
+.get{display:grid;grid-template-columns:24px 1fr;gap:14px;align-items:baseline}
+.get .gi{color:var(--lpetrol);font-size:19px}
+.get .gx{font-size:19px;line-height:1.45;color:rgba(255,255,255,.82)}
+
+/* ── section outro ── */
+.haves{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;width:100%}
+.have{display:flex;flex-direction:column;gap:9px;padding:22px 24px;border-radius:12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.have .hf{font-family:var(--mono);font-size:16px;color:var(--blue);word-break:break-word}
+.have .hx{font-size:16px;line-height:1.45;color:rgba(255,255,255,.62)}
+.nextup{display:flex;align-items:center;gap:20px;width:100%;padding:17px 24px;border-radius:12px;
+  background:rgba(0,193,182,.08);border:1px solid rgba(0,193,182,.32)}
+.nextup .nl{font-size:12px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--lpetrol);flex-shrink:0;width:96px}
+.nextup .nx{font-size:18px;line-height:1.45;color:rgba(255,255,255,.82)}
+
+/* ── anim ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.slide.active .a{animation:fadeUp .42s var(--ease) both}
+.slide.active .a:nth-child(2){animation-delay:.06s}
+.slide.active .a:nth-child(3){animation-delay:.12s}
+.slide.active .a:nth-child(4){animation-delay:.18s}
+
+/* ── edit mode ── */
+#tools{position:fixed;top:14px;left:20px;z-index:200;display:flex;gap:8px;align-items:center}
+.tbtn{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font-family:var(--font);font-size:13px;font-weight:700;padding:6px 15px;border-radius:999px;cursor:pointer;backdrop-filter:blur(8px)}
+.tbtn:hover{background:rgba(255,255,255,.18)}
+.tbtn.on{background:var(--petrol);border-color:var(--petrol);color:#02120f}
+.tbtn.hide{display:none}
+#saved{font-size:12px;color:var(--lpetrol);opacity:0;transition:opacity .3s}
+#saved.show{opacity:1}
+body.editing [contenteditable]{outline:1px dashed rgba(0,193,182,.45);outline-offset:3px;border-radius:3px}
+body.editing [contenteditable]:focus{outline:2px solid var(--lpetrol);outline-offset:3px;background:rgba(0,193,182,.08)}
+
+/* ══════════════════════════════════════════════════════════════
+   v2 VISUAL LANGUAGE
+   Rule: every slide leads with a thing on screen.
+   Skeleton borrowed from visuals-set1: label . h1 . fig . calls
+   All sizes fixed px. No clamp/vw/vh inside the 1600x900 canvas.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── slide-kind marker, top right ── */
+.kind{position:absolute;top:30px;right:38px;font-family:var(--mono);font-size:12.5px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;padding:5px 13px;border-radius:7px;
+  color:rgba(255,255,255,.45);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+.kind.art{color:var(--blue);background:rgba(90,165,255,.1);border-color:rgba(90,165,255,.3)}
+.kind.run{color:var(--lpetrol);background:rgba(0,193,182,.1);border-color:rgba(0,193,182,.32)}
+.kind.drl{color:var(--orange);background:rgba(255,144,0,.12);border-color:rgba(255,144,0,.4)}
+.kind.wch{color:var(--red);background:rgba(225,80,63,.11);border-color:rgba(225,80,63,.38)}
+
+/* ── the standard body: a figure that fills, three annotations under it ── */
+.fig{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;justify-content:center;
+  margin:14px 0 12px;padding:14px 20px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.085);border-radius:12px;backdrop-filter:blur(5px)}
+.fig.bare{padding:0;background:none;border:0;backdrop-filter:none}
+.fig > svg{width:100%;height:100%;max-height:100%;display:block}
+.calls{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;width:100%;flex-shrink:0}
+.calls.two{grid-template-columns:repeat(2,1fr)}
+.call{padding-left:14px;border-left:2px solid rgba(0,193,182,.5)}
+.call.o{border-left-color:rgba(255,144,0,.55)}
+.call.b{border-left-color:rgba(90,165,255,.55)}
+.call.r{border-left-color:rgba(225,80,63,.55)}
+.call .t{font-size:17px;font-weight:650;color:#fff;line-height:1.26;margin-bottom:4px}
+.call .s{font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.62);font-weight:350}
+.call .s b{color:rgba(255,255,255,.88);font-weight:600}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.085);
+  font-size:13px;color:rgba(255,255,255,.36);line-height:1.5;width:100%;flex-shrink:0}
+.src b{color:rgba(255,255,255,.55);font-weight:600}
+.subh{font-size:19px;line-height:1.5;color:rgba(255,255,255,.62);max-width:1150px;margin-top:7px}
+
+/* ── chapter card: the pipeline map with one chapter lit ── */
+.pmap{display:flex;width:100%;gap:10px;align-items:stretch}
+.pch{flex:1;display:flex;flex-direction:column;gap:10px;padding:18px 16px 20px;border-radius:13px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.09)}
+.pch.on{background:rgba(0,193,182,.13);border-color:rgba(0,193,182,.55);flex:1.55}
+.pchn{display:flex;gap:6px}
+.pchn span{font-family:var(--mono);font-size:15px;font-weight:800;width:29px;height:29px;border-radius:7px;
+  display:grid;place-items:center;color:rgba(255,255,255,.34);background:rgba(255,255,255,.06)}
+.pch.on .pchn span{color:var(--deepblue);background:var(--lpetrol)}
+.pcht{font-size:17px;font-weight:700;color:rgba(255,255,255,.5);line-height:1.25}
+.pch.on .pcht{color:#fff;font-size:19px}
+.pchs{font-size:14px;color:rgba(255,255,255,.32);line-height:1.4}
+.pch.on .pchs{color:rgba(255,255,255,.66);font-size:15px}
+
+/* ── the why-band: shown whenever a NEW topic is introduced ── */
+.why3{display:grid;grid-template-columns:repeat(3,1fr);width:100%;border-radius:13px;overflow:hidden;
+  border:1px solid rgba(0,193,182,.3);background:rgba(0,193,182,.05);flex-shrink:0}
+.why3 > div{padding:16px 22px 17px;display:flex;flex-direction:column;gap:6px}
+.why3 > div + div{border-left:1px solid rgba(0,193,182,.22)}
+.whyl{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--lpetrol)}
+.whyt{font-size:16px;line-height:1.44;color:rgba(255,255,255,.76)}
+.whyt b{color:#fff;font-weight:650}
+
+/* ── VS Code window ── */
+.vsc{width:100%;border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.16);
+  background:#0d1017;display:flex;flex-direction:column;box-shadow:0 20px 54px rgba(0,0,0,.5)}
+.vtb{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#171b26;
+  border-bottom:1px solid rgba(255,255,255,.08)}
+.vdot{width:10px;height:10px;border-radius:50%}
+.vtt{margin-left:12px;font-size:13px;color:rgba(255,255,255,.48);font-family:var(--mono)}
+.vbody{display:grid;grid-template-columns:262px 1fr}
+.vside{background:#11141d;border-right:1px solid rgba(255,255,255,.07);padding:11px 0 12px}
+.vsh{font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(255,255,255,.32);padding:0 15px 8px}
+.vf{display:flex;align-items:center;gap:7px;padding:2.5px 15px;font-family:var(--mono);font-size:13.5px;
+  color:rgba(255,255,255,.56);white-space:nowrap}
+.vf.dir{color:rgba(255,255,255,.8);font-weight:600}
+.vf.sel{background:rgba(90,165,255,.15);color:#fff;box-shadow:inset 2px 0 0 var(--blue)}
+.vf.i1{padding-left:31px}
+.vf.i2{padding-left:47px}
+.vf .hint{color:rgba(255,255,255,.28);font-size:12px;margin-left:auto;padding-left:12px}
+.vmain{display:flex;flex-direction:column;min-width:0}
+.vtabs{display:flex;background:#11141d;border-bottom:1px solid rgba(255,255,255,.07)}
+.vtab{font-family:var(--mono);font-size:12.5px;padding:7px 15px;color:rgba(255,255,255,.38);
+  border-right:1px solid rgba(255,255,255,.06)}
+.vtab.on{background:#0d1017;color:#fff;box-shadow:inset 0 1.5px 0 var(--blue)}
+.vcode{padding:10px 0;font-family:var(--mono);font-size:13px;line-height:1.6;flex:1}
+.vln{display:flex;gap:15px;padding:0 17px}
+.vln .no{color:rgba(255,255,255,.2);width:20px;text-align:right;flex-shrink:0}
+.vln .tx{color:rgba(255,255,255,.78);white-space:pre}
+.vterm{border-top:1px solid rgba(255,255,255,.09);background:#080a11;padding:9px 17px 11px}
+.vth{display:flex;gap:17px;font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(255,255,255,.28);padding-bottom:6px;font-weight:700}
+.vth .on{color:#fff;box-shadow:inset 0 -1.5px 0 var(--lpetrol);padding-bottom:4px}
+.vtl{font-family:var(--mono);font-size:13px;line-height:1.55;color:rgba(255,255,255,.7);white-space:pre}
+
+/* syntax + status colours, shared by every code and terminal frame */
+.cmt{color:rgba(255,255,255,.32)}
+.kw{color:var(--blue)}
+.str{color:#bcdd96}
+.okc{color:var(--lpetrol)}
+.badc{color:var(--red)}
+.wrnc{color:var(--orange)}
+.dimc{color:rgba(255,255,255,.38)}
+.pmt{color:var(--lpetrol)}
+
+/* ── plain terminal window ── */
+.tw{width:100%;border-radius:11px;overflow:hidden;border:1px solid rgba(255,255,255,.16);background:#080a11}
+.twh{display:flex;align-items:center;gap:9px;padding:7px 14px;background:#141824;
+  border-bottom:1px solid rgba(255,255,255,.08);font-family:var(--mono);font-size:12.5px;
+  color:rgba(255,255,255,.42)}
+.twb{padding:13px 20px 15px;font-family:var(--mono);font-size:14.5px;line-height:1.62;
+  color:rgba(255,255,255,.74);white-space:pre}
+.twb.s2{font-size:13px;line-height:1.56}
+
+/* ── annotated code with numbered pins ── */
+.anno{display:grid;grid-template-columns:1fr 392px;gap:24px;width:100%;align-items:stretch}
+.cw{border-radius:11px;border:1px solid rgba(255,255,255,.16);background:#0a0c14;overflow:hidden;
+  display:flex;flex-direction:column}
+.cwh{padding:7px 16px;background:#141824;border-bottom:1px solid rgba(255,255,255,.08);
+  font-family:var(--mono);font-size:12.5px;color:rgba(255,255,255,.46);display:flex;
+  justify-content:space-between}
+.cwb{padding:11px 0;font-family:var(--mono);font-size:13px;line-height:1.58;flex:1}
+.mcl{display:flex;gap:12px;padding:0 14px 0 26px;position:relative}
+.mcl.hl{background:rgba(255,144,0,.08)}
+.mcl .no{color:rgba(255,255,255,.18);width:18px;text-align:right;flex-shrink:0}
+.mcl .tx{white-space:pre;color:rgba(255,255,255,.8)}
+.mcl .pn{position:absolute;left:4px;top:1.5px;width:19px;height:19px;border-radius:50%;
+  background:var(--orange);color:#241000;font-size:12px;font-weight:800;display:grid;place-items:center;
+  font-family:var(--font)}
+.notes{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.note{display:grid;grid-template-columns:23px 1fr;gap:12px;align-items:start}
+.note .nn{width:22px;height:22px;border-radius:50%;background:rgba(255,144,0,.18);
+  border:1px solid var(--orange);color:var(--orange);font-size:12px;font-weight:800;
+  display:grid;place-items:center;margin-top:1px}
+.note .nt{font-size:15.5px;line-height:1.44;color:rgba(255,255,255,.7)}
+.note .nt b{color:#fff;font-weight:650}
+
+/* ── the folder that tells a story ── */
+.ftree{width:100%;border-radius:11px;border:1px solid rgba(255,255,255,.15);background:#0a0c14;
+  padding:14px 22px 16px;font-family:var(--mono);font-size:14px;line-height:1.68;
+  column-count:2;column-gap:44px;column-rule:1px solid rgba(255,255,255,.07)}
+.ftree .r{display:flex;break-inside:avoid;color:rgba(255,255,255,.6)}
+.ftree .r.fix{color:var(--red)}
+.ftree .r.pat{color:var(--orange)}
+.ftree .r.hd{color:rgba(255,255,255,.85);font-weight:700}
+.ftree .r .cm{color:rgba(255,255,255,.3);margin-left:auto;padding-left:16px;font-size:13px}
+
+/* ── ledger table ── */
+.ledg{width:100%;border-radius:11px;border:1px solid rgba(255,255,255,.15);overflow:hidden}
+.lrow{display:grid;grid-template-columns:92px 250px 104px 1fr;border-bottom:1px solid rgba(255,255,255,.07)}
+.lrow:last-child{border-bottom:0}
+.lrow.hdr{background:rgba(255,255,255,.05)}
+.lrow > span{padding:8px 16px;font-size:14.5px;color:rgba(255,255,255,.64);line-height:1.35;
+  align-self:center}
+.lrow.hdr > span{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.38)}
+.lrow .fn{font-family:var(--mono);font-size:13.5px;color:var(--blue)}
+.lrow .st{font-family:var(--mono);font-size:13px;font-weight:700}
+.lrow.pass .st{color:var(--lpetrol)}
+.lrow.part .st{color:var(--orange)}
+.lrow.failr .st{color:var(--red)}
+.lrow .dt{font-family:var(--mono);font-size:13px;color:rgba(255,255,255,.36)}
+
+/* ── lint rule grid ── */
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:100%}
+.rgc{border-radius:11px;padding:15px 17px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.11);display:flex;flex-direction:column;gap:9px}
+.rgc.sec{border-color:rgba(225,80,63,.34);background:rgba(225,80,63,.06)}
+.rgc.arc{border-color:rgba(0,193,182,.32);background:rgba(0,193,182,.06)}
+.rgh{display:flex;align-items:baseline;gap:9px}
+.rgn{font-family:var(--mono);font-size:26px;font-weight:800;color:#fff;line-height:1}
+.rgt{font-size:13.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;
+  color:rgba(255,255,255,.42)}
+.rgc.sec .rgt{color:var(--red)}
+.rgc.arc .rgt{color:var(--lpetrol)}
+.rgl{display:flex;flex-direction:column;gap:5px}
+.rgl span{font-family:var(--mono);font-size:12.5px;color:rgba(255,255,255,.52);line-height:1.34}
+.rgl span b{color:rgba(255,255,255,.84);font-weight:600}
+
+/* ── drill slide ── */
+.drill{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;align-items:stretch}
+.dq{border-radius:13px;padding:22px 26px;background:rgba(255,144,0,.07);
+  border:1px solid rgba(255,144,0,.38);display:flex;flex-direction:column;gap:13px}
+.da{border-radius:13px;padding:22px 26px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.13);display:flex;flex-direction:column;gap:13px}
+.dh{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange)}
+.da .dh{color:var(--lpetrol)}
+.dtx{font-size:17px;line-height:1.5;color:rgba(255,255,255,.76)}
+.dtx b{color:#fff;font-weight:650}
+.dsay{border-left:3px solid var(--orange);padding:11px 0 11px 16px;font-size:16.5px;line-height:1.52;
+  color:#fff;background:rgba(255,144,0,.06)}
+.dsay.no{border-left-color:var(--red);color:rgba(255,255,255,.55);background:rgba(225,80,63,.05)}
+.dlab{font-family:var(--mono);font-size:11px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--orange);display:block;margin-bottom:5px}
+.dsay.no .dlab{color:var(--red)}
+
+/* ── takeaway strip ── */
+.take{display:flex;align-items:center;gap:15px;width:100%;padding:14px 24px;border-radius:12px;
+  background:rgba(0,193,182,.07);border:1px solid rgba(0,193,182,.3);flex-shrink:0}
+.takei{font-size:19px;flex-shrink:0}
+.taket{font-size:17px;line-height:1.46;color:rgba(255,255,255,.8)}
+.taket b{color:#fff;font-weight:650}
+.take.wrn{background:rgba(225,80,63,.07);border-color:rgba(225,80,63,.34)}
+
+/* ── pre-flight checklist ── */
+.pflt{display:grid;grid-template-columns:1fr 1fr;gap:11px 26px;width:100%}
+.pfr{display:flex;gap:13px;align-items:flex-start;padding:11px 15px;border-radius:9px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.11)}
+.pfi{font-size:17px;line-height:1.1;flex-shrink:0;margin-top:1px}
+.pfr .pfn{font-size:14.5px;font-weight:650;color:#fff;line-height:1.3;margin-bottom:3px}
+.pfr .pfd{font-size:12.6px;line-height:1.45;color:rgba(255,255,255,.6)}
+.pfr .pfd b{color:#00C1B6;font-weight:650}
+.pfr.miss{border-color:rgba(225,80,63,.42);background:rgba(225,80,63,.07)}
+.pfr.miss .pfd b{color:#E1503F}
+
+/* ── numbered horizontal step flow ── */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%}
+.steps.five{grid-template-columns:repeat(5,1fr)}
+.stp{padding:14px 16px 15px;border-radius:10px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.13);display:flex;flex-direction:column;gap:6px}
+.stp .stpn{font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--lpetrol)}
+.stp .stpt{font-size:15px;font-weight:650;color:#fff;line-height:1.25}
+.stp .stpd{font-size:12.6px;line-height:1.5;color:rgba(255,255,255,.62)}
+.stp .stpd code{font-family:var(--mono);font-size:11.8px;color:#5AA5FF}
+.stp.o{border-color:rgba(255,144,0,.4)} .stp.o .stpn{color:var(--orange)}
+
+/* ── module brief flow ── */
+.mflow{display:grid;grid-template-columns:544px 1fr;gap:24px;width:100%;flex:1;min-height:0}
+.mfl{display:flex;flex-direction:column;gap:13px;min-height:0}
+.mfr{min-height:0;display:flex;align-items:center}
+.mfr > svg{width:100%;height:100%;max-height:100%;display:block}
+.cwb .bl{padding:2px 16px;color:#c8ccdb;white-space:pre;font-size:15px;line-height:1.5}
+.cwb .bl .hh{color:#00C1B6;font-weight:700}
+.cwb .bl .dd{color:#7f8497}
+.cwb .bl .bb{color:#5AA5FF}
+
+/* ── wireframe: ascii layout + widget-binding tables ── */
+.wire{display:grid;grid-template-columns:660px 1fr;gap:22px;width:100%;flex:1;min-height:0}
+.ascii{border-radius:11px;border:1px solid rgba(255,255,255,.16);background:#0a0c14;overflow:hidden;
+  display:flex;flex-direction:column;min-height:0}
+.ascii pre{margin:0;padding:12px 18px;font-family:var(--mono);font-size:12.4px;line-height:1.34;
+  color:rgba(255,255,255,.6);white-space:pre;overflow:hidden}
+.wcol{display:flex;flex-direction:column;gap:13px;min-height:0}
+.bnd{border-radius:11px;border:1px solid rgba(255,255,255,.15);overflow:hidden}
+.brow{display:grid;grid-template-columns:1.25fr 1.15fr 1.6fr;border-bottom:1px solid rgba(255,255,255,.07)}
+.brow:last-child{border-bottom:0}
+.brow.hdr{background:rgba(255,255,255,.05)}
+.brow.two{grid-template-columns:1.25fr 2.75fr}
+.brow > span{padding:6.5px 14px;font-size:13.2px;line-height:1.34;color:rgba(255,255,255,.64);
+  align-self:center}
+.brow.hdr > span{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.38)}
+.brow .wn{color:#fff;font-weight:600}
+.brow code{font-family:var(--mono);font-size:12.3px;color:var(--blue)}
+.brow i{font-style:normal;color:var(--orange)}
+
+/* ── open-issues register ── */
+.oreg{width:100%;border-radius:11px;border:1px solid rgba(255,255,255,.15);overflow:hidden}
+.orow{display:grid;grid-template-columns:38px 1.45fr 200px 176px 1.85fr;
+  border-bottom:1px solid rgba(255,255,255,.07)}
+.orow:last-child{border-bottom:0}
+.orow.hdr{background:rgba(255,255,255,.05)}
+.orow > span{padding:10px 15px;font-size:13.4px;line-height:1.42;color:rgba(255,255,255,.6);
+  align-self:center}
+.orow.hdr > span{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(255,255,255,.38)}
+.orow .oi{font-family:var(--mono);color:rgba(255,255,255,.28);font-size:12.5px}
+.orow .ot{font-size:12.8px;color:rgba(255,255,255,.46)}
+.orow .os{font-family:var(--mono);font-size:12.1px;font-weight:700;letter-spacing:.03em;
+  color:rgba(255,255,255,.5)}
+.orow.op .os{color:var(--orange)}
+.orow.cld .os{color:var(--lpetrol)}
+.orow.ac .os{color:var(--blue)}
+.orow b{color:#fff;font-weight:650}
+.orow code{font-family:var(--mono);font-size:12.3px;color:var(--blue)}
+
+.split2{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%}
+
+/* ── artifact strip (stage slides) ── */
+.iop{padding:13px 16px;border-radius:11px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.04);display:flex;flex-direction:column;gap:7px;width:100%}
+.iop.out{border-color:rgba(0,193,182,.4);background:rgba(0,153,153,.09)}
+.iop .iopl{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);font-weight:800}
+.iop .iopf{display:flex;flex-wrap:wrap;gap:7px}
+.iop .iopf span{font-family:var(--mono);font-size:15px;padding:3px 9px;border-radius:6px;
+  background:rgba(0,193,182,.14);color:var(--lpetrol);border:1px solid rgba(0,193,182,.28)}
+.iop .iopn{font-size:14.5px;line-height:1.45;color:rgba(255,255,255,.6)}
+/* ── agent cards ── */
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}
+.acard{display:flex;flex-direction:column;gap:7px;padding:13px 15px 12px;border-radius:11px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12)}
+.acard .ah{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.acard .ai{font-size:20px;line-height:1}
+.acard .an{font-size:17px;font-weight:700;color:#fff}
+.acard .ast{font-family:var(--mono);font-size:11.5px;padding:2px 7px;border-radius:5px;
+  background:rgba(90,165,255,.14);color:var(--blue);border:1px solid rgba(90,165,255,.24)}
+.acard .ad{font-size:14px;line-height:1.45;color:rgba(255,255,255,.78)}
+.acard .adf{font-size:13.5px;line-height:1.45;color:rgba(255,255,255,.52);border-left:2px solid rgba(255,144,0,.45);padding-left:10px}
+.acard .am{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.acard .amm,.acard .amw{font-family:var(--mono);font-size:11.5px;padding:2px 7px;border-radius:5px;
+  background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12)}
+.acard .amm{color:var(--lpetrol);border-color:rgba(0,193,182,.3)}
+.acard .amw.wr{color:var(--orange);border-color:rgba(255,144,0,.34)}
+
+/* ══ CHAPTER BAR ══ */
+#cbar{position:fixed;bottom:13px;left:50%;transform:translateX(-50%);z-index:100;
+  display:flex;align-items:center;gap:3px;padding:6px 9px;border-radius:11px;
+  background:rgba(0,0,0,.58);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(8px)}
+.cseg{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(255,255,255,.32);padding:5px 9px;border-radius:7px;
+  cursor:pointer;transition:color .2s ease,background .2s ease;white-space:nowrap}
+.cseg:hover{color:#fff;background:rgba(255,255,255,.09)}
+.cseg.done{color:rgba(255,255,255,.55)}
+.cseg.on{color:var(--deepblue);background:var(--lpetrol)}
+.cseg.soon{color:rgba(255,255,255,.16);cursor:default}
+.cseg.soon:hover{color:rgba(255,255,255,.16);background:none}
+.cvr{width:1px;height:15px;background:rgba(255,255,255,.15);margin:0 6px}
+
+/* ══ VERTICAL FILL: title top, artifact takes the rest, one line at the foot ══ */
+.slide > .col.wide{height:100%}
+.samid{flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+.samid.s{align-items:stretch}
+.samid > svg{width:100%;height:100%}
+
+/* ══ WINDOW FRAME ══ */
+.saw{border:1px solid rgba(255,255,255,.16);border-radius:13px;
+  background:rgba(255,255,255,.035);overflow:hidden;display:flex;flex-direction:column}
+.saw.hot{border-color:rgba(255,144,0,.42)}
+.saw.cool{border-color:rgba(0,193,182,.42)}
+.sawh{display:flex;align-items:center;gap:7px;padding:9px 14px;
+  background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.09)}
+.sawh i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.18);display:block}
+.sawt{font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  color:rgba(255,255,255,.45);margin-left:5px}
+.sawb{padding:20px 22px;display:flex;flex-direction:column;gap:13px;flex:1}
+
+/* ══ TERMINAL LINES ══ */
+.sat{font-family:var(--mono);font-size:15.5px;line-height:1.95;color:rgba(255,255,255,.55);
+  white-space:pre-wrap}
+.sat b{font-weight:400;color:rgba(255,255,255,.9)}
+.sat em{font-style:normal;color:var(--orange)}
+.sat i{font-style:normal;color:var(--red);font-weight:700}
+.sat u{text-decoration:none;color:var(--lpetrol)}
+
+/* ══ CONSTRAINT CHIP ══ */
+.sac{flex:1;display:flex;align-items:center;gap:13px;padding:13px 18px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12)}
+.sac .k{font-family:var(--mono);font-size:11.5px;font-weight:700;letter-spacing:.1em;
+  color:var(--lpetrol);opacity:.75;min-width:22px}
+.sac .v{font-size:21px;line-height:1.34;color:rgba(255,255,255,.88)}
+/* the chip that carries the ownership point, deliberately the loudest one */
+.sac.big{padding:17px 18px;background:rgba(255,144,0,.09);border-color:rgba(255,144,0,.4)}
+.sac.big .v{font-size:26px;font-weight:650;color:#fff}
+/* second line inside a chip, for the consequence of the line above it */
+.sac .col2{display:flex;flex-direction:column;gap:4px}
+.sac .v2{font-size:16.5px;line-height:1.4;color:rgba(255,255,255,.55)}
+
+/* the two-column comparison reads from the back of the room, so its list runs
+   larger than the base .checks size */
+.checks.big li{font-size:20.5px;line-height:1.48}
+
+/* ══ FOOT LINE ══ */
+.saf{font-size:19px;line-height:1.5;color:rgba(255,255,255,.62);text-align:center}
+.saf b{color:rgba(255,255,255,.95);font-weight:650}
+
+/* ══ CONTEXT CHAPTER ══ */
+.sctc{flex:1;min-width:0;display:flex;flex-direction:column;gap:14px;padding:24px 26px;
+  border-radius:15px;background:rgba(255,255,255,.03);border:1px solid}
+.sctt{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.sctc .sfl{text-align:left;font-size:18.5px;color:rgba(255,255,255,.74)}
+.sctf{font-family:var(--mono);font-size:15.5px;color:rgba(255,255,255,.55);
+  padding-top:13px;border-top:1px solid rgba(255,255,255,.12)}
+.scts{display:flex;align-items:baseline;gap:18px;padding:15px 20px;border-radius:12px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1)}
+.scts .n{font-family:var(--mono);font-size:19px;font-weight:700;color:var(--lpetrol);
+  min-width:24px;flex:none}
+.scts .col2{display:flex;flex-direction:column;gap:4px}
+.scts .v{font-size:21px;font-weight:650;color:#fff}
+.scts .v2{font-size:17px;line-height:1.45;color:rgba(255,255,255,.58)}
+
+/* ══ SPINE 1, INTRO ══ */
+.sin{display:flex;align-items:baseline;gap:18px;padding:13px 18px;border-radius:11px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1)}
+.sin .k{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.15em;
+  color:rgba(255,255,255,.4);min-width:190px;flex:none}
+.sin .v{font-size:19.5px;line-height:1.5;color:rgba(255,255,255,.86)}
+.sin .v b{color:#fff;font-weight:650}
+
+/* ══ SPINE 1b, RUN IT. Numbered step, readable heading, sentence beneath. ══ */
+.srun{display:flex;align-items:flex-start;gap:20px;padding:15px 20px;border-radius:12px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1)}
+.srun .n{flex:none;width:32px;height:32px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;
+  font-weight:800;color:#00C1B6;border:1.5px solid rgba(0,193,182,.55)}
+.srun .tx{display:flex;flex-direction:column;gap:3px}
+.srun .k{font-size:20px;font-weight:650;color:#fff;letter-spacing:-.01em;line-height:1.3}
+.srun .v{font-size:18.5px;line-height:1.5;color:rgba(255,255,255,.66)}
+.srun .v b{color:rgba(255,255,255,.92);font-weight:650}
+
+/* ══ SPINE 2, IN / RUNS / OUT ══ */
+.sfrow{display:flex;align-items:stretch;gap:0;width:100%}
+.sfcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:11px}
+.sfcap{font-family:var(--mono);font-size:12px;font-weight:800;letter-spacing:.14em;
+  color:rgba(255,255,255,.34);text-align:center}
+.sfcol.i .sfcap{color:rgba(255,144,0,.8)}
+.sfcol.o .sfcap{color:rgba(0,193,182,.8)}
+.sfbody{flex:1;display:flex;flex-direction:column;gap:9px;justify-content:center;
+  padding:22px 20px;border-radius:15px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.12)}
+.sfcol.o .sfbody{border-color:rgba(0,193,182,.34)}
+.sfarr{flex:none;display:flex;align-items:center;padding:0 16px;font-size:26px;
+  color:rgba(255,255,255,.26)}
+.sfhead{font-family:var(--mono);font-size:21px;color:var(--orange);text-align:center;
+  padding:11px 0;margin-bottom:6px;border:1px dashed rgba(255,144,0,.5);border-radius:10px;
+  background:rgba(255,144,0,.07)}
+.sfl{font-size:17px;line-height:1.5;color:rgba(255,255,255,.68);text-align:center}
+.sfl.c{color:rgba(255,255,255,.55)}
+.sfl b{color:rgba(255,255,255,.92);font-weight:650}
+.sff{font-family:var(--mono);font-size:17px;color:var(--blue);line-height:1.5}
+.sff.r{color:var(--lpetrol)}
+.sfn{font-size:15px;line-height:1.45;color:rgba(255,255,255,.42)}
+.sfgap{height:9px}
+.sfrule{height:1px;background:rgba(255,255,255,.12);margin:5px 0}
+
+/* ══ SPINE 3, REVIEW ══ */
+.sopen{display:flex;align-items:baseline;gap:14px;padding:12px 17px;border-radius:11px;
+  background:rgba(90,165,255,.09);border:1px solid rgba(90,165,255,.36)}
+.sopen .k{font-family:var(--mono);font-size:11.5px;font-weight:800;letter-spacing:.15em;
+  color:var(--blue);min-width:58px;flex:none}
+.sopen .v{font-family:var(--mono);font-size:19px;color:var(--blue)}
+.sfork{display:flex;gap:16px;width:100%}
+.sbad,.sgood{flex:1;display:flex;align-items:baseline;gap:13px;padding:12px 17px;
+  border-radius:11px}
+.sbad{background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.34)}
+.sgood{background:rgba(0,153,153,.1);border:1px solid rgba(0,193,182,.36)}
+.sbad .k,.sgood .k{font-family:var(--mono);font-size:11px;font-weight:800;
+  letter-spacing:.14em;flex:none}
+.sbad .k{color:#FF5A5A}
+.sgood .k{color:var(--lpetrol)}
+.sbad .v,.sgood .v{font-size:17px;line-height:1.45;color:rgba(255,255,255,.84)}
+
+/* ══ SPINE OPTIONAL, THE QUESTIONS A CHECKPOINT ASKS ══ */
+.sqc{display:flex;flex-direction:column;gap:9px;padding:15px 19px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.13)}
+.sqc.open{background:rgba(255,144,0,.07);border-color:rgba(255,144,0,.4)}
+.sqc .q{font-size:18.5px;line-height:1.42;color:rgba(255,255,255,.9);font-weight:600}
+.sqc.open .q{color:var(--orange);font-weight:650}
+.sqos{display:flex;flex-direction:column;gap:5px;padding-left:2px}
+.sqo{display:flex;align-items:baseline;gap:12px}
+.sqo .l{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--lpetrol);
+  min-width:15px;flex:none}
+.sqo .x{font-size:16.5px;line-height:1.4;color:rgba(255,255,255,.62)}
+
+/* ══ SPINE OPTIONAL, FEEDBACK IN, CHANGE OUT ══ */
+.sfb{display:flex;align-items:center;gap:16px;padding:10px 17px;border-radius:10px;
+  background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.11)}
+.sfb .s{flex:1;min-width:0;font-size:17px;line-height:1.4;color:var(--orange);
+  font-style:italic}
+.sfb .a{flex:none;font-size:19px;color:rgba(255,255,255,.28)}
+.sfb .d{flex:1.15;min-width:0;font-size:16.5px;line-height:1.4;
+  color:rgba(255,255,255,.72)}
+.sfb .d b{color:var(--lpetrol);font-weight:400;font-family:var(--mono);font-size:15.5px}
+
+/* ══ BEAT 1, STAGE OPENER ══ */
+.soc{display:flex;gap:44px;align-items:flex-start;width:100%;max-width:1300px}
+.sonum{font-family:var(--mono);font-size:150px;font-weight:700;line-height:.86;
+  color:var(--lpetrol);opacity:.92;min-width:170px;text-align:right;
+  letter-spacing:-.04em}
+.sopl{display:flex;flex-direction:column;gap:9px;width:100%;max-width:1000px;
+  padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+.sopk{font-family:var(--mono);font-size:11.5px;font-weight:800;letter-spacing:.16em;
+  color:rgba(255,255,255,.4);margin-bottom:2px}
+.sop{position:relative;padding-left:26px;font-size:19.5px;line-height:1.5;
+  color:rgba(255,255,255,.8)}
+.sop::before{content:'\203A';position:absolute;left:4px;top:-1px;color:var(--lpetrol);
+  font-size:21px;font-weight:700}
+.sop b{color:#fff;font-weight:650}
+
+/* ══ BEAT 3, EXERCISE ══ */
+.sxk{font-family:var(--mono);font-size:13px;font-weight:800;letter-spacing:.15em;
+  padding:6px 13px;border-radius:7px;background:rgba(255,144,0,.14);
+  border:1px solid rgba(255,144,0,.5);color:var(--orange)}
+/* The translation toggle. Only exercise slides carry one, and it sits at the
+   far right of the header row so it never pushes the title around. Muted until
+   hover, because it is an affordance for the room rather than a thing to look
+   at. Chinese lines set slightly tighter than the English they replace. */
+.zhb{margin-left:auto;flex:none;font-family:var(--mono);font-size:13px;
+  font-weight:700;letter-spacing:.06em;padding:6px 14px;border-radius:7px;
+  cursor:pointer;color:rgba(255,255,255,.55);background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.2)}
+.zhb:hover{color:#fff;border-color:rgba(255,255,255,.45)}
+.slide.zh .sxs .t,.slide.zh .sxdone .v{line-height:1.4}
+.slide.zh .h1{line-height:1.2}
+/* Deck-wide language switch. Sits opposite the chapter bar, quiet until you
+   look for it. The per-slide exercise buttons stay: during an exercise you
+   often want one slide in Chinese while the rest of the room reads English. */
+#lang{position:fixed;top:15px;right:17px;z-index:120;display:flex;
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;
+  border:1px solid rgba(255,255,255,.18);border-radius:8px;overflow:hidden;
+  background:rgba(0,0,0,.42);backdrop-filter:blur(6px)}
+#lang button{appearance:none;border:0;background:transparent;font:inherit;
+  padding:6px 13px;color:rgba(255,255,255,.45);cursor:pointer}
+#lang button.on{background:rgba(255,255,255,.13);color:#fff}
+#lang button:hover:not(.on){color:rgba(255,255,255,.85)}
+@media print{#lang{display:none}}
+/* ══ EXERCISE BLOCK. Four at most. Chip, heading, one sentence beneath. ══
+   The .srun shape from runit(), in the exercise's orange. Added 2026-08-21
+   when the steps went from seven small ones to four blocks. Deliberately
+   roomier than .srun: at four blocks there is height to spend, and this is
+   the slide people read while standing at their laptop. */
+.sxr{display:flex;align-items:flex-start;gap:22px;padding:19px 24px;border-radius:13px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,144,0,.22)}
+.sxr .n{flex:none;width:34px;height:34px;border-radius:50%;display:flex;
+  align-items:center;justify-content:center;font-family:var(--mono);font-size:15px;
+  font-weight:800;color:var(--orange);border:1.5px solid rgba(255,144,0,.55)}
+.sxr .tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sxr .k{font-family:var(--mono);font-size:14px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--orange);line-height:1.3}
+.sxr .v{font-size:21px;line-height:1.45;color:rgba(255,255,255,.9)}
+.sxr .v b{color:#fff;font-weight:650}
+.sxr .v u{text-decoration:none;color:var(--blue);font-family:var(--mono);font-size:19px}
+.slide.zh .sxr .k{font-family:inherit;letter-spacing:.02em;text-transform:none}
+.slide.zh .sxr .v{line-height:1.55}
+
+.sxs{display:flex;align-items:flex-start;gap:15px;padding:14px 18px;border-radius:11px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12)}
+.sxs .n{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--orange);
+  min-width:20px;line-height:1.45}
+.sxs .t{font-size:20px;line-height:1.45;color:rgba(255,255,255,.88)}
+.sxs .t b{color:#fff;font-weight:650}
+.sxs .t u{text-decoration:none;color:var(--blue);font-family:var(--mono);font-size:18.5px}
+.sxb,.sxsee,.sxhw{display:flex;flex:1;min-width:0;flex-direction:column;gap:6px;
+  padding:12px 17px;border-radius:10px}
+.sxb{background:rgba(255,144,0,.09);border:1px solid rgba(255,144,0,.34)}
+.sxsee{background:rgba(0,153,153,.1);border:1px solid rgba(0,193,182,.36)}
+.sxhw{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.12)}
+.sxb .k,.sxsee .k,.sxhw .k{font-family:var(--mono);font-size:11.5px;font-weight:800;
+  letter-spacing:.13em;white-space:nowrap}
+.sxb .k{color:var(--orange)}
+.sxsee .k{color:var(--lpetrol)}
+.sxhw .k{color:rgba(255,255,255,.42)}
+.sxb .v,.sxsee .v,.sxhw .v{font-size:18px;line-height:1.45;color:rgba(255,255,255,.86)}
+.sxhw .v{font-size:16.5px;color:rgba(255,255,255,.6)}
+
+/* ══ BEAT 4, PAYOFF ══ */
+.spy{display:flex;align-items:baseline;gap:16px;padding:13px 18px;border-radius:10px;
+  background:rgba(0,153,153,.07);border:1px solid rgba(0,193,182,.3)}
+.spy .k{font-family:var(--mono);font-size:16.5px;color:var(--blue);min-width:250px}
+.spy .v{font-size:18px;line-height:1.45;color:rgba(255,255,255,.78)}
+
+/* ══ SMALL NOTE UNDER THE FOOT ══ */
+.sbn{font-size:15px;line-height:1.5;color:rgba(255,255,255,.33);text-align:center;
+  max-width:1060px;margin:0 auto}
+
+/* ══ RUNNING APP MOCK ══ */
+.saptop{display:flex;gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.09)}
+.sapl{height:26px;width:112px;border-radius:7px;background:rgba(0,193,182,.24)}
+.sapl.s{width:78px;background:rgba(255,255,255,.09)}
+.saptbl{display:flex;flex-direction:column;justify-content:space-evenly;padding:14px 0;flex:1}
+.saprow{display:flex;align-items:center;gap:14px}
+.sapb{height:11px;border-radius:5px;background:rgba(255,255,255,.13);display:block}
+.sapbtn{height:34px;width:132px;border-radius:8px;background:rgba(0,193,182,.55);align-self:flex-end}
+
+/* ══ FOLDER TREE ══ */
+.satr{font-family:var(--mono);font-size:15px;line-height:1.95;color:rgba(255,255,255,.52);
+  white-space:pre}
+.satr b{font-weight:400;color:var(--blue)}
+.satr em{font-style:normal;color:var(--orange)}
+.satr u{text-decoration:none;color:var(--lpetrol)}
+
+/* ══ QUESTION CARD, LABEL OVER VALUE ══ */
+.sbq{display:flex;flex-direction:column;gap:6px}
+.sbq .k{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.15em;
+  color:rgba(0,193,182,.72)}
+.sbq .v{font-size:21px;line-height:1.5;color:rgba(255,255,255,.84)}
+.sbq .v b{font-weight:650;color:#fff}
+.sbq.hot .k{color:rgba(255,144,0,.72)}
+.sbd{font-size:19px;line-height:1.5;color:rgba(255,255,255,.3);font-style:italic}
+
+/* ══ YOUR JOB HERE, one per stage slide ══ */
+.sjob{display:flex;align-items:center;justify-content:center;gap:15px}
+.sjob .k{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.15em;
+  color:var(--orange);white-space:nowrap;padding:5px 11px;border-radius:6px;
+  background:rgba(255,144,0,.1);border:1px solid rgba(255,144,0,.34)}
+.sjob .v{font-size:18px;line-height:1.45;color:rgba(255,255,255,.68)}
+.sjob .v b{color:#fff;font-weight:650}
+
+/* ══ STATUS CARD ══ */
+.sst{display:flex;flex-direction:column;gap:6px;padding:16px 19px;border-radius:10px;
+  text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.13)}
+.sst .k{font-family:var(--mono);font-size:14.5px;font-weight:700;color:rgba(255,255,255,.85)}
+.sst .v{font-size:16px;line-height:1.42;color:rgba(255,255,255,.5)}
+.sst.cool{border-color:rgba(0,193,182,.45);background:rgba(0,193,182,.07)}
+.sst.cool .k{color:var(--lpetrol)}
+.sst.hot{border-color:rgba(255,144,0,.45);background:rgba(255,144,0,.07)}
+.sst.hot .k{color:var(--orange)}
+
+/* ══ EXAMPLE MARKER ══ */
+.stag{font-family:var(--mono);font-size:10.5px;font-weight:800;letter-spacing:.15em;
+  padding:4px 10px;border-radius:6px;white-space:nowrap;
+  background:rgba(90,165,255,.13);border:1px solid rgba(90,165,255,.42);color:#5AA5FF}
+
+/* ══ ICON CARD GRID ══ */
+/* Rows size to their content and the block centres in the body, rather than
+   every card stretching to full slide height. With the card content also
+   top-aligned, the three icons and the three headings land on one line. */
+.scdg{display:grid;gap:20px;width:100%;height:100%;align-content:center}
+.scdg.c2{grid-template-columns:repeat(2,1fr)}
+.scdg.c3{grid-template-columns:repeat(3,1fr)}
+.scd{display:flex;flex-direction:column;gap:14px;padding:30px 30px;border-radius:15px;
+  justify-content:flex-start;background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.13)}
+.scd svg{flex:none;opacity:.95}
+.scd .h{font-size:24px;font-weight:650;line-height:1.25;color:#fff;letter-spacing:-.01em}
+.scd .b{font-size:18px;line-height:1.5;color:rgba(255,255,255,.62)}
+.scd .b b{color:rgba(255,255,255,.9);font-weight:650}
+
+/* ══ EXERCISE, THE ONE THIN DONE LINE ══ */
+.sxdone{display:flex;align-items:baseline;gap:14px;padding:11px 18px;border-radius:10px;
+  background:rgba(255,144,0,.08);border:1px solid rgba(255,144,0,.34);width:100%}
+.sxdone .k{font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.14em;
+  color:var(--orange);white-space:nowrap;flex:none}
+.sxdone .v{font-size:18px;line-height:1.4;color:rgba(255,255,255,.86)}
+
+/* OPEN sitting on the title row rather than on a bar of its own */
+.sopen.tall{flex:none;max-width:620px;align-self:center}
+
+/* ══ RANKED REQUEST ROW ══ */
+.sbr{display:flex;align-items:center;gap:22px;padding:23px 28px;border-radius:11px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1)}
+.sbr.one{background:rgba(255,144,0,.08);border-color:rgba(255,144,0,.4)}
+.sbr .n{font-family:var(--mono);font-size:22px;font-weight:700;
+  color:rgba(0,193,182,.8);min-width:28px}
+.sbr.one .n{color:var(--orange)}
+.sbr .t{font-size:20px;line-height:1.35;color:rgba(255,255,255,.84)}
+.sbr .t span{color:rgba(255,255,255,.4)}
+
+/* ══ COMPARISON TABLE ══ */
+/* Added 2026-08-20 round 3 for the two slides that are genuinely a matrix and
+   were being faked as prose lists: which stages cost you what, given what you
+   brought, and the path A / path B fork at stage 1. Both are one argument at
+   two altitudes and both need a reader to compare ACROSS a row and DOWN a
+   column, which no card grid supports.
+   Column count is set by a modifier class so the grid never has to be inlined
+   per call site. Cells carry a tone: .hot marks the expensive one, which is the
+   only thing either slide is really trying to say. */
+.smx{display:grid;gap:10px;width:100%;height:100%;align-content:center}
+.smx.k3{grid-template-columns:1.15fr 1fr 1fr 1fr}
+.smx.k2{grid-template-columns:.85fr 1fr 1fr}
+.smxh{font-family:var(--mono);font-size:12.5px;font-weight:800;letter-spacing:.12em;
+  color:rgba(255,255,255,.5);text-transform:uppercase;padding:0 4px 4px 4px;
+  align-self:end;line-height:1.35}
+.smxh.c{color:rgba(0,193,182,.85)}
+/* The cell is a flex box that centres ONE child, and the text lives in that
+   child. Both shorter versions of this were wrong on a rendered frame and
+   neither was visible to verify.py:
+     display:flex  directly on the text made every inline <b> and <u> a sibling
+                   COLUMN, so a sentence rendered in ragged halves.
+     display:grid  directly on the text made every inline element its own ROW,
+                   so a comma-separated file list broke one file per line with
+                   the commas orphaned at the start of the next.
+   Both are the same mistake: a formatting context applied to the element that
+   owns the prose. Keep the wrapper. */
+.smxr,.smxc{display:flex;align-items:center;padding:16px 18px;border-radius:11px}
+.smxr{background:rgba(255,144,0,.07);border:1px solid rgba(255,144,0,.34)}
+.smxr .t{font-size:19px;font-weight:650;line-height:1.3;color:#fff}
+.smxc{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.12)}
+.smxc .t{font-size:17.5px;line-height:1.42;color:rgba(255,255,255,.62)}
+.smxc.hot .t{color:rgba(255,255,255,.92)}
+.smxc.hot{background:rgba(0,193,182,.11);border-color:rgba(0,193,182,.5)}
+.smxc b{color:#fff;font-weight:650}
+.smxc u{text-decoration:none;color:var(--lpetrol);font-family:var(--mono);font-size:16px}
+
+/* additions needed for the Stage 6 rebuild, lifted from chapter-testing.html verbatim */
+.itbl{width:100%;border-radius:11px;border:1px solid rgba(255,255,255,.15);overflow:hidden}
+.itr{display:grid;grid-template-columns:250px 1fr 1fr 286px;border-bottom:1px solid rgba(255,255,255,.07)}
+.itr:last-child{border-bottom:0}
+.itr.hdr{background:rgba(255,255,255,.05)}
+.itr > span{padding:11px 18px;font-size:15px;line-height:1.4;color:rgba(255,255,255,.68);align-self:center}
+.itr.hdr > span{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.38)}
+.itr .iname{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-size:15.5px;font-weight:650;color:#fff}
+.itr .blind{color:rgba(255,255,255,.44)}
+.itr.must{background:rgba(0,193,182,.07)}
+.itbl.two .itr{grid-template-columns:400px 1fr}
+.itbl.three .itr{grid-template-columns:88px 1fr 170px}
+.itbl.three .itr .rc{font-family:var(--mono);font-size:17px;font-weight:800;color:#fff}
+.itbl.three .itr .bkt{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.05em}
+.bkt.p{color:var(--lpetrol)} .bkt.f{color:var(--red)} .bkt.x{color:rgba(255,255,255,.5)}
+.pill.mini{font-size:10.5px;letter-spacing:.09em;padding:3px 9px}
+.card.tight{padding:19px 22px}
+.guard{border-left:3px solid rgba(0,193,182,.65);background:rgba(0,193,182,.06);
+  padding:9px 0 9px 14px;font-size:14.5px;line-height:1.44;color:rgba(255,255,255,.9);margin-top:11px}
+.glab{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--lpetrol);display:block;margin-bottom:4px}
+.dateline{font-family:var(--mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.38);margin-top:8px}
+.itbl.inv .itr{grid-template-columns:246px 1fr 1fr 232px}
+.itbl.inv .itr > span{padding:7px 16px;font-size:14px;line-height:1.34}
+.itbl.inv .itr.hdr > span{padding:7px 16px;font-size:11px;line-height:1.35}
+.itbl.inv .iname{font-family:var(--mono);font-size:13.5px;font-weight:650;color:#fff}
+.trg{display:flex;align-items:center;gap:8px}
+.trg .tq{font-family:var(--mono);font-size:12.5px;color:rgba(255,255,255,.42);line-height:1.3;white-space:nowrap}
+
+.spot{display:flex;flex-direction:column;gap:13px;padding:22px 24px}
+.sph{display:flex;align-items:center;gap:11px}
+.spnum{font-family:var(--mono);font-size:13px;font-weight:800;width:25px;height:25px;border-radius:7px;
+  display:grid;place-items:center;flex-shrink:0;color:var(--lpetrol);background:rgba(0,193,182,.14)}
+.card-r .spnum{color:var(--red);background:rgba(225,80,63,.18)}
+.card-a .spnum{color:var(--orange);background:rgba(255,144,0,.18)}
+.spn{font-size:19px;font-weight:700;color:#fff;line-height:1.24}
+.spx{display:block;font-size:15.5px;line-height:1.5;color:rgba(255,255,255,.68)}
+.steps.big{gap:20px}
+.steps.big .stp{padding:24px 22px 26px;border-radius:14px;gap:12px}
+.steps.big .stp .spnum{width:34px;height:34px;font-size:16px;border-radius:9px;margin-bottom:2px}
+.steps.big .stp .stpn{font-size:13.5px;letter-spacing:.13em}
+.steps.big .stp .stpt{font-size:22px;line-height:1.22}
+.steps.big .stp .stpd{font-size:15px;line-height:1.5;color:rgba(255,255,255,.68)}
+
+</style>
+</head>
+<body>
+<!-- REEL BODY. Built into reel.html by build.py, which prepends the master deck's
+     <style> block so the visual system is identical, not a copy that drifts. -->
+<style>
+/* ══ reveal system ══ */
+.rv{opacity:0;transform:translateY(14px);
+    transition:opacity .55s var(--ease),transform .55s var(--ease)}
+.rv.on{opacity:1;transform:none}
+.rv.nofly{transform:none}
+
+/* ══ recording chrome ══ */
+body.rec #dots,body.rec .arr,body.rec #snum,body.rec #hint{display:none}
+#hint{position:fixed;bottom:14px;left:18px;z-index:100;font-family:var(--mono);font-size:12px;
+  color:rgba(255,255,255,.28)}
+
+/* ══ slide 1: the nesting ══ */
+.nest{position:relative;width:100%;height:100%}
+.nb{position:absolute;border-radius:14px;border:1.6px solid;background:rgba(255,255,255,.012)}
+.nb > .nbh{position:absolute;top:-12px;left:20px;right:16px;display:flex;
+  align-items:baseline;justify-content:space-between;gap:16px}
+.nb .nbt{font-size:21px;font-weight:700;color:#fff;letter-spacing:-.01em;
+  background:var(--n950);padding:0 10px;white-space:nowrap}
+.nb .nbr{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  background:var(--n950);padding:0 10px;white-space:nowrap}
+.nb .nbn{position:absolute;top:-13px;left:-13px;width:26px;height:26px;border-radius:50%;
+  display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:800;
+  color:var(--n950)}
+.modelbox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:320px;height:96px;padding:0 14px;border-radius:10px;
+  border:1.6px dashed rgba(0,193,182,.75);background:rgba(0,193,182,.06);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.modelbox .mt{font-size:20px;font-weight:800;letter-spacing:.06em;color:var(--lpetrol)}
+.modelbox .ms{font-size:14.5px;color:rgba(255,255,255,.5)}
+.thenbox{width:340px;flex:none;border:1px solid rgba(255,255,255,.14);border-radius:14px;
+  padding:26px 24px;display:flex;flex-direction:column;gap:8px;position:relative;height:100%}
+.thenbox .tt{font-size:21px;font-weight:700;color:rgba(255,255,255,.82)}
+.thenbox .tr{font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(255,255,255,.34)}
+.vrule{width:1px;background:rgba(255,255,255,.12);flex:none;margin:0 30px}
+
+/* ══ slide 2: what it can see ══ */
+.ctxframe{position:relative;width:100%;height:100%;border:1px dashed rgba(255,255,255,.14);
+  border-radius:16px}
+.ctxframe .ctop{position:absolute;top:-9px;left:22px;background:var(--n950);padding:0 10px;
+  font-size:15px;color:rgba(255,255,255,.55)}
+.ctxframe .cwarn{position:absolute;bottom:-13px;left:0;right:0;text-align:center;
+  font-size:17.5px;font-weight:650;color:var(--orange)}
+.ctxframe .cwarn span{background:var(--n950);padding:0 14px}
+.ctxout{position:absolute;top:50%;transform:translateY(-50%);display:flex;
+  flex-direction:column;gap:52px}
+.ctxout.l{left:112px;top:46%} .ctxout.r{right:112px;align-items:flex-end;top:56%}
+.ctxout div{font-size:17px;color:rgba(255,255,255,.55);padding:11px 18px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035)}
+.ctxsee{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:430px;
+  border:1.6px solid rgba(0,193,182,.5);background:rgba(0,193,182,.07);border-radius:14px;
+  padding:26px 22px;display:flex;flex-direction:column;gap:19px;align-items:center}
+.ctxsee.on{transform:translate(-50%,-50%)}
+.ctxsee .st{font-family:var(--mono);font-size:13px;font-weight:800;letter-spacing:.13em;
+  color:var(--lpetrol)}
+.ctxsee div.l{font-size:18px;color:rgba(255,255,255,.88);text-align:center}
+
+/* ══ slide 4: the pipeline ══ */
+.prow{display:flex;align-items:flex-start;width:100%;gap:0}
+.pst{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;min-width:0}
+.pst+.pst::before{content:'';position:absolute;top:34px;left:-50%;width:100%;height:1.5px;
+  background:rgba(255,255,255,.14)}
+.pnd{width:68px;height:68px;border-radius:50%;display:grid;place-items:center;font-size:24px;
+  font-weight:800;font-family:var(--mono);border:2.5px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);position:relative;z-index:1;
+  transition:all .45s var(--ease)}
+.pst.done .pnd{border-color:rgba(0,153,153,.85);background:rgba(0,153,153,.18);color:var(--lpetrol)}
+.pst.now .pnd{border-color:var(--orange);background:rgba(255,144,0,.2);color:var(--orange);
+  transform:scale(1.16);box-shadow:0 0 0 8px rgba(255,144,0,.08)}
+.pgate{margin-top:9px;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.13em;
+  color:rgba(0,193,182,.75);height:12px}
+.plb{margin-top:8px;font-size:17px;font-weight:650;text-align:center;line-height:1.2;
+  color:rgba(255,255,255,.5);transition:color .45s var(--ease);padding:0 3px}
+.pst.done .plb,.pst.now .plb{color:rgba(255,255,255,.88)}
+.pcap{width:100%;margin-top:44px;min-height:104px;display:flex;align-items:center;
+  justify-content:center}
+.pcapin{display:flex;align-items:center;gap:26px;padding:18px 30px;border-radius:14px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12);
+  opacity:0;transition:opacity .35s var(--ease)}
+.pcapin.on{opacity:1}
+.pcapin .side{display:flex;flex-direction:column;gap:5px;min-width:270px}
+.pcapin .k{font-family:var(--mono);font-size:11.5px;font-weight:800;letter-spacing:.15em;
+  color:rgba(255,255,255,.34)}
+.pcapin .v{font-size:19px;font-weight:650;color:#fff}
+.pcapin .arrw{font-size:26px;color:var(--orange);font-weight:300}
+
+/* ══ slide 5: modules ══ */
+.mods{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;width:100%;align-items:start}
+.modc{display:flex;flex-direction:column;gap:9px}
+.modh{border-radius:11px;padding:13px 16px;text-align:center}
+.modh .mn{font-size:19px;font-weight:700;color:rgba(255,255,255,.92)}
+.modh .mw{font-size:14px;margin-top:3px}
+.asset{border-radius:7px;padding:7px 13px;font-size:15.5px;display:flex;gap:11px;
+  align-items:center}
+.asset.new{background:rgba(0,193,182,.13);border:1px solid rgba(0,193,182,.5);
+  color:rgba(255,255,255,.88)}
+.asset.old{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.11);
+  color:rgba(255,255,255,.42)}
+.asset .g{font-family:var(--mono);font-weight:800;color:var(--lpetrol);flex:none;width:9px}
+.modf{font-size:13.5px;color:rgba(255,255,255,.32);text-align:center;margin-top:5px}
+.modrole{margin-top:16px;padding-top:22px;display:flex;flex-direction:column;align-items:center;
+  gap:7px;position:relative}
+.modrole::before{content:'';position:absolute;top:0;left:-13px;right:-13px;height:1px;
+  background:rgba(255,255,255,.1)}
+.modrole .dotm{width:18px;height:18px;border-radius:50%}
+.modrole .rt{font-size:16px;color:rgba(255,255,255,.62);text-align:center;line-height:1.35}
+
+/* ══ fill the middle band rather than float in it ══ */
+.samid.s > .scdg{align-content:stretch}
+.mods{align-items:stretch}
+.modc{height:100%}
+.modrole{margin-top:auto}
+
+/* ══ phone first: this is watched at about 400px wide ══ */
+.asset{font-size:16px}
+.modf{font-size:15px;color:rgba(255,255,255,.4)}
+.sctc .sfl{font-size:22.5px}
+.sctf{font-size:16.5px}
+.scd .b{font-size:19.5px}
+
+/* ══ headless run diagram ══ */
+.pchip{font-family:var(--mono);font-size:16.5px;padding:8px 15px;border-radius:8px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.16);
+  color:rgba(255,255,255,.72);white-space:nowrap}
+.pchip.hot{border-color:rgba(255,144,0,.6);background:rgba(255,144,0,.1);color:var(--orange)}
+.parr{color:rgba(255,255,255,.3);font-size:16px}
+/* ══ slides 4b + 7b: fill the middle band instead of floating in it ══ */
+#srcslide .scd .b,#guardslide .scd .b,#agentslide .scd .b{font-size:19.5px}
+#vibeslide .scd .b{font-size:17px;line-height:1.5}
+#vibeslide .scd .h{font-size:23px}
+.agn{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.1em;color:var(--lpetrol);margin-top:-4px}
+/* ══ slide 7d: the project folder ══ */
+.ftree{font-family:var(--mono);border-radius:14px;background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.14);padding:26px 34px;display:flex;
+  flex-direction:column;gap:14px;min-width:840px}
+.ftroot{font-size:19px;font-weight:800;color:#fff}
+.ftg{display:flex;flex-direction:column;gap:7px;padding-left:24px}
+.ftr{display:flex;align-items:baseline;gap:20px;font-size:17.5px;line-height:1.35}
+.ftr .fn{flex:0 0 210px;color:var(--lpetrol);font-weight:700}
+.ftr .fc{color:rgba(255,255,255,.5)}
+.ftg.later{border-left:1.5px solid rgba(255,144,0,.45);margin-left:8px;padding-left:16px}
+.ftg.later .fn{color:rgba(255,255,255,.34);font-weight:600}
+.ftg.later .fc{color:var(--orange)}
+.ftnote{font-family:var(--sans);font-size:17px;color:rgba(255,255,255,.6);padding-left:24px}
+/* ══ slide 6 simplified: carry-over stated once, not re-listed ══ */
+.carry{font-size:14.5px;font-style:italic;color:rgba(255,255,255,.34);padding:5px 4px 3px;
+  border-bottom:1px dashed rgba(255,255,255,.12);margin-bottom:3px}
+.scdf{margin-top:auto;padding-top:13px;font-family:var(--mono);font-size:13px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;color:rgba(0,193,182,.72);
+  border-top:1px solid rgba(255,255,255,.1)}
+.gchain{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.gchain .pchip{font-size:18px;padding:10px 18px}
+.scdl{gap:13px}
+</style>
+
+<div id="stage" style="transform: translate(-50%, -50%) scale(1.01111);">
+
+<!-- ══════════ 1 · cover ══════════ -->
+<div class="slide bg-mesh center cover active" data-steps="3">
+  <div class="col center a" style="gap:18px;width:100%;max-width:1180px">
+    <div class="rv label nofly on" data-s="0">An introduction</div>
+    <div class="rv nofly on" data-s="0" style="font-size:82px;font-weight:700;line-height:1.06;
+      letter-spacing:-.025em;text-align:center"><em>AI Engineering</em></div>
+    <div class="rv nofly" data-s="1" style="font-size:30px;font-weight:500;line-height:1.3;
+      color:rgba(255,255,255,.72);text-align:center;margin-top:-4px">Taking a real system through
+      nine stages</div>
+    <div class="rv divider div-c nofly" data-s="2"></div>
+    <div class="rv body nofly" data-s="2" style="max-width:820px;text-align:center">Where the work
+      moved, what we built to do it, and what it looks like running.</div>
+  </div>
+</div>
+
+<!-- ══════════ 2 · the shape change ══════════ -->
+<div class="slide bg-dark" data-steps="5">
+  <div class="col wide" style="gap:20px">
+    <div class="col a" style="gap:6px">
+      <div class="label">How software engineering changed shape</div>
+      <div class="h1">The model became the <em>smallest part of the system</em>.</div>
+    </div>
+    <div class="samid s"><div class="row" style="width:100%;align-items:stretch">
+
+      <div class="nest">
+        <div class="rv nb" data-s="3" style="inset:8px 8px 10px 10px;border-color:rgba(90,165,255,.55)">
+          <div class="nbn" style="background:#5AA5FF">4</div>
+          <div class="nbh"><span class="nbt">Loop engineering</span>
+            <span class="nbr" style="color:#5AA5FF">The system</span></div>
+        </div>
+        <div class="rv nb" data-s="2" style="inset:54px 28px 36px 66px;border-color:rgba(0,193,182,.5)">
+          <div class="nbn" style="background:#00C1B6">3</div>
+          <div class="nbh"><span class="nbt">Harness engineering</span>
+            <span class="nbr" style="color:#00C1B6">The orchestration</span></div>
+        </div>
+        <div class="rv nb" data-s="1" style="inset:100px 48px 62px 122px;border-color:rgba(0,193,182,.65)">
+          <div class="nbn" style="background:#00C1B6">2</div>
+          <div class="nbh"><span class="nbt">Context engineering</span>
+            <span class="nbr" style="color:#00C1B6">The memory</span></div>
+        </div>
+        <div class="rv nb on" data-s="0" style="inset:146px 68px 88px 178px;border-color:rgba(0,193,182,.8)">
+          <div class="nbn" style="background:#00C1B6">1</div>
+          <div class="nbh"><span class="nbt">Prompt engineering</span>
+            <span class="nbr" style="color:#00C1B6">The message</span></div>
+          <div class="modelbox">
+            <div class="mt">THE MODEL</div>
+            <div class="ms">Inference. Generation. Nothing more.</div>
+          </div>
+        </div>
+      </div>
+
+    </div></div>
+    <div class="rv saf nofly" data-s="4">The model is the one part you do not build.
+      <b>Everything around it is engineering</b>, and that is where the last few years went.</div>
+  </div>
+</div>
+
+<!-- ══════════ 3 · the pipeline ══════════ -->
+<div class="slide bg-grid" data-steps="11" id="pipeslide">
+  <div class="col wide" style="gap:16px">
+    <div class="col a" style="gap:6px">
+      <div class="label">What we build on top of it</div>
+      <div class="h1">The <em>AI engineering pipeline</em>.</div>
+    </div>
+    <div class="samid s"><div class="col" style="width:100%;justify-content:center">
+      <div class="prow" style="position:relative">
+        <svg class="rv nofly" data-s="8" viewBox="0 0 1000 80" preserveAspectRatio="none" style="position:absolute;left:0;top:118px;width:100%;height:80px;overflow:visible">
+          <path d="M722 4 C 752 58, 803 58, 833 4" fill="none" stroke="rgba(90,165,255,.6)" stroke-width="1.8" vector-effect="non-scaling-stroke"></path>
+        </svg>
+        <div class="rv nofly" data-s="8" style="position:absolute;left:77.8%;top:152px;
+             transform:translateX(-50%);font-size:14px;font-weight:650;color:#5AA5FF;
+             background:#05060e;padding:0 9px">a loop</div>
+        <div class="pst" data-in="a blank app" data-out="project folder, agent config"><div class="pnd">P</div><div class="pgate"></div><div class="plb">Kickoff</div></div>
+        <div class="pst" data-in="whatever source you have" data-out="a map of the source, what is relevant, what is in scope"><div class="pnd">0</div><div class="pgate">GATE</div><div class="plb">Triage</div></div>
+        <div class="pst" data-in="the source files" data-out="mapped into readable formats, XML to JSON, into Mendix terms, plus a quality read"><div class="pnd">1</div><div class="pgate"></div><div class="plb">Analysis</div></div>
+        <div class="pst" data-in="the mapped source" data-out="business requirement documents, and the open gaps in scope"><div class="pnd">2</div><div class="pgate"></div><div class="plb">Requirements</div></div>
+        <div class="pst" data-in="the BRDs" data-out="blueprints and wireframes"><div class="pnd">3</div><div class="pgate">GATE</div><div class="plb">Architecture</div></div>
+        <div class="pst" data-in="the blueprint" data-out="numbered scripts, coverage map"><div class="pnd">4</div><div class="pgate">GATE</div><div class="plb">Build plan</div></div>
+        <div class="pst" data-in="the scripts" data-out="the model, build log"><div class="pnd">5</div><div class="pgate"></div><div class="plb">Build</div></div>
+        <div class="pst" data-in="the running app" data-out="end to end test report, quality report"><div class="pnd">6</div><div class="pgate"></div><div class="plb">Test</div></div>
+        <div class="pst" data-in="the reports" data-out="cutover record, sign off"><div class="pnd">7</div><div class="pgate">GATE</div><div class="plb">Cutover</div></div>
+      </div>
+      <div class="pcap"><div class="pcapin" id="pcapin">
+        <div class="side"><div class="k">IN</div><div class="v" id="pin">a blank app</div></div>
+        <div class="arrw">→</div>
+        <div class="side"><div class="k">OUT</div><div class="v" id="pout">project folder, agent config</div></div>
+      </div></div>
+      <div class="rv nofly on" data-s="0" style="text-align:center;font-family:var(--mono);
+        font-size:13px;letter-spacing:.12em;margin-top:16px;color:rgba(0,193,182,.7)">GATE
+        = a human signs off before the pipeline continues</div>
+    </div></div>
+    <div class="rv saf nofly" data-s="10">Each stage hands the next one files, not a conversation.
+      Four of them are hard stops. <b>Each of these is its own post.</b></div>
+  </div>
+</div>
+
+<!-- ══════════ 4 · source is whatever you have ══════════ -->
+<div class="slide bg-steel" data-steps="3">
+  <div class="col wide" style="gap:16px">
+    <div class="col a" style="gap:6px">
+      <div class="label">What counts as source</div>
+      <div class="h1">Source is <em>whatever you have</em>. Rarely just code.</div>
+    </div>
+    <div class="samid"><svg class="rv" data-s="1" viewBox="0 0 1140 410"><defs><marker id="a5AA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5AA5FF"></path></marker><marker id="aFF9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#FF9000"></path></marker></defs><rect x="0" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(70,20)"><ellipse cx="15" cy="6" rx="12" ry="4.5" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></ellipse><path d="M3 6 v16 a12 4.5 0 0 0 24 0 v-16" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 14 a12 4.5 0 0 0 24 0" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="85" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">A database</text><text x="85" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">schemas, tables, views</text><path d="M85 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="194" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(264,20)"><rect x="2" y="3" width="26" height="24" rx="3" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></rect><path d="M2 11 h26 M2 19 h26 M11 9 v18 M20 9 v18" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="279" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Spreadsheets</text><text x="279" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">mappings, rules, lists</text><path d="M279 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="388" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(458,20)"><path d="M5 2 h15 l7 7 v19 h-22 z" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 15 h11 M10 21 h11 M10 27 h7" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="473" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">User manuals</text><text x="473" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">specs, process notes</text><path d="M473 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="582" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(652,20)"><path d="M2 6 h17 l9 9 l-9 9 h-17 z" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="9" cy="15" r="2.2" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></circle></g><text x="667" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Tickets</text><text x="667" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">years of small decisions</text><path d="M667 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="776" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(846,20)"><rect x="1" y="4" width="28" height="22" rx="3" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></rect><circle cx="9" cy="11" r="3" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></circle><path d="M4 22 l6 -7 l6 7 l4 -4 l6 6" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="861" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Screenshots</text><text x="861" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">screens with no spec</text><path d="M861 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="970" y="0" width="170" height="104" rx="12" fill="rgba(255,255,255,.04)" stroke="rgba(255,255,255,.15)" stroke-width="1.3"></rect><g transform="translate(1040,20)"><path d="M9 7 l-8 8 l8 8 M21 7 l8 8 l-8 8 M18 6 l-6 18" fill="none" stroke="#00C1B6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></g><text x="1055" y="72" fill="#fff" font-size="17" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">A codebase</text><text x="1055" y="91" fill="#9aa0b5" font-size="12.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">the system as it runs</text><path d="M1055 104 V150" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><path d="M85 150 H1055" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><path d="M570 150 V174" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.3"></path><rect x="410" y="174" width="320" height="62" rx="12" fill="rgba(0,193,182,.1)" stroke="rgba(0,193,182,.55)" stroke-width="1.5"></rect><text x="570" y="205" fill="#fff" font-size="21" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">sources/</text><text x="570" y="225" fill="#9aa0b5" font-size="13" text-anchor="middle" font-family="Inter,system-ui,sans-serif">opened read only, never edited</text><path d="M570 236 C280 280, 280 280, 280 312" fill="none" stroke="#5AA5FF" stroke-width="2" marker-end="url(#a5AA)"></path><rect x="40" y="312" width="480" height="94" rx="12" fill="rgba(255,255,255,.04)" stroke="#5AA5FF" stroke-width="1.4"></rect><text x="280" y="344" fill="#fff" font-size="19" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Stage 0, triage</text><text x="280" y="368" fill="#9aa0b5" font-size="14.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">What is each file?</text><text x="280" y="388" fill="#9aa0b5" font-size="14.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Is the set of them enough to build from?</text><path d="M570 236 C860 280, 860 280, 860 312" fill="none" stroke="#FF9000" stroke-width="2" marker-end="url(#aFF9)"></path><rect x="620" y="312" width="480" height="94" rx="12" fill="rgba(255,255,255,.04)" stroke="#FF9000" stroke-width="1.4"></rect><text x="860" y="344" fill="#fff" font-size="19" font-weight="650" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Stage 1, extraction</text><text x="860" y="368" fill="#9aa0b5" font-size="14.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">Read the same pile properly,</text><text x="860" y="388" fill="#9aa0b5" font-size="14.5" text-anchor="middle" font-family="Inter,system-ui,sans-serif">and turn it into data you can query.</text></svg></div>
+    <div class="rv saf nofly" data-s="2">Most projects bring four or five of these at once, and the weakest one sets the grade. <b>The pile does not change between stage 0 and stage 1. What you ask of it does.</b></div>
+  </div>
+</div>
+
+<!-- ══════════ 5 · context is a size problem ══════════ -->
+<div class="slide bg-grid" data-steps="4">
+  <div class="col wide" style="gap:18px">
+    <div class="col a" style="gap:6px">
+      <div class="label">Context engineering, in practice</div>
+      <div class="h1">Cut the work until the context <em>fits one window</em>.</div>
+    </div>
+    <div class="samid s"><div class="col" style="width:100%;gap:18px;justify-content:center">
+      <div style="flex:1;min-height:0;display:flex">
+      <svg class="rv nofly" data-s="1" viewBox="0 0 1000 396" style="width:100%;height:100%">
+      <rect x="40" y="132" width="260" height="140" rx="12" fill="rgba(255,144,0,.09)" stroke="rgba(255,144,0,.45)"></rect>
+      <text x="170" y="196" fill="rgba(255,255,255,.82)" font-size="19" font-weight="600" text-anchor="middle" font-family="Inter,sans-serif">one module</text>
+      <text x="170" y="222" fill="rgba(255,255,255,.45)" font-size="16" text-anchor="middle" font-family="Inter,sans-serif">as it arrives</text>
+      <rect x="520" y="34" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="60" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">the data model, whole</text><path d="M300 202 C 410 202, 410 54, 520 54" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="34" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="48" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="34" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 54 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="520" y="90" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="116" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">the shared UI module</text><path d="M300 202 C 410 202, 410 110, 520 110" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="90" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="104" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="90" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 110 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="520" y="146" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="172" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">one group of microflows</text><path d="M300 202 C 410 202, 410 166, 520 166" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="146" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="160" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="146" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 166 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="520" y="202" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="228" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">one page, with its bindings</text><path d="M300 202 C 410 202, 410 222, 520 222" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="202" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="216" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="202" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 222 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="520" y="258" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="284" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">roles and grants</text><path d="M300 202 C 410 202, 410 278, 520 278" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="258" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="272" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="258" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 278 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path><rect x="520" y="314" width="270" height="40" rx="8" fill="rgba(255,255,255,.055)" stroke="rgba(255,255,255,.16)"></rect><text x="540" y="340" fill="rgba(255,255,255,.7)" font-size="16" font-family="Inter,sans-serif">the tests for all of it</text><path d="M300 202 C 410 202, 410 334, 520 334" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.4"></path><rect x="836" y="314" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><rect x="848" y="328" width="16" height="12" rx="2" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><rect x="892" y="314" width="40" height="40" rx="8" fill="rgba(0,193,182,.13)" stroke="rgba(0,193,182,.45)"></rect><path d="M902 334 l6 7 l12 -13" fill="none" stroke="#00C1B6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <text x="856" y="18" fill="rgba(255,255,255,.4)" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="middle" font-family="ui-monospace,monospace">FITS</text>
+      <text x="912" y="18" fill="rgba(255,255,255,.4)" font-size="11" font-weight="700" letter-spacing="1.2" text-anchor="middle" font-family="ui-monospace,monospace">PROVES</text>
+    </svg>
+      </div>
+      <div class="rv nofly row" data-s="2" style="gap:14px;align-items:stretch">
+        <div class="card card-a tight" style="flex:1;display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#FF9000">Too little</div>
+          <div style="font-size:19px;font-weight:650;color:#fff;line-height:1.3">The model fills the gaps itself.</div>
+          <div style="font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.55)">It invents your naming, your validation rules, your error handling, and it sounds sure about it.</div>
+        </div>
+        <div class="card card-t tight" style="flex:1;display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#00C1B6">The fit</div>
+          <div style="font-size:19px;font-weight:650;color:#fff;line-height:1.3">One piece, and everything that piece needs.</div>
+          <div style="font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.55)">One module. One group of microflows. One page and its bindings.</div>
+        </div>
+        <div class="card card-b tight" style="flex:1;display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#5AA5FF">Too much</div>
+          <div style="font-size:19px;font-weight:650;color:#fff;line-height:1.3">It loses the thread, and you pay for every token.</div>
+          <div style="font-size:14.5px;line-height:1.5;color:rgba(255,255,255,.55)">Detail from six other modules crowds out the part that matters, on every call after that.</div>
+        </div>
+      </div>
+    </div></div>
+    <div class="rv saf nofly" data-s="3">The tree is not the point. <b>The two marks on every leaf are the point.</b>
+      A piece is only a piece if what it needs fits, and if something other than the model can say it is done.</div>
+  </div>
+</div>
+
+<!-- ══════════ 6 · CLI + pipeline ══════════ -->
+<div class="slide bg-dark" data-steps="6">
+  <div class="col wide" style="gap:16px">
+    <div class="col a" style="gap:6px">
+      <div class="label">What we build on top of the CLI</div>
+      <div class="h1">A tool that can do anything still has to be told <em>what to do next</em>.</div>
+    </div>
+    <div class="samid"><div class="col" style="width:100%;gap:0;justify-content:center">
+
+      <div class="rv" data-s="2" style="position:relative;padding:34px 26px 26px;border-radius:17px;
+        border:1.5px solid rgba(0,193,182,.45);background:rgba(0,193,182,.05)">
+        <div style="position:absolute;top:-13px;left:26px;font-family:var(--mono);font-size:13.5px;
+          letter-spacing:.14em;color:var(--lpetrol);background:#05060e;padding:2px 10px">THE PIPELINE</div>
+        <div class="col" style="gap:14px">
+          <div class="row rv nofly" data-s="3" style="gap:16px;align-items:stretch">
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px">A defined process</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">Nine stages, kickoff through cutover, in a fixed order. Each one reads the files the last one wrote.</div>
+          </div>
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px">Instructions for this project</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">Module names, conventions, what good looks like here. Written once, read at the start of every stage.</div>
+          </div>
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px">The wiring</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">One project folder. Sources, analysis, plans, scripts, reports. Every stage adds to it and nothing is thrown away.</div>
+          </div>
+          </div>
+          <div class="row rv nofly" data-s="4" style="gap:16px;align-items:stretch">
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px">Six agents, already defined</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">BA and architect decide, MDL drafts, gate, test and review check the result. <b style="color:#fff">None of them can change your model.</b></div>
+          </div>
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px">Skill packs</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">The Mendix knowledge the model does not have, carried as assets and not as prose.</div>
+          </div>
+          <div style="flex:1;padding:17px 19px;border-radius:12px;
+            background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.11)">
+            <div style="font-size:19.5px;font-weight:650;margin-bottom:5px;color:var(--lpetrol)">Guarded writes</div>
+            <div style="font-size:16px;color:rgba(255,255,255,.62);line-height:1.45">Check, snapshot, baseline, write, build gate. A regression restores the snapshot on its own.</div>
+          </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rv nofly" data-s="2" style="display:flex;align-items:center;justify-content:center;
+        gap:13px;padding:8px 0">
+        <svg viewBox="0 0 14 26" width="14" height="26"><path d="M7 2 V19" stroke="#FF9000" stroke-width="2" stroke-linecap="round"></path><path d="M2 14 l5 6 l5 -6" fill="none" stroke="#FF9000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span style="font-size:17px;color:rgba(255,255,255,.62)">it drives</span>
+      </div>
+
+      <div class="rv" data-s="1" style="position:relative;padding:32px 26px 24px;border-radius:17px;
+        border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03)">
+        <div style="position:absolute;top:-13px;left:26px;font-family:var(--mono);font-size:13.5px;
+          letter-spacing:.14em;color:rgba(255,255,255,.55);background:#05060e;padding:2px 10px">MXCLI</div>
+        <div class="gchain" style="display:flex;align-items:center;justify-content:flex-start;gap:11px;flex-wrap:wrap">
+          <span class="pchip">exec &nbsp;writes the model</span>
+          <span class="pchip">run &nbsp;builds and runs it</span>
+          <span class="pchip">test &nbsp;runs the tests</span>
+          <span class="pchip">check &nbsp;resolves every reference</span>
+        </div>
+        <div style="font-size:16.5px;color:rgba(255,255,255,.6);margin-top:13px">These are the things
+          the agent is able to do. Nothing in here decides which one comes next.</div>
+      </div>
+
+    </div></div>
+    <div class="rv saf nofly" data-s="5">All of it is in a repo you can clone.
+      <b>Same process, same agents, same skills, same checks, on your project.</b></div>
+  </div>
+</div>
+
+<!-- ══════════ 7 · the headless run ══════════ -->
+<div class="slide bg-grid" data-steps="8">
+  <div class="col wide" style="gap:18px">
+    <div class="col a" style="gap:6px">
+      <div class="label">Because it is headless</div>
+      <div class="h1">The machine doing the work can be <em>anywhere</em>.</div>
+    </div>
+    <div class="samid"><div class="col" style="width:100%;gap:14px">
+    <div class="row" style="gap:0;width:100%;align-items:center">
+
+      <div class="rv" data-s="1" style="flex:0 0 272px;display:flex;flex-direction:column;gap:13px;
+        align-items:center;padding:32px 22px;border-radius:15px;background:rgba(255,255,255,.03);
+        border:1px solid rgba(255,255,255,.12)">
+        <svg viewBox="0 0 46 30" width="76" height="50"><rect x="0" y="0" width="32" height="20" rx="2.5" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6"></rect><path d="M-3 24 h38" stroke="#fff" stroke-opacity=".7" stroke-width="1.6" stroke-linecap="round"></path><rect x="36" y="8" width="10" height="18" rx="2.5" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><path d="M39.5 23.5 h3" stroke="#00C1B6" stroke-width="1.4" stroke-linecap="round"></path></svg>
+        <div style="font-size:22px;font-weight:650">You</div>
+        <div style="font-size:17.5px;color:rgba(255,255,255,.6);text-align:center;line-height:1.4">
+          A laptop, or just your phone. You send the instruction and close the lid.</div>
+      </div>
+
+      <svg class="rv" data-s="2" viewBox="0 0 60 20" style="flex:0 0 58px" height="20"><path d="M4 10 h44" stroke="#FF9000" stroke-width="2" stroke-linecap="round"></path><path d="M42 4 l8 6 l-8 6" fill="none" stroke="#FF9000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+
+      <div class="rv" data-s="2" style="flex:1;position:relative;padding:34px 26px 24px;border-radius:18px;
+        border:1.5px dashed rgba(0,193,182,.5);background:rgba(0,193,182,.04)">
+        <div style="position:absolute;top:-13px;left:26px;font-family:var(--mono);font-size:13.5px;
+          letter-spacing:.14em;color:var(--lpetrol);background:#05060e;padding:2px 10px">A MACHINE, LOCAL OR REMOTE</div>
+        <div class="col" style="gap:18px">
+          <div style="display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:19px;
+            padding:13px 18px;border-radius:9px;background:rgba(0,0,0,.45);
+            border:1px solid rgba(255,255,255,.14)"><span style="color:var(--lpetrol)">$</span>
+            <span style="color:rgba(255,255,255,.85)">mxcli run &nbsp;<span style="color:rgba(255,255,255,.4)">.. the stages, unattended</span></span></div>
+          <div class="rv nofly" data-s="3" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+            <span class="pchip">Requirements</span><span class="parr">→</span>
+            <span class="pchip">Build plan</span><span class="parr">→</span>
+            <span class="pchip hot">Build</span><span class="parr">→</span>
+            <span class="pchip hot">Test</span>
+          </div>
+          <div class="rv nofly" data-s="3" style="display:flex;align-items:center;gap:10px">
+            <svg viewBox="0 0 26 26" width="25" height="25"><path d="M22 13 a9 9 0 1 1 -3.2 -6.9" fill="none" stroke="#FF9000" stroke-width="1.8" stroke-linecap="round"></path><path d="M14 4 h5 v5" fill="none" stroke="#FF9000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span style="font-size:18px;color:rgba(255,255,255,.68)">Build and test go round
+              <b style="color:#fff">until the check passes</b>, then it writes the report.</span></div>
+        </div>
+      </div>
+
+      <svg class="rv" data-s="4" viewBox="0 0 60 20" style="flex:0 0 58px" height="20"><path d="M4 10 h44" stroke="#FF9000" stroke-width="2" stroke-linecap="round"></path><path d="M42 4 l8 6 l-8 6" fill="none" stroke="#FF9000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+
+      <div class="rv" data-s="4" style="flex:0 0 322px;display:flex;flex-direction:column;gap:12px">
+
+        <div style="display:flex;flex-direction:column;gap:8px;align-items:center;
+          padding:19px 20px;border-radius:15px;background:rgba(255,255,255,.03);
+          border:1px solid rgba(255,255,255,.12)">
+          <svg viewBox="0 0 34 26" width="43" height="33"><rect x="0" y="0" width="34" height="26" rx="3" fill="none" stroke="#00C1B6" stroke-width="1.6"></rect><path d="M0 7 h34 M10 7 v19" stroke="#00C1B6" stroke-width="1.6"></path><path d="M15 14 l4 3 l-4 3" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <div style="font-size:20.5px;font-weight:650">Studio Pro</div>
+          <div style="font-size:16.5px;color:rgba(255,255,255,.6);text-align:center;line-height:1.4">
+            Open the model and look at it. Early on, check it builds to
+            <b style="color:#fff">your</b> practices, not its own.</div>
+        </div>
+
+        <div class="rv nofly" data-s="5" style="display:flex;flex-direction:column;gap:8px;
+          align-items:center;padding:19px 20px;border-radius:15px;background:rgba(0,193,182,.06);
+          border:1px solid rgba(0,193,182,.4)">
+          <svg viewBox="0 0 44 26" width="47" height="28" fill="#00C1B6" fill-opacity=".9"><circle cx="14" cy="15" r="8"></circle><circle cx="25" cy="11" r="10"></circle><circle cx="34" cy="16.5" r="6.5"></circle><rect x="14" y="15" width="20" height="8"></rect></svg>
+          <div style="font-size:20.5px;font-weight:650;color:var(--lpetrol)">Mendix Cloud</div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:center">
+            <span class="pchip" style="font-size:14px;padding:5px 10px">private cloud</span>
+            <span class="pchip" style="font-size:14px;padding:5px 10px">a preview URL</span>
+          </div>
+          <div style="font-size:16.5px;color:rgba(255,255,255,.6);text-align:center;line-height:1.4">
+            The pipeline pushes the build up through the Mendix platform APIs. Someone who knows
+            the process opens the app and tries it.</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="rv nofly" data-s="6" style="display:flex;align-items:center;gap:14px;
+      padding:0 30px 0 336px;margin-top:2px">
+      <svg viewBox="0 0 22 12" width="22" height="12"><path d="M20 6 H4" stroke="#FF9000" stroke-width="2" stroke-linecap="round"></path><path d="M10 1 L4 6 L10 11" fill="none" stroke="#FF9000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <div style="flex:1;height:1px;background:rgba(255,144,0,.35)"></div>
+      <div style="font-size:17px;color:rgba(255,255,255,.72);white-space:nowrap">What they say goes
+        back in as requirements. <b style="color:#fff">The next run picks it up.</b></div>
+      <div style="flex:1;height:1px;background:rgba(255,144,0,.35)"></div>
+    </div>
+
+    </div></div>
+    <div class="rv saf nofly" data-s="7">Headless does not mean unsupervised. It means the waiting
+      happens without you. <b>You review results, not progress.</b></div>
+  </div>
+</div>
+
+<!-- ══════════ 8 · why Mendix ══════════ -->
+<div class="slide bg-mesh center cover" data-steps="6" id="vibeslide">
+  <div class="col center a" style="gap:22px;width:100%;max-width:1560px">
+    <div class="rv label nofly on" data-s="0">Why generate into Mendix</div>
+    <div class="rv nofly on" data-s="0" style="font-size:54px;font-weight:700;line-height:1.12;
+      letter-spacing:-.02em;text-align:center;max-width:1300px">Let’s call it “vibecoding”,<br>but
+      <em>without the governance &amp; security risks</em>.</div>
+    <div class="row" style="gap:22px;width:100%;margin-top:10px;align-items:stretch">
+      <div class="rv scd" data-s="1">
+        <div class="h">The full stack, one model</div>
+        <div class="b">Data, logic and UI are generated together as one model. There is no pile of
+          glue code that nobody read on the way in.</div>
+      </div>
+      <div class="rv scd" data-s="2">
+        <div class="h">Security lives in the model</div>
+        <div class="b">Roles, entity access and page access are part of the model, and the platform
+          enforces them at runtime. Nothing to audit line by line for the hole you missed.</div>
+      </div>
+      <div class="rv scd" data-s="3">
+        <div class="h">Deployed like any other app</div>
+        <div class="b">The run pushes the build up through the Mendix platform APIs, into a private
+          cloud or your own on-premises environment. Same standards as everything else you run.</div>
+      </div>
+      <div class="rv scd" data-s="4">
+        <div class="h">Still maintained tomorrow</div>
+        <div class="b">What comes out is a supported platform app your team can keep building on,
+          not a snapshot that starts aging the day it ships.</div>
+      </div>
+    </div>
+    <div class="rv saf nofly" data-s="5" style="max-width:1120px">Generated fast, and it still
+      lands where a real app has to land. <b>Governed by the platform, deployed by the platform,
+      supported tomorrow.</b></div>
+  </div>
+</div>
+
+<!-- ══════════ 9 · try it yourself ══════════ -->
+<div class="slide bg-grid" data-steps="5">
+  <div class="col wide" style="gap:18px">
+    <div class="col a" style="gap:6px">
+      <div class="label">Try it yourself</div>
+      <div class="h1">Everything you just saw is <em>public</em>.</div>
+    </div>
+    <div class="samid"><div class="col" style="gap:16px;width:100%;max-width:1080px;margin:0 auto">
+      <div class="rv scts" data-s="1"><span class="n">1</span><span class="col2">
+        <div class="v">Download the latest mxcli</div>
+        <div class="v2" style="font-family:var(--mono);color:#5AA5FF">github.com/mendixlabs/mxcli/releases</div>
+      </span></div>
+      <div class="rv scts" data-s="2"><span class="n">2</span><span class="col2">
+        <div class="v">Clone the project toolkit</div>
+        <div class="v2" style="font-family:var(--mono);color:#5AA5FF">github.com/MendixMau/mxcli-project-toolkit</div>
+      </span></div>
+      <div class="rv scts" data-s="3"><span class="n">3</span><span class="col2">
+        <div class="v">Init your project against the toolkit, and start the pipeline</div>
+        <div class="v2">The toolkit walks you and your agent through the rest. That is the whole setup.</div>
+      </span></div>
+    </div></div>
+    <div class="rv saf nofly" data-s="4">Then you are ready to start. Run it on something real, and
+      <b>tell me what breaks. Feedback is exactly what I am after.</b></div>
+  </div>
+</div>
+
+</div>
+
+<div id="bar" style="width: 11.1111%;"></div>
+<div id="dots"><div class="dot on"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+<button class="arr" id="prev">‹</button>
+<button class="arr" id="next">›</button>
+<div id="snum"><span id="sn">1</span><span class="of"> / <span id="st">9</span></span></div>
+<div id="hint">→ step &nbsp;·&nbsp; A autoplay &nbsp;·&nbsp; R hide chrome</div>
+
+<script>
+const stage=document.getElementById('stage');
+const slides=[...document.querySelectorAll('.slide')];
+let si=0, step=0, auto=null;
+const DWELL=2100;
+
+function fit(){
+  const s=Math.min(innerWidth/1600,innerHeight/900);
+  stage.style.transform=`translate(-50%,-50%) scale(${s})`;
+}
+addEventListener('resize',fit); fit();
+
+function steps(i){return parseInt(slides[i].dataset.steps||'1',10)}
+
+function paintPipeline(){
+  const sl=document.getElementById('pipeslide');
+  if(slides[si]!==sl) return;
+  const psts=[...sl.querySelectorAll('.pst')];
+  const cap=document.getElementById('pcapin');
+  psts.forEach((p,k)=>{
+    p.classList.toggle('done',step>k+1);
+    p.classList.toggle('now',step===k+1);
+  });
+  const active=psts[Math.min(step,psts.length)-1];
+  if(active){
+    cap.classList.add('on');
+    document.getElementById('pin').textContent=active.dataset.in;
+    document.getElementById('pout').textContent=active.dataset.out;
+  } else if(step===0){
+    cap.classList.remove('on');
+  }
+}
+
+function paint(){
+  slides.forEach((s,i)=>s.classList.toggle('active',i===si));
+  slides[si].querySelectorAll('.rv').forEach(el=>{
+    el.classList.toggle('on',parseInt(el.dataset.s,10)<=step);
+  });
+  paintPipeline();
+  document.getElementById('bar').style.width=((si+1)/slides.length*100)+'%';
+  document.getElementById('sn').textContent=si+1;
+  [...document.querySelectorAll('.dot')].forEach((d,i)=>d.classList.toggle('on',i===si));
+}
+
+function next(){
+  if(step<steps(si)-1){step++}
+  else if(si<slides.length-1){si++;step=0}
+  else{stopAuto();return}
+  paint();
+}
+function prev(){
+  if(step>0){step--}
+  else if(si>0){si--;step=steps(si)-1}
+  paint();
+}
+function goSlide(i){si=i;step=0;paint()}
+
+function stopAuto(){if(auto){clearInterval(auto);auto=null}}
+function toggleAuto(){
+  if(auto){stopAuto();return}
+  auto=setInterval(next,DWELL);
+}
+
+const dots=document.getElementById('dots');
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');d.className='dot';
+  d.onclick=()=>goSlide(i);dots.appendChild(d);
+});
+document.getElementById('st').textContent=slides.length;
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();stopAuto();next()}
+  if(e.key==='ArrowLeft'){e.preventDefault();stopAuto();prev()}
+  if(e.key==='a'||e.key==='A'){toggleAuto()}
+  if(e.key==='r'||e.key==='R'){document.body.classList.toggle('rec')}
+  if(e.key==='Home'){stopAuto();goSlide(0)}
+});
+
+paint();
+</script>
+
+
+
+
+</body></html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Stack Decision Guide -- Print Ready</title>
+<style>
+/* ---- Print settings ---- */
+@page {
+  size: A4 portrait;
+  margin: 0.25in;
+}
+@media print {
+  body { background: white; }
+  .screen-note { display: none; }
+}
+
+/* ---- Screen settings ---- */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 20px;
+}
+.page {
+  page-break-after: always;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.11);
+  padding: 14px 16px 10px 16px;
+  margin-bottom: 28px;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.page:last-child {
+  page-break-after: avoid;
+  margin-bottom: 0;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 8px;
+}
+.page-header h2 {
+  font-size: 18px;
+  color: #1a1a2e;
+  margin: 0 0 3px 0;
+}
+.page-header p {
+  font-size: 11px;
+  color: #666;
+  margin: 0;
+}
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.screen-note {
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+  margin: 10px 0 0 0;
+}
+</style>
+</head>
+<body>
+
+<p class="screen-note">
+  To generate the LinkedIn carousel PDF: File &rarr; Print &rarr; Save as PDF &nbsp;|&nbsp;
+  Set orientation: Portrait, margins: None or Minimum.
+</p>
+
+<!-- ================================================================ -->
+<!-- PAGE 1: Technology Overview                                        -->
+<!-- ================================================================ -->
+<div class="page">
+  <div class="page-header">
+    <h2>Choosing Your ICX AI Stack</h2>
+    <p>Answer each question. Every YES adds a layer. Combine freely for a composed solution.</p>
+  </div>
+  <svg viewBox="0 0 900 950" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="p1-arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#555555"/>
+      </marker>
+      <marker id="p1-arr-yes" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#28a745"/>
+      </marker>
+      <marker id="p1-arr-no" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#c0392b"/>
+      </marker>
+      <marker id="p1-arr-cont" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#aaaaaa"/>
+      </marker>
+    </defs>
+    <!-- START -->
+    <rect x="100" y="22" width="220" height="52" rx="26" ry="26" fill="#e2e3e5" stroke="#383d41" stroke-width="2"/>
+    <text x="210" y="53" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#1b1e21">Your Problem</text>
+    <line x1="210" y1="74" x2="210" y2="117" stroke="#555" stroke-width="2" marker-end="url(#p1-arr)"/>
+    <!-- Q1 -->
+    <rect x="100" y="120" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="210" y="148" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q1: Free text input?</text>
+    <text x="210" y="167" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. notes, emails, reports,</text>
+    <text x="210" y="183" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">descriptions typed by people</text>
+    <line x1="320" y1="165" x2="336" y2="165" stroke="#28a745" stroke-width="2.5" marker-end="url(#p1-arr-yes)"/>
+    <text x="326" y="157" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A1: SYSTEM ONE -->
+    <rect x="340" y="103" width="250" height="148" rx="7" fill="#d4edda" stroke="#28a745" stroke-width="2.5"/>
+    <text x="465" y="130" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#155724">SYSTEM ONE</text>
+    <text x="465" y="149" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#1e7e34">Laya / Jev</text>
+    <line x1="352" y1="158" x2="578" y2="158" stroke="#28a745" stroke-width="1" opacity="0.35"/>
+    <text x="465" y="176" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#155724">Typed decisions in ~33ms</text>
+    <text x="465" y="193" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#155724">Confidence score + escalation built in</text>
+    <text x="465" y="210" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#155724">Closed options -- no hallucination</text>
+    <text x="465" y="227" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#155724">Turns free text into structured features</text>
+    <!-- NO Q1 to Q2 -->
+    <line x1="210" y1="210" x2="289" y2="297" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p1-arr-no)"/>
+    <text x="231" y="263" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 465,251 C 465,278 415,280 400,298" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p1-arr-cont)"/>
+    <!-- Q2 -->
+    <rect x="180" y="300" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="290" y="328" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q2: Structured data?</text>
+    <text x="290" y="347" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. transactions, sensor readings,</text>
+    <text x="290" y="363" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">form fields, numeric features</text>
+    <line x1="400" y1="345" x2="416" y2="345" stroke="#28a745" stroke-width="2.5" marker-end="url(#p1-arr-yes)"/>
+    <text x="406" y="337" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A2: DECISION TREE -->
+    <rect x="420" y="283" width="250" height="148" rx="7" fill="#cce5ff" stroke="#004085" stroke-width="2.5"/>
+    <text x="545" y="310" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#004085">DECISION TREE</text>
+    <text x="545" y="329" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#0056b3">or Rule Engine</text>
+    <line x1="432" y1="338" x2="658" y2="338" stroke="#004085" stroke-width="1" opacity="0.35"/>
+    <text x="545" y="356" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#004085">If-then rules from your labelled rows</text>
+    <text x="545" y="373" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#004085">Fast, cheap, fully auditable</text>
+    <text x="545" y="390" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#004085">Shows exactly which split fired</text>
+    <text x="545" y="407" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#004085">Structured and tabular inputs only</text>
+    <!-- NO Q2 to Q3 -->
+    <line x1="290" y1="390" x2="369" y2="477" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p1-arr-no)"/>
+    <text x="311" y="443" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 545,431 C 545,458 495,460 480,478" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p1-arr-cont)"/>
+    <!-- Q3 -->
+    <rect x="260" y="480" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="370" y="507" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q3: Multi-source context</text>
+    <text x="370" y="524" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">or audit trail?</text>
+    <text x="370" y="543" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. linked data, relationships,</text>
+    <text x="370" y="559" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">history, provenance across sources</text>
+    <line x1="480" y1="525" x2="496" y2="525" stroke="#28a745" stroke-width="2.5" marker-end="url(#p1-arr-yes)"/>
+    <text x="486" y="517" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A3: KNOWLEDGE GRAPH -->
+    <rect x="500" y="463" width="250" height="148" rx="7" fill="#fff3cd" stroke="#856404" stroke-width="2.5"/>
+    <text x="625" y="490" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#856404">KNOWLEDGE GRAPH</text>
+    <text x="625" y="509" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#856404">RDF / OWL / SPARQL</text>
+    <line x1="512" y1="518" x2="738" y2="518" stroke="#856404" stroke-width="1" opacity="0.35"/>
+    <text x="625" y="536" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#856404">Joins context the note cannot see</text>
+    <text x="625" y="553" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#856404">Vocabulary hierarchies and roll-ups</text>
+    <text x="625" y="570" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#856404">Full provenance of every decision</text>
+    <text x="625" y="587" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#856404">Multi-source context at query time</text>
+    <!-- NO Q3 to Q4 -->
+    <line x1="370" y1="570" x2="449" y2="657" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p1-arr-no)"/>
+    <text x="391" y="623" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 625,611 C 625,638 575,640 560,658" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p1-arr-cont)"/>
+    <!-- Q4 -->
+    <rect x="340" y="660" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="450" y="687" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q4: Open-ended reasoning</text>
+    <text x="450" y="704" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">or orchestration?</text>
+    <text x="450" y="723" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. summarise, explain, draft,</text>
+    <text x="450" y="739" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">coordinate complex workflows</text>
+    <line x1="560" y1="705" x2="576" y2="705" stroke="#28a745" stroke-width="2.5" marker-end="url(#p1-arr-yes)"/>
+    <text x="566" y="697" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A4: LLM -->
+    <rect x="580" y="643" width="250" height="148" rx="7" fill="#f8d7da" stroke="#721c24" stroke-width="2.5"/>
+    <text x="705" y="670" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#721c24">LLM -- System Two</text>
+    <text x="705" y="689" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#a71d2a">GPT-4 / Claude / Gemini</text>
+    <line x1="592" y1="698" x2="818" y2="698" stroke="#721c24" stroke-width="1" opacity="0.35"/>
+    <text x="705" y="716" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#721c24">Flexible multi-step reasoning</text>
+    <text x="705" y="733" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#721c24">Generates human-readable output</text>
+    <text x="705" y="750" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#721c24">Can orchestrate all other layers</text>
+    <text x="705" y="767" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#721c24">Highest cost and latency of the four</text>
+    <!-- NO Q4 to END -->
+    <line x1="450" y1="750" x2="450" y2="837" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p1-arr-no)"/>
+    <text x="462" y="799" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 705,791 C 705,820 580,830 562,840" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p1-arr-cont)"/>
+    <!-- END -->
+    <rect x="310" y="840" width="280" height="68" rx="10" fill="#e2e3e5" stroke="#383d41" stroke-width="2.5"/>
+    <text x="450" y="867" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="bold" fill="#1b1e21">Your Stack</text>
+    <text x="450" y="888" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#383d41">= every layer you said YES to</text>
+    <!-- LEGEND -->
+    <rect x="650" y="840" width="228" height="90" rx="6" fill="#fafafa" stroke="#cccccc" stroke-width="1"/>
+    <text x="764" y="860" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#444">Legend</text>
+    <line x1="663" y1="874" x2="683" y2="874" stroke="#28a745" stroke-width="2" marker-end="url(#p1-arr-yes)"/>
+    <text x="689" y="878" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Add this layer to your stack</text>
+    <line x1="663" y1="893" x2="683" y2="893" stroke="#c0392b" stroke-width="2" marker-end="url(#p1-arr-no)"/>
+    <text x="689" y="897" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Skip, continue to next Q</text>
+    <line x1="663" y1="912" x2="683" y2="912" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#p1-arr-cont)"/>
+    <text x="689" y="916" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Continue after YES answer</text>
+  </svg>
+</div>
+
+<!-- ================================================================ -->
+<!-- PAGE 2: Sample Data                                                -->
+<!-- ================================================================ -->
+<div class="page">
+  <div class="page-header">
+    <h2>Sample Golf Dataset -- To Play or Not to Play</h2>
+    <p>Same flow, coloured boxes now show example inputs and outputs (golf prediction problem).</p>
+  </div>
+  <svg viewBox="0 0 900 950" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="p2-arr" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#555555"/>
+      </marker>
+      <marker id="p2-arr-yes" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#28a745"/>
+      </marker>
+      <marker id="p2-arr-no" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#c0392b"/>
+      </marker>
+      <marker id="p2-arr-cont" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+        <polygon points="0 0, 9 3.5, 0 7" fill="#aaaaaa"/>
+      </marker>
+    </defs>
+    <!-- START -->
+    <rect x="100" y="22" width="220" height="52" rx="26" ry="26" fill="#e2e3e5" stroke="#383d41" stroke-width="2"/>
+    <text x="210" y="53" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="15" font-weight="bold" fill="#1b1e21">Your Problem</text>
+    <line x1="210" y1="74" x2="210" y2="117" stroke="#555" stroke-width="2" marker-end="url(#p2-arr)"/>
+    <!-- Q1 -->
+    <rect x="100" y="120" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="210" y="148" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q1: Free text input?</text>
+    <text x="210" y="167" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. notes, emails, reports,</text>
+    <text x="210" y="183" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">descriptions typed by people</text>
+    <line x1="320" y1="165" x2="336" y2="165" stroke="#28a745" stroke-width="2.5" marker-end="url(#p2-arr-yes)"/>
+    <text x="326" y="157" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A1: SYSTEM ONE sample -->
+    <rect x="340" y="103" width="250" height="148" rx="7" fill="#d4edda" stroke="#28a745" stroke-width="2.5"/>
+    <text x="465" y="127" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="bold" fill="#155724">SYSTEM ONE</text>
+    <text x="465" y="143" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" font-style="italic" fill="#1e7e34">Sample: text in, features out</text>
+    <line x1="352" y1="152" x2="578" y2="152" stroke="#28a745" stroke-width="1" opacity="0.35"/>
+    <text x="352" y="166" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">Note: "Grey, damp underfoot,</text>
+    <text x="352" y="178" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">      light breeze"</text>
+    <text x="352" y="190" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">--------------------------</text>
+    <text x="352" y="202" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">comfort   : borderline</text>
+    <text x="352" y="214" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">p_pleasant: 0.38</text>
+    <text x="352" y="226" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">p_wet     : 0.61  [review]</text>
+    <text x="352" y="238" font-family="Courier New,Courier,monospace" font-size="10" fill="#155724">p_heat    : 0.04</text>
+    <!-- NO Q1 to Q2 -->
+    <line x1="210" y1="210" x2="289" y2="297" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p2-arr-no)"/>
+    <text x="231" y="263" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 465,251 C 465,278 415,280 400,298" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p2-arr-cont)"/>
+    <!-- Q2 -->
+    <rect x="180" y="300" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="290" y="328" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q2: Structured data?</text>
+    <text x="290" y="347" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. transactions, sensor readings,</text>
+    <text x="290" y="363" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">form fields, numeric features</text>
+    <line x1="400" y1="345" x2="416" y2="345" stroke="#28a745" stroke-width="2.5" marker-end="url(#p2-arr-yes)"/>
+    <text x="406" y="337" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A2: DECISION TREE sample -->
+    <rect x="420" y="283" width="250" height="148" rx="7" fill="#cce5ff" stroke="#004085" stroke-width="2.5"/>
+    <text x="545" y="307" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="bold" fill="#004085">DECISION TREE</text>
+    <text x="545" y="323" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" font-style="italic" fill="#0056b3">Sample: enriched training rows</text>
+    <line x1="432" y1="332" x2="658" y2="332" stroke="#004085" stroke-width="1" opacity="0.35"/>
+    <text x="432" y="346" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">Outlook  Temp p_wet Play</text>
+    <text x="432" y="358" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">-------- ---- ----- ----</text>
+    <text x="432" y="370" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">Sunny    Hot  0.02   No</text>
+    <text x="432" y="382" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">Overcast Hot  0.11  Yes</text>
+    <text x="432" y="394" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">Rainy    Mild 0.91   No</text>
+    <text x="432" y="406" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">... 14 rows total</text>
+    <text x="432" y="418" font-family="Courier New,Courier,monospace" font-size="10" fill="#004085">Rule: p_wet &gt; 0.7 -&gt; No</text>
+    <!-- NO Q2 to Q3 -->
+    <line x1="290" y1="390" x2="369" y2="477" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p2-arr-no)"/>
+    <text x="311" y="443" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 545,431 C 545,458 495,460 480,478" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p2-arr-cont)"/>
+    <!-- Q3 -->
+    <rect x="260" y="480" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="370" y="507" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q3: Multi-source context</text>
+    <text x="370" y="524" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">or audit trail?</text>
+    <text x="370" y="543" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. linked data, relationships,</text>
+    <text x="370" y="559" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">history, provenance across sources</text>
+    <line x1="480" y1="525" x2="496" y2="525" stroke="#28a745" stroke-width="2.5" marker-end="url(#p2-arr-yes)"/>
+    <text x="486" y="517" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A3: KNOWLEDGE GRAPH sample -->
+    <rect x="500" y="463" width="250" height="148" rx="7" fill="#fff3cd" stroke="#856404" stroke-width="2.5"/>
+    <text x="625" y="487" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="bold" fill="#856404">KNOWLEDGE GRAPH</text>
+    <text x="625" y="503" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" font-style="italic" fill="#856404">Sample: game-day context (Turtle)</text>
+    <line x1="512" y1="512" x2="738" y2="512" stroke="#856404" stroke-width="1" opacity="0.35"/>
+    <text x="512" y="526" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">d:today</text>
+    <text x="512" y="538" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">  golf:onCourse d:riverside ;</text>
+    <text x="512" y="550" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">  golf:precededBy d:yesterday .</text>
+    <text x="512" y="562" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">d:riverside</text>
+    <text x="512" y="574" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">  golf:drainage "poor" .</text>
+    <text x="512" y="586" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">d:yesterday</text>
+    <text x="512" y="598" font-family="Courier New,Courier,monospace" font-size="10" fill="#856404">  golf:rainfallMm 14.0 .</text>
+    <!-- NO Q3 to Q4 -->
+    <line x1="370" y1="570" x2="449" y2="657" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p2-arr-no)"/>
+    <text x="391" y="623" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 625,611 C 625,638 575,640 560,658" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p2-arr-cont)"/>
+    <!-- Q4 -->
+    <rect x="340" y="660" width="220" height="90" rx="7" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+    <text x="450" y="687" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">Q4: Open-ended reasoning</text>
+    <text x="450" y="704" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="13" font-weight="bold" fill="#222222">or orchestration?</text>
+    <text x="450" y="723" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">e.g. summarise, explain, draft,</text>
+    <text x="450" y="739" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#555555">coordinate complex workflows</text>
+    <line x1="560" y1="705" x2="576" y2="705" stroke="#28a745" stroke-width="2.5" marker-end="url(#p2-arr-yes)"/>
+    <text x="566" y="697" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#28a745">YES</text>
+    <!-- A4: LLM sample -->
+    <rect x="580" y="643" width="250" height="148" rx="7" fill="#f8d7da" stroke="#721c24" stroke-width="2.5"/>
+    <text x="705" y="667" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="14" font-weight="bold" fill="#721c24">LLM -- System Two</text>
+    <text x="705" y="683" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="10" font-style="italic" fill="#a71d2a">Sample: audit explanation</text>
+    <line x1="592" y1="692" x2="818" y2="692" stroke="#721c24" stroke-width="1" opacity="0.35"/>
+    <text x="592" y="706" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">Q: Why No Play today?</text>
+    <text x="592" y="718" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24"> </text>
+    <text x="592" y="730" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">A: Rule R5 fired. Yesterday's</text>
+    <text x="592" y="742" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">14mm of rain on Riverside's</text>
+    <text x="592" y="754" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">poorly-drained course</text>
+    <text x="592" y="766" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">outweighed mild conditions.</text>
+    <text x="592" y="778" font-family="Courier New,Courier,monospace" font-size="10" fill="#721c24">Graph context, not note text.</text>
+    <!-- NO Q4 to END -->
+    <line x1="450" y1="750" x2="450" y2="837" stroke="#c0392b" stroke-width="2.5" marker-end="url(#p2-arr-no)"/>
+    <text x="462" y="799" text-anchor="start" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#c0392b">NO</text>
+    <path d="M 705,791 C 705,820 580,830 562,840" fill="none" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#p2-arr-cont)"/>
+    <!-- END -->
+    <rect x="310" y="840" width="280" height="68" rx="10" fill="#e2e3e5" stroke="#383d41" stroke-width="2.5"/>
+    <text x="450" y="867" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="16" font-weight="bold" fill="#1b1e21">Your Stack</text>
+    <text x="450" y="888" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" fill="#383d41">= every layer you said YES to</text>
+    <!-- LEGEND -->
+    <rect x="650" y="840" width="228" height="90" rx="6" fill="#fafafa" stroke="#cccccc" stroke-width="1"/>
+    <text x="764" y="860" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="11" font-weight="bold" fill="#444">Legend</text>
+    <line x1="663" y1="874" x2="683" y2="874" stroke="#28a745" stroke-width="2" marker-end="url(#p2-arr-yes)"/>
+    <text x="689" y="878" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Add this layer to your stack</text>
+    <line x1="663" y1="893" x2="683" y2="893" stroke="#c0392b" stroke-width="2" marker-end="url(#p2-arr-no)"/>
+    <text x="689" y="897" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Skip, continue to next Q</text>
+    <line x1="663" y1="912" x2="683" y2="912" stroke="#aaaaaa" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#p2-arr-cont)"/>
+    <text x="689" y="916" font-family="Segoe UI,Arial,sans-serif" font-size="11" fill="#444">Continue after YES answer</text>
+  </svg>
+</div>
+
+</body>
+</html>

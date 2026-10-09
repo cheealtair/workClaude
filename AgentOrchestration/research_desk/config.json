@@ -1,0 +1,32 @@
+{
+  "backend": {
+    "base_url": "https://llm.sdc.siemens.cloud",
+    "api_key_env": "ANTHROPIC_API_KEY",
+    "anthropic_version": "2023-06-01",
+    "timeout_s": 120,
+    "max_retries": 1
+  },
+  "models": {
+    "planner": "claude-opus-5-5",
+    "worker": "claude-haiku-4-5-20251001",
+    "synthesizer": "claude-sonnet-5-5",
+    "critic": "claude-opus-5-5",
+    "single": "claude-sonnet-5-5"
+  },
+  "limits": {
+    "max_workers": 4,
+    "worker_timeout_s": 90,
+    "max_revisions": 2,
+    "token_budget": 60000,
+    "max_output_tokens": 1500
+  },
+  "rates_usd_per_mtok": {
+    "claude-opus-5-5": {"in": null, "out": null},
+    "claude-sonnet-5-5": {"in": null, "out": null},
+    "claude-haiku-4-5-20251001": {"in": null, "out": null}
+  },
+  "rubric": {
+    "weights": {"accuracy": 1.0, "completeness": 1.0, "clarity": 1.0, "consistency": 1.0},
+    "pass_threshold": 4.0
+  }
+}

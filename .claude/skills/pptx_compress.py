@@ -3,8 +3,7 @@
 
 Usage:
   python pptx_compress.py deck.pptx [--dpi 150] [--preset medium]
-         [--prune-layouts [--confirm-prune] [--keep "a,b"]]
-         [--skip-video] [--skip-audio] [--output out.pptx]
+         [--keep "a,b"] [--skip-video] [--skip-audio] [--output out.pptx]
 
 Requires: Python 3, Pillow, ffmpeg on PATH
 """
@@ -32,13 +31,30 @@ ZIP64_LIMIT = 2 ** 30
 EXT_JPG = {".jpg", ".jpeg"}
 EXT_PNG = {".png"}
 EXT_VIDEO = {".mp4", ".mov"}
+EXT_GIF = {".gif"}
 EXT_AUDIO = {".mp3", ".wav", ".m4a"}
 
+GIF_MAX_WIDTH = 960
+GIF_MAX_FPS = 15
+GIF_COLORS = 128
+GIF_DURATION_TOLERANCE = 0.05
+
 PRESETS = {
-    "light": {"crf": 23, "abr": 160, "sr": 44100},
-    "medium": {"crf": 26, "abr": 128, "sr": 44100},
-    "aggressive": {"crf": 29, "abr": 96, "sr": 22050},
+    "light": {"crf": 23, "sr": 44100},
+    "medium": {"crf": 29, "sr": 44100},
+    "aggressive": {"crf": 29, "sr": 22050},
 }
+
+# Video house rules: never wider than 960 px, never above 15 fps (sources already lower are left alone).
+VIDEO_MAX_WIDTH = 960
+VIDEO_MAX_FPS = 15
+
+# Images: after the dpi cap, if either side is still above this many pixels, halve both sides.
+HALVE_ABOVE_PX = 500
+
+# Audio (mp3/m4a): sources above this bitrate are re-encoded to it; lower bitrates are left alone.
+AUDIO_MAX_KBPS = 96
+BITRATE_RE = re.compile(r"bitrate:\s*(\d+)\s*kb/s")
 
 # Lossy re-encodes that do not resize must save at least 10% to be kept.
 MIN_GAIN_LOSSY = 0.90
@@ -233,6 +249,8 @@ def plan_resize(iw, ih, w_in, h_in, dpi):
     tw = w_in * dpi
     th = h_in * dpi
     scale = min(1.0, max(tw / float(iw), th / float(ih)))
+    if iw * scale > HALVE_ABOVE_PX or ih * scale > HALVE_ABOVE_PX:
+        scale *= 0.5
     if scale >= 1.0:
         return None
     return max(1, int(round(iw * scale))), max(1, int(round(ih * scale)))
@@ -287,21 +305,42 @@ def run_ffmpeg(ffmpeg, args):
     return p.returncode == 0, p.stderr.strip().splitlines()[-1] if p.stderr.strip() else ""
 
 
+def probe_fps(ffmpeg, src):
+    p = subprocess.run([ffmpeg, "-nostdin", "-i", src], capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    line = next((l for l in p.stderr.splitlines() if " Video:" in l), "")
+    m = re.search(r"(\d+(?:\.\d+)?) fps", line)
+    return float(m.group(1)) if m else None
+
+
 def compress_video(ffmpeg, src, dst, preset):
+    vf = "scale='trunc(min(iw,%d)/2)*2':-2" % VIDEO_MAX_WIDTH
+    src_fps = probe_fps(ffmpeg, src)
+    if src_fps is None or src_fps > VIDEO_MAX_FPS + 0.01:
+        vf += ",fps=%d" % VIDEO_MAX_FPS
     args = [
         "-i", src, "-map", "0:v:0", "-map", "0:a?",
         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", str(preset["crf"]), "-preset", "medium",
-        "-vf", "scale='trunc(min(iw,1920)/2)*2':-2",
+        "-vf", vf,
         "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", dst,
     ]
     return run_ffmpeg(ffmpeg, args)
 
 
+def probe_kbps(ffmpeg, src):
+    p = subprocess.run([ffmpeg, "-nostdin", "-i", src], capture_output=True, text=True,
+                       encoding="utf-8", errors="replace")
+    m = BITRATE_RE.search(p.stderr)
+    return int(m.group(1)) if m else None
+
+
 def compress_audio(ffmpeg, src, dst, ext, preset):
-    if ext == ".mp3":
-        args = ["-i", src, "-vn", "-c:a", "libmp3lame", "-b:a", "%dk" % preset["abr"], dst]
-    elif ext == ".m4a":
-        args = ["-i", src, "-vn", "-c:a", "aac", "-b:a", "%dk" % preset["abr"], dst]
+    if ext in (".mp3", ".m4a"):
+        kbps = probe_kbps(ffmpeg, src)
+        if kbps is not None and kbps <= AUDIO_MAX_KBPS:
+            return None, "skipped (already %d kb/s, at or below %dk)" % (kbps, AUDIO_MAX_KBPS)
+        codec = "libmp3lame" if ext == ".mp3" else "aac"
+        args = ["-i", src, "-vn", "-c:a", codec, "-b:a", "%dk" % AUDIO_MAX_KBPS, dst]
     else:
         try:
             with wave.open(src, "rb") as w:
@@ -310,6 +349,46 @@ def compress_audio(ffmpeg, src, dst, ext, preset):
             return False, "cannot read WAV sample rate"
         args = ["-i", src, "-vn", "-c:a", "pcm_s16le", "-ar", str(min(src_sr, preset["sr"])), dst]
     return run_ffmpeg(ffmpeg, args)
+
+
+def gif_info(Image, path):
+    """(width, height, frames, total_ms, loop) of a GIF; frames == 1 for a static one."""
+    with Image.open(path) as im:
+        n = getattr(im, "n_frames", 1)
+        total = 0
+        for i in range(n):
+            im.seek(i)
+            total += im.info.get("duration", 0) or 0
+        return im.size[0], im.size[1], n, total, im.info.get("loop")
+
+
+def compress_gif(ffmpeg, Image, src, dst, w_in, dpi):
+    """Animated GIF: width capped at min(source, 960 px, display width at dpi); never above 15 fps (the fps filter is only
+    added when the average frame rate is above 15, so nothing is upsampled); 128-colour palette tuned to the clip. The loop
+    setting is kept and the total play time must stay within 5 percent, otherwise the file is left alone."""
+    w, h, n, total_ms, loop = gif_info(Image, src)
+    if n < 2:
+        return None, "skipped (static GIF)"
+    avg_fps = n * 1000.0 / total_ms if total_ms else 0.0
+    target_w = int(min(w, GIF_MAX_WIDTH, max(1, w_in * dpi)))
+    chain = []
+    if avg_fps > GIF_MAX_FPS + 0.01:
+        chain.append("fps=%d" % GIF_MAX_FPS)
+    if target_w < w:
+        chain.append("scale=%d:-2:flags=lanczos" % target_w)
+    chain.append("split[a][b];[a]palettegen=max_colors=%d:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=5:diff_mode=rectangle" % GIF_COLORS)
+    vf = ",".join(chain[:-1] + [chain[-1]]) if len(chain) > 1 else chain[0]
+    ok, note = run_ffmpeg(ffmpeg, ["-i", src, "-vf", vf, "-loop", "0" if loop == 0 else ("-1" if loop is None else str(loop)), dst])
+    if not ok:
+        return None, "ffmpeg failed: %s" % note
+    try:
+        _, _, n2, total2, _ = gif_info(Image, dst)
+    except Exception as exc:
+        return None, "skipped (cannot read result: %s)" % exc
+    if total_ms and abs(total2 - total_ms) > GIF_DURATION_TOLERANCE * total_ms:
+        return None, "skipped (play time would change: %.1fs -> %.1fs)" % (total_ms / 1000.0, total2 / 1000.0)
+    ow, oh = Image.open(dst).size
+    return (target_w < w), "%dx%d -> %dx%d, %d -> %d frames, %d colours" % (w, h, ow, oh, n, n2, GIF_COLORS)
 
 
 def layout_name(data):
@@ -526,13 +605,18 @@ def main():
     ap.add_argument("--dpi", type=int, default=150)
     ap.add_argument("--quality", type=int, default=80, help="JPEG quality")
     ap.add_argument("--preset", choices=sorted(PRESETS), default="medium")
-    ap.add_argument("--prune-layouts", action="store_true")
-    ap.add_argument("--confirm-prune", action="store_true", help="apply the layout pruning plan")
-    ap.add_argument("--keep", default="", help="comma-separated layout names to keep")
+    ap.add_argument("--prune-layouts", action="store_true", help="print the plan of unused layouts and exit without writing (dry run)")
+    ap.add_argument("--confirm-prune", action="store_true", help="with --prune-layouts: apply the plan after the user has reviewed it")
+    ap.add_argument("--keep", default="", help="comma-separated layout names to keep when pruning")
     ap.add_argument("--skip-video", action="store_true")
     ap.add_argument("--skip-audio", action="store_true")
+    ap.add_argument("--skip-gif", action="store_true", help="do not touch animated GIFs")
     ap.add_argument("--output", default="")
     args = ap.parse_args()
+
+    if args.confirm_prune and not args.prune_layouts:
+        print("ERROR: --confirm-prune requires --prune-layouts")
+        return 2
 
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")
@@ -571,6 +655,7 @@ def main():
         need_ffmpeg = any(
             (posixpath.splitext(n)[1].lower() in EXT_VIDEO and not args.skip_video)
             or (posixpath.splitext(n)[1].lower() in EXT_AUDIO and not args.skip_audio)
+            or (posixpath.splitext(n)[1].lower() in EXT_GIF and not args.skip_gif)
             for n in media
         )
         ffmpeg = shutil.which("ffmpeg")
@@ -588,7 +673,7 @@ def main():
             plan = plan_prune(names, parts, rels_before, keep_names)
             total_remove = print_prune_plan(plan)
             if not args.confirm_prune:
-                print("Dry run only. Nothing written. Re-run with --confirm-prune to apply.")
+                print("Dry run only: nothing written. Re-run with --prune-layouts --confirm-prune to apply.")
                 return 0
             if total_remove:
                 removed, modified = apply_prune(parts, plan)
@@ -610,7 +695,8 @@ def main():
                 is_img = ext in EXT_JPG or ext in EXT_PNG
                 is_vid = ext in EXT_VIDEO
                 is_aud = ext in EXT_AUDIO
-                if not (is_img or is_vid or is_aud):
+                is_gif = ext in EXT_GIF
+                if not (is_img or is_vid or is_aud or is_gif):
                     untouched_other += 1
                     continue
                 before = zin.getinfo(name).file_size
@@ -618,13 +704,13 @@ def main():
                        "action": "unchanged", "note": "", "where": ""}
                 rows.append(row)
 
-                if (is_vid and args.skip_video) or (is_aud and args.skip_audio):
+                if (is_vid and args.skip_video) or (is_aud and args.skip_audio) or (is_gif and args.skip_gif):
                     row["action"] = "skipped"
                     row["note"] = "by option"
                     continue
 
                 req = None
-                if is_img:
+                if is_img or is_gif:
                     req, why = image_requirement(name, refs, uses)
                     if req is None:
                         row["action"] = "skipped"
@@ -644,6 +730,9 @@ def main():
                     elif ext in EXT_PNG:
                         resized, note = compress_png(Image, resample, in_f, out_f, req[0], req[1], args.dpi)
                         lossy = False
+                    elif is_gif:
+                        resized, note = compress_gif(ffmpeg, Image, in_f, out_f, req[0], args.dpi)
+                        lossy = True
                     elif is_vid:
                         ok, note = compress_video(ffmpeg, in_f, out_f, preset)
                         if not ok:
@@ -652,7 +741,9 @@ def main():
                             resized, note, lossy = False, "re-encoded crf %d" % preset["crf"], True
                     else:
                         ok, note = compress_audio(ffmpeg, in_f, out_f, ext, preset)
-                        if not ok:
+                        if ok is None:
+                            resized = None
+                        elif not ok:
                             resized, note = None, "ffmpeg failed: %s" % note
                         else:
                             resized, note, lossy = False, "re-encoded", True

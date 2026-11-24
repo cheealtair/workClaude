@@ -27,6 +27,13 @@ Before generating, confirm the following with the user:
 5. **Confirm slide count is reasonable.**
    Ideal range: 10-25 slides. More than 30 becomes hard to navigate in a reel format.
 
+6. **Which slide types are needed?**
+   Eight types are available: `cover`, `bullets`, `table`, `query` (code + results), `diagram`
+   (boxes-and-arrows flow drawn as inline SVG), `split` (two panels: anatomy or versus), `stats`
+   (large figures with their sentences) and `bars` (proportional bar, or value gauges). Use `diagram`
+   for processes, flows and architectures; use `split`, `stats` or `bars` to make bullet-heavy slides
+   show the shape of their content (comparison, evidence figures, proportions) without cutting text.
+
 ---
 
 ## 2. Design System -- Siemens Brand Palette
@@ -85,7 +92,7 @@ scaleStage();
 
 ## 4. Slide Types
 
-Four slide types are supported. Choose based on content structure.
+Eight slide types are supported. Choose based on content structure.
 
 ### 4a. Cover Slide (`type: 'cover'`)
 
@@ -137,6 +144,128 @@ Required fields:
 CSS classes used: `.query-body`, `.query-explanation`, `.query-panels`, `.query-panel`,
 `.query-panel-label`, `.query-code`, `.query-result-wrap`, `.query-result-table`
 
+Optional fields (need the panel-label add-on in Section 7b):
+- `codeLabel` -- replaces the left panel label "SPARQL" (e.g. `'Python - simplified from lab04_agent_loop.py'`)
+- `resultLabel` -- replaces the right panel label "Live Results" (e.g. `'Real output - 2026-11-18'`)
+
+Use these when the code is not SPARQL. Labels are set with `textContent`, never as markup.
+
+### 4e. Diagram Slide (`type: 'diagram'`)
+
+A boxes-and-arrows flow diagram, drawn as inline SVG from data. Use it for processes, flows,
+loops and architectures (e.g. agent loops, workflow patterns, request/response cycles).
+
+Layout:
+- TOP: slide title, then a one- or two-sentence `caption` in plain language
+- BELOW: an SVG drawing area, 600px high, full slide width
+
+Coordinate system: the SVG uses `viewBox="0 0 1400 600"` (scaled to fit, aspect preserved).
+All x/y values are in that space; (0,0) is top-left. Node x/y is the box CENTRE.
+
+Required fields:
+- `title` -- slide heading
+- `caption` -- plain-language explanation shown above the diagram
+- `nodes` -- array of boxes:
+  - `id` -- unique string, referenced by edges
+  - `label` -- box text; use `\n` for line breaks
+  - `x`, `y` -- centre of the box
+  - `w`, `h` -- optional width/height (defaults 220 x 84)
+  - `kind` -- optional style: `'accent'` (orange), `'gate'` (blue), `'ghost'` (dashed outline); omit for the default petrol box
+
+Optional fields:
+- `edges` -- array of arrows:
+  - `from`, `to` -- node ids (an edge whose ids do not exist is silently skipped)
+  - `label` -- optional text on the arrow
+  - `curve` -- optional bend in px (positive or negative; 0 or absent = straight line). Use opposite
+    curves for a pair of arrows going both ways, or a large curve for a loop-back
+  - `dashed` -- optional `true` for a dashed arrow (e.g. feedback or "next call")
+  - `dx`, `dy` -- optional nudge of the edge label position
+- `labels` -- array of free text notes: `x`, `y`, `text` (`\n` allowed), optional `cls`
+  (`'diagram-note'` default, or `'diagram-section'` for an upper-case section heading) and optional
+  `anchor` (`'middle'` default, `'start'`, `'end'`)
+
+Text safety: all diagram text (node labels, edge labels, notes) is set with `textContent` /
+SVG `tspan` elements, never `innerHTML`, so no markup can be injected. Title and caption go
+through the engine's `esc()` function.
+
+CSS classes used: `.diagram-caption`, `.diagram-wrap`, `.diagram-svg`, `.diagram-node`
+(`.accent`, `.gate`, `.ghost`), `.diagram-edge` (`.dashed`), `.diagram-arrowhead`,
+`.diagram-edge-label`, `.diagram-note`, `.diagram-section`
+
+Requires the CSS add-on (Section 6b) and the JS add-on (Section 7b).
+
+### 4f. Split Slide (`type: 'split'`)
+
+Two titled panels side by side, joined by a connector, with an optional lead sentence above and an
+optional full-width "shared" band below. Two connector modes:
+- `connector: 'arrow'` (default): an orange arrow with an optional label -- use for an anatomy
+  (input on the left, output on the right, e.g. request -> response).
+- `connector: 'divider'`: a vertical line with a centred label such as `'vs'` -- use for a head-to-head
+  comparison (e.g. workflow vs agent), with what both sides share in the band.
+
+Fields:
+- `title` -- slide heading (required)
+- `lead` -- optional sentence shown full width above the panels
+- `left`, `right` -- required objects: `{ title, tag (optional short italic line), items: [strings] }`
+  The left panel is outlined in petrol, the right panel in orange.
+- `connector` -- `'arrow'` or `'divider'`; `connectorLabel` -- optional short label
+- `shared` -- optional `{ title, items: [strings] }` band under the panels (blue rule)
+
+Budget: about 5-7 items in total at 20px. All text is set with `textContent` (never `innerHTML`).
+
+CSS classes used: `.x-lead`, `.x-list`, `.split-row`, `.split-panel` (`.left`, `.right`),
+`.split-panel-title`, `.split-tag`, `.split-connector` (`.arrow`, `.divider`), `.split-vline`,
+`.split-connector-label`, `.split-shared`, `.split-shared-title`
+
+### 4g. Stats Slide (`type: 'stats'`)
+
+A row of tiles, each with one large orange figure above the original sentence it comes from, then an
+optional "change of view" pair (before -> after) and an optional highlighted footer line. Use for
+evidence slides whose bullets each carry a key number. Keep it to one or two slides per deck so the
+large figures stay special.
+
+Fields:
+- `title` -- slide heading (required)
+- `tiles` -- required array of `{ figure, text, span (optional, default 1) }`. `figure` must be a
+  number that already appears in `text`; `span: 2` gives a long figure (e.g. a range) a double-width
+  tile. Columns = sum of spans; 4-5 columns fit at 1600 px.
+- `pair` -- optional `{ title, before: { when, text }, after: { when, text } }`, drawn with an arrow
+- `footer` -- optional single sentence in a tinted band
+
+CSS classes used: `.stats-grid`, `.stat-tile`, `.stat-figure`, `.stat-text`, `.stats-pair`,
+`.stats-pair-title`, `.stats-pair-side` (`.after`), `.stats-pair-when`, `.stats-pair-text`,
+`.stats-pair-arrow`, `.stats-footer`
+
+### 4h. Bars Slide (`type: 'bars'`)
+
+Two modes, both for quantities that are parts of a whole or percentages:
+- Default mode: one proportional horizontal bar split into segments (petrol, blue, orange in order),
+  with a column of detail under each segment whose width matches the segment. Optional header line
+  above, optional note under the bar, optional footer list.
+- `mode: 'gauges'`: value gauges (label, large value, filled track, caption) in a left column beside a
+  compact list on the right. Use to contrast two or three rates (e.g. pass@k vs pass^k).
+
+Fields (default mode):
+- `title` (required), `head` (optional sentence)
+- `segments` -- required array of `{ label, value, display (optional, e.g. 'about 44%'), text }`.
+  `value` sets the proportional width (values need not sum to 100); up to 3 segments use the palette.
+- `barNote` -- optional small note under the bar (e.g. how totals were derived)
+- `footer` -- optional array of strings
+
+Fields (`mode: 'gauges'`):
+- `title` (required), `head` (optional)
+- `gauges` -- array of `{ label, value (0-100, fill width), display (optional), caption, low (true = orange) }`
+- `gaugeNote` -- optional small note under the gauges
+- `items` -- array of strings shown as the list on the right
+
+CSS classes used: `.bars-head`, `.bars-track`, `.bars-seg` (`.c0`-`.c2`), `.bars-note`, `.bars-cols`,
+`.bars-col`, `.bars-col-title` (`.c0`-`.c2`), `.bars-col-text`, `.bars-foot`, `.gauges-row`, `.gauges`,
+`.gauge` (`.low`), `.gauge-top`, `.gauge-label`, `.gauge-value`, `.gauge-track`, `.gauge-fill`,
+`.gauge-caption`, `.gauge-note`, `.gauges-list`
+
+Types 4f-4h require the CSS add-on (Section 6c) and the JS add-on (Section 7c). The JS add-on uses
+`svgEl()` from the diagram helpers (Section 7b, Piece 1), so paste that piece too.
+
 ---
 
 ## 5. SLIDES Data Array Format
@@ -180,6 +309,75 @@ const SLIDES = [
       ['entity:001', '450000'],
       ['entity:002', '380000']
     ]
+  },
+  {
+    type: 'diagram',
+    title: 'Tools: the model asks, your code acts',
+    caption: "Tool use is a contract. The model emits a structured request, your code runs the operation, and the result flows back. 'The model never runs anything on its own.' (Anthropic docs)",
+    nodes: [
+      { id: 'model', label: 'Model', x: 230, y: 320, w: 220, kind: 'accent' },
+      { id: 'prog', label: 'Your program', x: 700, y: 320, w: 260 },
+      { id: 'tool', label: 'Tool function\n(your code)', x: 1170, y: 320, w: 260 }
+    ],
+    edges: [
+      { from: 'prog', to: 'model', label: '1. message + tool schemas', curve: 90 },
+      { from: 'model', to: 'prog', label: '2. tool_use request', curve: 90, dy: 40 },
+      { from: 'prog', to: 'tool', label: '3. run it', curve: 90, dy: 40 },
+      { from: 'tool', to: 'prog', label: '4. output', curve: 90 },
+      { from: 'prog', to: 'model', label: '5. tool_result (next call)', curve: 230, dashed: true }
+    ],
+    labels: [
+      { x: 700, y: 540, text: 'The model only ever sees the schema and the result - never your Python code (Anthropic docs).', cls: 'diagram-note' }
+    ]
+  },
+  {
+    type: 'split',
+    title: 'Agent or workflow? The definitions that matter',
+    left: { title: 'Workflow', tag: 'your code decides the path',
+            items: ["Workflow: 'LLMs and tools are orchestrated through predefined code paths' (Anthropic 2024)."] },
+    connector: 'divider',
+    connectorLabel: 'vs',
+    right: { title: 'Agent', tag: 'the model directs its own process',
+             items: ["Agent: LLMs 'dynamically direct their own processes and tool usage' (Anthropic 2024)."] },
+    shared: { title: 'Where both views agree',
+              items: ["Shared building block: the augmented LLM - a model plus retrieval, tools and memory (Anthropic 2024)."] }
+  },
+  {
+    type: 'stats',
+    title: 'When multi-agent helps - and when it hurts',
+    tiles: [
+      { figure: '90.2%', text: "Anthropic's research system beat single-agent Opus by 90.2% on its internal eval, at about 15x chat tokens (Anthropic 2025)." },
+      { figure: '+80.8% / -70.0%', span: 2, text: "Across 260 configurations, multi-agent ranged from +80.8% to -70.0% versus one agent (Kim et al. 2025)." }
+    ],
+    pair: {
+      title: 'Cognition changed its view',
+      before: { when: '2025', text: "Cognition 2025: 'Don't build multi-agents' - share full context; actions carry implicit decisions." },
+      after: { when: '2026', text: "Cognition 2026: it works when 'writes stay single-threaded' and extra agents add intelligence, not actions." }
+    },
+    footer: "Good fit: parallel, separable, high-value work. Poor fit: tightly coupled work, such as most coding (Anthropic 2025)."
+  },
+  {
+    type: 'bars',
+    title: 'How multi-agent systems fail: the MAST study',
+    head: "1,642 annotated traces from 7 multi-agent frameworks; 14 failure modes in 3 groups (Cemri et al. 2025).",
+    segments: [
+      { label: 'System design', value: 44, display: 'about 44%', text: "System design, about 44% (derived): ..." },
+      { label: 'Inter-agent misalignment', value: 32, display: 'about 32%', text: "Inter-agent misalignment, about 32% (derived): ..." },
+      { label: 'Task verification', value: 23.5, display: 'about 23.5%', text: "Task verification, about 23.5% (derived): ..." }
+    ],
+    barNote: 'Share of observed failures by group. Group totals are derived by summing the published per-mode figures.',
+    footer: ["Lesson: design termination and verification in from the start - do not bolt them on later."]
+  },
+  {
+    type: 'bars',
+    mode: 'gauges',
+    title: 'Evaluation: measure outcomes, not impressions',
+    gauges: [
+      { label: 'pass@3', value: 98, display: '98%', caption: 'at least one of 3 trials succeeds' },
+      { label: 'pass^3', value: 42, display: '42%', caption: 'all 3 trials succeed', low: true }
+    ],
+    gaugeNote: 'Same agent, 75% success per trial, k = 3. Values rounded (arithmetic).',
+    items: ["pass@k: at least one of k trials succeeds. pass^k: all k succeed - the reliability number (Anthropic evals; tau-bench)."]
   }
 ];
 ```
@@ -374,6 +572,146 @@ html, body {
 #next { right: 14px; }
 ```
 
+### 6b. Diagram CSS add-on (only if the deck uses `diagram` slides)
+
+Paste verbatim at the END of the `<style>` block, after the Section 6 CSS. Do not modify the Section 6 block itself.
+
+```css
+/* ==== ADDED LAYOUT TYPE: Diagram slides (type: 'diagram') - begin ==== */
+.diagram-caption {
+  font-size: 20px; line-height: 1.5;
+  color: rgba(255,255,255,0.88);
+  margin-bottom: 12px;
+}
+.diagram-wrap { width: 100%; height: 600px; }
+.diagram-svg { width: 100%; height: 100%; display: block; }
+.diagram-node rect { fill: rgba(0,153,153,0.22); stroke: var(--petrol); stroke-width: 2.5; }
+.diagram-node text { fill: var(--white); font-family: var(--font); font-size: 22px; font-weight: 600; }
+.diagram-node.accent rect { fill: rgba(255,144,0,0.16); stroke: var(--orange); }
+.diagram-node.gate rect { fill: rgba(90,165,255,0.16); stroke: var(--blue); }
+.diagram-node.ghost rect { fill: none; stroke-dasharray: 8 6; }
+.diagram-edge { fill: none; stroke: var(--orange); stroke-width: 3; }
+.diagram-edge.dashed { stroke-dasharray: 10 8; }
+.diagram-arrowhead { fill: var(--orange); }
+.diagram-edge-label {
+  fill: var(--lpetrol); font-family: var(--font); font-size: 19px; font-weight: 600;
+  paint-order: stroke; stroke: var(--deepblue); stroke-width: 6px; stroke-linejoin: round;
+}
+.diagram-note { fill: rgba(255,255,255,0.78); font-family: var(--font); font-size: 18px; }
+.diagram-section { fill: var(--lpetrol); font-family: var(--font); font-size: 18px; font-weight: 700; letter-spacing: 0.08em; }
+/* ==== ADDED LAYOUT TYPE: Diagram slides - end ==== */
+```
+
+### 6c. Split / stats / bars CSS add-on (only if the deck uses `split`, `stats` or `bars` slides)
+
+Paste verbatim at the END of the `<style>` block, after the Section 6 CSS (and after 6b if present).
+
+```css
+/* ==== ADDED LAYOUT TYPES: split / stats / bars slides - begin ==== */
+.x-lead {
+  font-size: 22px; line-height: 1.45; color: rgba(255,255,255,0.92);
+  margin-bottom: 22px; max-width: 1300px;
+}
+.x-list { list-style: none; padding: 0; margin: 0; }
+.x-list li {
+  font-size: 20px; line-height: 1.45; color: rgba(255,255,255,0.90);
+  padding-left: 20px; position: relative; margin-bottom: 12px;
+}
+.x-list li::before {
+  content: ""; position: absolute; left: 0; top: 7px;
+  width: 6px; height: 16px; border-radius: 2px; background: var(--petrol);
+}
+
+/* split: two panels joined by an arrow (anatomy) or a divider (versus) */
+.split-row { display: flex; align-items: stretch; }
+.split-panel {
+  flex: 1 1 0; min-width: 0; padding: 22px 26px 10px;
+  border: 2px solid rgba(0,153,153,0.70); border-radius: 10px;
+  background: rgba(0,153,153,0.08);
+}
+.split-panel.right { border-color: rgba(255,144,0,0.75); background: rgba(255,144,0,0.06); }
+.split-panel-title { font-size: 26px; font-weight: 700; color: var(--lpetrol); margin-bottom: 4px; }
+.split-panel.right .split-panel-title { color: var(--orange); }
+.split-tag { font-size: 18px; font-style: italic; color: rgba(255,255,255,0.65); margin-bottom: 16px; }
+.split-panel.right .x-list li::before { background: var(--orange); }
+.split-connector {
+  flex: 0 0 130px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.split-connector svg { width: 110px; height: 40px; display: block; }
+.split-connector-label { font-size: 18px; font-weight: 600; color: var(--lpetrol); margin-bottom: 8px; text-align: center; }
+.split-connector.divider .split-vline { width: 2px; flex: 1 1 auto; background: rgba(255,255,255,0.25); }
+.split-connector.divider .split-connector-label { font-size: 24px; color: var(--white); margin: 12px 0; }
+.split-shared {
+  display: flex; gap: 28px; align-items: flex-start;
+  margin-top: 24px; padding-top: 16px; border-top: 2px solid rgba(90,165,255,0.60);
+}
+.split-shared-title { flex: 0 0 230px; font-size: 21px; font-weight: 700; color: var(--blue); line-height: 1.4; }
+.split-shared .x-list { flex: 1 1 0; }
+.split-shared .x-list li::before { background: var(--blue); }
+
+/* stats: large figures, each with its original sentence */
+.stats-grid {
+  display: grid; gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.18); border-bottom: 1px solid rgba(255,255,255,0.18);
+}
+.stat-tile { padding: 18px 22px 20px; border-left: 1px solid rgba(255,255,255,0.18); min-width: 0; }
+.stat-tile:first-child { border-left: none; padding-left: 0; }
+.stat-figure {
+  font-size: 54px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;
+  color: var(--orange); margin-bottom: 10px; white-space: nowrap;
+}
+.stat-text { font-size: 20px; line-height: 1.42; color: rgba(255,255,255,0.88); }
+.stats-pair { display: flex; align-items: stretch; margin-top: 26px; }
+.stats-pair-title { flex: 0 0 210px; font-size: 22px; font-weight: 700; color: var(--lpetrol); line-height: 1.3; padding-top: 4px; }
+.stats-pair-side { flex: 1 1 0; min-width: 0; padding: 0 22px; border-left: 3px solid var(--petrol); }
+.stats-pair-side.after { border-left-color: var(--orange); }
+.stats-pair-when { font-size: 30px; font-weight: 800; color: var(--white); margin-bottom: 4px; }
+.stats-pair-text { font-size: 20px; line-height: 1.42; color: rgba(255,255,255,0.88); }
+.stats-pair-arrow { flex: 0 0 64px; display: flex; align-items: center; justify-content: center; }
+.stats-pair-arrow svg { width: 56px; height: 30px; display: block; }
+.stats-footer {
+  margin-top: 26px; padding: 14px 20px; border-radius: 8px;
+  font-size: 21px; line-height: 1.45; color: var(--white); background: rgba(0,193,182,0.12);
+}
+
+/* bars: one proportional bar with a column of detail under each segment */
+.bars-head { font-size: 21px; line-height: 1.45; color: rgba(255,255,255,0.90); margin-bottom: 20px; }
+.bars-track { display: flex; height: 64px; border-radius: 8px; overflow: hidden; }
+.bars-seg {
+  flex-basis: 0; min-width: 0; display: flex; align-items: center; padding: 0 16px;
+  font-size: 22px; font-weight: 700; color: var(--deepblue); white-space: nowrap; overflow: hidden;
+}
+.bars-seg.c0 { background: var(--lpetrol); }
+.bars-seg.c1 { background: var(--blue); }
+.bars-seg.c2 { background: var(--orange); }
+.bars-note { font-size: 18px; color: rgba(255,255,255,0.62); margin-top: 8px; }
+.bars-cols { display: flex; }
+.bars-col { flex-basis: 0; min-width: 0; padding: 14px 20px 0 0; }
+.bars-col-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.bars-col-title.c0 { color: var(--lpetrol); }
+.bars-col-title.c1 { color: var(--blue); }
+.bars-col-title.c2 { color: var(--orange); }
+.bars-col-text { font-size: 20px; line-height: 1.42; color: rgba(255,255,255,0.88); }
+.bars-foot { margin-top: 26px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.18); }
+
+/* bars, mode 'gauges': value gauges beside a compact list */
+.gauges-row { display: flex; gap: 48px; align-items: flex-start; }
+.gauges { flex: 0 0 470px; }
+.gauge { margin-bottom: 30px; }
+.gauge-top { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px; }
+.gauge-label { font-size: 30px; font-weight: 700; color: var(--white); }
+.gauge-value { font-size: 58px; font-weight: 800; line-height: 1; color: var(--lpetrol); }
+.gauge.low .gauge-value { color: var(--orange); }
+.gauge-track { height: 22px; border-radius: 11px; overflow: hidden; background: rgba(255,255,255,0.10); }
+.gauge-fill { height: 100%; background: var(--lpetrol); }
+.gauge.low .gauge-fill { background: var(--orange); }
+.gauge-caption { font-size: 20px; color: rgba(255,255,255,0.78); margin-top: 8px; }
+.gauge-note { font-size: 18px; line-height: 1.4; color: rgba(255,255,255,0.62); }
+.gauges-list { flex: 1 1 0; min-width: 0; }
+/* ==== ADDED LAYOUT TYPES: split / stats / bars slides - end ==== */
+```
+
 ---
 
 ## 7. Full JS Engine Block (paste verbatim, do not modify)
@@ -517,6 +855,318 @@ document.getElementById('prev').addEventListener('click', function() {
 });
 ```
 
+### 7b. JS add-ons (only if the deck uses `diagram` slides or query panel labels)
+
+The Section 7 engine stays verbatim except for one inserted branch. Three pieces, each delimited by `ADDED` comments:
+
+**Piece 1 -- diagram renderer helpers.** Paste right after the `SLIDES` array, before `function esc(s)`:
+
+```js
+/* ==== ADDED LAYOUT TYPE: Diagram renderer helpers - begin ==== */
+/* Builds an inline SVG from static SLIDES data only. All text is set with
+   textContent (never innerHTML), so no markup can be injected. */
+var SVGNS = 'http://www.w3.org/2000/svg';
+var diagramCount = 0;
+
+function svgEl(tag, attrs) {
+  var el = document.createElementNS(SVGNS, tag);
+  for (var k in attrs) {
+    if (Object.prototype.hasOwnProperty.call(attrs, k)) el.setAttribute(k, attrs[k]);
+  }
+  return el;
+}
+
+function boxEdgePoint(n, tx, ty) {
+  var dx = tx - n.x, dy = ty - n.y;
+  if (dx === 0 && dy === 0) return { x: n.x, y: n.y };
+  var hw = n.w / 2, hh = n.h / 2;
+  var tX = dx !== 0 ? hw / Math.abs(dx) : Infinity;
+  var tY = dy !== 0 ? hh / Math.abs(dy) : Infinity;
+  var t = Math.min(tX, tY);
+  return { x: n.x + dx * t, y: n.y + dy * t };
+}
+
+function svgMultiline(textEl, x, y, text, lineHeight) {
+  var lines = String(text).split('\n');
+  textEl.setAttribute('x', x);
+  textEl.setAttribute('y', y - (lines.length - 1) * lineHeight / 2);
+  lines.forEach(function(line, i) {
+    var ts = svgEl('tspan', { x: x, dy: i === 0 ? 0 : lineHeight });
+    ts.textContent = line;
+    textEl.appendChild(ts);
+  });
+}
+
+function buildDiagram(data) {
+  diagramCount += 1;
+  var markerId = 'arrowhead-' + diagramCount;
+  var wrap = document.createElement('div');
+  wrap.className = 'diagram-wrap';
+  var svg = svgEl('svg', { viewBox: '0 0 1400 600', 'class': 'diagram-svg', preserveAspectRatio: 'xMidYMid meet' });
+  var defs = svgEl('defs', {});
+  var marker = svgEl('marker', { id: markerId, viewBox: '0 0 10 10', refX: '9', refY: '5',
+                                 markerWidth: '7', markerHeight: '7', orient: 'auto' });
+  marker.appendChild(svgEl('path', { d: 'M 0 0 L 10 5 L 0 10 z', 'class': 'diagram-arrowhead' }));
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+
+  var byId = {};
+  data.nodes.forEach(function(n) {
+    byId[n.id] = { x: n.x, y: n.y, w: n.w || 220, h: n.h || 84 };
+  });
+
+  var edgeLayer = svgEl('g', {});
+  var nodeLayer = svgEl('g', {});
+  var labelLayer = svgEl('g', {});
+
+  (data.edges || []).forEach(function(e) {
+    var a = byId[e.from], b = byId[e.to];
+    if (!a || !b) return;
+    var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    var c = e.curve || 0, cx = mx, cy = my;
+    if (c) {
+      var ddx = b.x - a.x, ddy = b.y - a.y;
+      var len = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
+      cx = mx - ddy / len * c;
+      cy = my + ddx / len * c;
+    }
+    var p1 = boxEdgePoint(a, c ? cx : b.x, c ? cy : b.y);
+    var p2 = boxEdgePoint(b, c ? cx : a.x, c ? cy : a.y);
+    var d = c
+      ? 'M ' + p1.x + ' ' + p1.y + ' Q ' + cx + ' ' + cy + ' ' + p2.x + ' ' + p2.y
+      : 'M ' + p1.x + ' ' + p1.y + ' L ' + p2.x + ' ' + p2.y;
+    edgeLayer.appendChild(svgEl('path', {
+      d: d,
+      'class': 'diagram-edge' + (e.dashed ? ' dashed' : ''),
+      'marker-end': 'url(#' + markerId + ')'
+    }));
+    if (e.label) {
+      var lx = c ? (0.25 * p1.x + 0.5 * cx + 0.25 * p2.x) : (p1.x + p2.x) / 2;
+      var ly = c ? (0.25 * p1.y + 0.5 * cy + 0.25 * p2.y) : (p1.y + p2.y) / 2;
+      var t = svgEl('text', { x: lx + (e.dx || 0), y: ly + (e.dy || 0) - 10,
+                              'class': 'diagram-edge-label', 'text-anchor': 'middle' });
+      t.textContent = e.label;
+      labelLayer.appendChild(t);
+    }
+  });
+
+  data.nodes.forEach(function(n) {
+    var m = byId[n.id];
+    var g = svgEl('g', { 'class': 'diagram-node' + (n.kind ? ' ' + n.kind : '') });
+    g.appendChild(svgEl('rect', { x: m.x - m.w / 2, y: m.y - m.h / 2, width: m.w, height: m.h, rx: 10, ry: 10 }));
+    var tx = svgEl('text', { 'text-anchor': 'middle', 'dominant-baseline': 'central' });
+    svgMultiline(tx, m.x, m.y, n.label, 26);
+    g.appendChild(tx);
+    nodeLayer.appendChild(g);
+  });
+
+  (data.labels || []).forEach(function(l) {
+    var lt = svgEl('text', { 'class': l.cls || 'diagram-note', 'text-anchor': l.anchor || 'middle' });
+    svgMultiline(lt, l.x, l.y, l.text, 24);
+    labelLayer.appendChild(lt);
+  });
+
+  svg.appendChild(edgeLayer);
+  svg.appendChild(nodeLayer);
+  svg.appendChild(labelLayer);
+  wrap.appendChild(svg);
+  return wrap;
+}
+/* ==== ADDED LAYOUT TYPE: Diagram renderer helpers - end ==== */
+```
+
+**Piece 2 -- diagram branch in `buildSlide()`.** This is where the renderer is called. Insert it after the
+`query` branch's closing `'</div>';` and before the final `}` that closes the if/else chain (just above `return div;`):
+
+```js
+  /* ==== ADDED LAYOUT TYPE: diagram branch - begin ==== */
+  } else if (data.type === 'diagram') {
+    div.innerHTML =
+      '<div class="slide-title">' + esc(data.title) + '</div>' +
+      '<div class="diagram-caption">' + esc(data.caption) + '</div>';
+    div.appendChild(buildDiagram(data));
+  /* ==== ADDED LAYOUT TYPE: diagram branch - end ==== */
+```
+
+**Piece 3 -- optional query panel labels (`codeLabel` / `resultLabel`).** Paste at the very end of the
+script, after the `prev`/`next` click handlers (it needs `slideEls`, which the engine has already built):
+
+```js
+/* ==== ADDED: optional panel labels for query slides (codeLabel / resultLabel) - begin ==== */
+/* The verbatim engine labels query panels 'SPARQL' / 'Live Results'. This deck shows
+   Python, so slides may override the labels. textContent only - no markup injection. */
+SLIDES.forEach(function(s, i) {
+  if (s.type !== 'query') return;
+  var labels = slideEls[i].querySelectorAll('.query-panel-label');
+  if (s.codeLabel && labels[0]) labels[0].textContent = s.codeLabel;
+  if (s.resultLabel && labels[1]) labels[1].textContent = s.resultLabel;
+});
+/* ==== ADDED: optional panel labels for query slides - end ==== */
+```
+
+### 7c. JS add-ons for `split`, `stats` and `bars` slides
+
+Two pieces, each delimited by `ADDED` comments. They rely on `svgEl()` from Section 7b Piece 1, so
+paste that piece as well even if the deck has no diagram slides.
+
+**Piece 1 -- renderers.** Paste right after the Section 7b Piece 1 helpers, before `function esc(s)`:
+
+```js
+/* ==== ADDED LAYOUT TYPES: split / stats / bars renderers - begin ==== */
+/* Build DOM from static SLIDES data only. All text is set with textContent
+   (never innerHTML), so no markup can be injected. Uses svgEl() above. */
+function xEl(tag, cls, text) {
+  var e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined && text !== null) e.textContent = text;
+  return e;
+}
+
+function xList(items) {
+  var ul = xEl('ul', 'x-list');
+  (items || []).forEach(function(t) { ul.appendChild(xEl('li', null, t)); });
+  return ul;
+}
+
+function xArrow(w, h) {
+  var svg = svgEl('svg', { viewBox: '0 0 ' + w + ' ' + h });
+  var mid = h / 2;
+  svg.appendChild(svgEl('path', { d: 'M 4 ' + mid + ' L ' + (w - 18) + ' ' + mid,
+                                  stroke: '#FF9000', 'stroke-width': '4', fill: 'none' }));
+  svg.appendChild(svgEl('path', { d: 'M ' + (w - 20) + ' ' + (mid - 12) + ' L ' + (w - 2) + ' ' + mid +
+                                     ' L ' + (w - 20) + ' ' + (mid + 12) + ' z', fill: '#FF9000' }));
+  return svg;
+}
+
+function buildSplit(data, div) {
+  if (data.lead) div.appendChild(xEl('div', 'x-lead', data.lead));
+  var row = xEl('div', 'split-row');
+  function panel(p, side) {
+    var d = xEl('div', 'split-panel ' + side);
+    d.appendChild(xEl('div', 'split-panel-title', p.title));
+    if (p.tag) d.appendChild(xEl('div', 'split-tag', p.tag));
+    d.appendChild(xList(p.items));
+    return d;
+  }
+  row.appendChild(panel(data.left, 'left'));
+  var mode = data.connector === 'divider' ? 'divider' : 'arrow';
+  var conn = xEl('div', 'split-connector ' + mode);
+  if (mode === 'divider') {
+    conn.appendChild(xEl('div', 'split-vline'));
+    conn.appendChild(xEl('div', 'split-connector-label', data.connectorLabel || ''));
+    conn.appendChild(xEl('div', 'split-vline'));
+  } else {
+    if (data.connectorLabel) conn.appendChild(xEl('div', 'split-connector-label', data.connectorLabel));
+    conn.appendChild(xArrow(110, 40));
+  }
+  row.appendChild(conn);
+  row.appendChild(panel(data.right, 'right'));
+  div.appendChild(row);
+  if (data.shared) {
+    var sh = xEl('div', 'split-shared');
+    sh.appendChild(xEl('div', 'split-shared-title', data.shared.title));
+    sh.appendChild(xList(data.shared.items));
+    div.appendChild(sh);
+  }
+}
+
+function buildStats(data, div) {
+  var cols = 0;
+  data.tiles.forEach(function(t) { cols += t.span || 1; });
+  var grid = xEl('div', 'stats-grid');
+  grid.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+  data.tiles.forEach(function(t) {
+    var tile = xEl('div', 'stat-tile');
+    if (t.span) tile.style.gridColumn = 'span ' + t.span;
+    tile.appendChild(xEl('div', 'stat-figure', t.figure));
+    tile.appendChild(xEl('div', 'stat-text', t.text));
+    grid.appendChild(tile);
+  });
+  div.appendChild(grid);
+  if (data.pair) {
+    var pr = xEl('div', 'stats-pair');
+    pr.appendChild(xEl('div', 'stats-pair-title', data.pair.title));
+    [data.pair.before, data.pair.after].forEach(function(s, i) {
+      if (i === 1) {
+        var ar = xEl('div', 'stats-pair-arrow');
+        ar.appendChild(xArrow(56, 30));
+        pr.appendChild(ar);
+      }
+      var side = xEl('div', 'stats-pair-side' + (i === 1 ? ' after' : ''));
+      side.appendChild(xEl('div', 'stats-pair-when', s.when));
+      side.appendChild(xEl('div', 'stats-pair-text', s.text));
+      pr.appendChild(side);
+    });
+    div.appendChild(pr);
+  }
+  if (data.footer) div.appendChild(xEl('div', 'stats-footer', data.footer));
+}
+
+function buildBars(data, div) {
+  if (data.head) div.appendChild(xEl('div', 'bars-head', data.head));
+  if (data.mode === 'gauges') {
+    var row = xEl('div', 'gauges-row');
+    var gs = xEl('div', 'gauges');
+    data.gauges.forEach(function(g) {
+      var gd = xEl('div', 'gauge' + (g.low ? ' low' : ''));
+      var top = xEl('div', 'gauge-top');
+      top.appendChild(xEl('div', 'gauge-label', g.label));
+      top.appendChild(xEl('div', 'gauge-value', g.display || (g.value + '%')));
+      gd.appendChild(top);
+      var track = xEl('div', 'gauge-track');
+      var fill = xEl('div', 'gauge-fill');
+      fill.style.width = Math.max(0, Math.min(100, g.value)) + '%';
+      track.appendChild(fill);
+      gd.appendChild(track);
+      if (g.caption) gd.appendChild(xEl('div', 'gauge-caption', g.caption));
+      gs.appendChild(gd);
+    });
+    if (data.gaugeNote) gs.appendChild(xEl('div', 'gauge-note', data.gaugeNote));
+    row.appendChild(gs);
+    var lst = xEl('div', 'gauges-list');
+    lst.appendChild(xList(data.items));
+    row.appendChild(lst);
+    div.appendChild(row);
+    return;
+  }
+  var trk = xEl('div', 'bars-track');
+  var colsEl = xEl('div', 'bars-cols');
+  data.segments.forEach(function(s, i) {
+    var c = 'c' + (i % 3);
+    var seg = xEl('div', 'bars-seg ' + c, s.display || (s.value + '%'));
+    seg.style.flexGrow = s.value;
+    trk.appendChild(seg);
+    var col = xEl('div', 'bars-col');
+    col.style.flexGrow = s.value;
+    col.appendChild(xEl('div', 'bars-col-title ' + c, s.label));
+    col.appendChild(xEl('div', 'bars-col-text', s.text));
+    colsEl.appendChild(col);
+  });
+  div.appendChild(trk);
+  if (data.barNote) div.appendChild(xEl('div', 'bars-note', data.barNote));
+  div.appendChild(colsEl);
+  if (data.footer) {
+    var ft = xEl('div', 'bars-foot');
+    ft.appendChild(xList(data.footer));
+    div.appendChild(ft);
+  }
+}
+/* ==== ADDED LAYOUT TYPES: split / stats / bars renderers - end ==== */
+```
+
+**Piece 2 -- branch in `buildSlide()`.** Insert directly after the diagram branch (Section 7b Piece 2),
+before the final `}` that closes the if/else chain (just above `return div;`):
+
+```js
+  /* ==== ADDED LAYOUT TYPES: split / stats / bars branch - begin ==== */
+  } else if (data.type === 'split' || data.type === 'stats' || data.type === 'bars') {
+    div.appendChild(xEl('div', 'slide-title', data.title));
+    if (data.type === 'split') buildSplit(data, div);
+    else if (data.type === 'stats') buildStats(data, div);
+    else buildBars(data, div);
+  /* ==== ADDED LAYOUT TYPES: split / stats / bars branch - end ==== */
+```
+
 ---
 
 ## 8. Full HTML Shell (the outer wrapper -- never changes)
@@ -588,7 +1238,7 @@ const SLIDES = [ /* PASTE SLIDE DATA HERE (Section 5) */ ];
 Before running the Write tool:
 
 - [ ] Content source confirmed and read
-- [ ] Slide list extracted and typed (cover / bullets / table / query)
+- [ ] Slide list extracted and typed (cover / bullets / table / query / diagram / split / stats / bars)
 - [ ] Output filename and folder confirmed with user
 - [ ] Cover slide fields filled (tag, title, subtitle, sub2)
 - [ ] Table slides have <= 4 columns and <= 6 rows
@@ -596,6 +1246,16 @@ Before running the Write tool:
 - [ ] Query slides have resultHeaders and resultRows populated with real data (not placeholders)
 - [ ] SLIDES array count matches expected slide count
 - [ ] No Unicode box-drawing characters in any string (use plain ASCII only)
+- [ ] Diagram slides: every edge `from`/`to` references an existing node `id` (bad ids are silently dropped)
+- [ ] Diagram slides: every node box (x +/- w/2, y +/- h/2) fits inside the 1400 x 600 viewBox
+- [ ] Diagram or panel-label add-ons used: Section 6b CSS and Section 7b JS pieces pasted
+- [ ] Split / stats / bars used: Section 6c CSS and Section 7c JS pieces pasted (plus 7b Piece 1 for `svgEl()`)
+- [ ] Restyling bullet slides: every original item string still appears verbatim in the new slide data (check by script)
+- [ ] Stats tiles: each `figure` already appears in its own `text`; long figures use `span: 2`
+- [ ] Bars: segment `value`s are the real figures (label derived totals as derived); gauges `value` 0-100
+- [ ] Layout checked in a browser (or headless Chrome screenshot) at 1600x900: no text clipped by the slide's `overflow: hidden`
+- [ ] Script syntax checked: extract the `<script>` content and run `node --check` on it (if node is available)
+- [ ] Whole file scanned for non-ASCII characters (zero expected)
 - [ ] Presented proposed change to user and received approval before Write
 
 ---
@@ -603,7 +1263,7 @@ Before running the Write tool:
 ## 12. Adding a New Slide
 
 1. Append or insert an object into the `SLIDES` array
-2. Choose `type` from: `cover`, `bullets`, `table`, `query`
+2. Choose `type` from: `cover`, `bullets`, `table`, `query`, `diagram`, `split`, `stats`, `bars`
 3. Populate the required fields for that type (see Section 4)
 4. No other changes needed -- the renderer and counter update automatically from `SLIDES.length`
 
@@ -612,3 +1272,7 @@ Before running the Write tool:
 1. Add CSS for the new layout inside the `<style>` block (follow the `/* ---- Query slides ---- */` pattern)
 2. Add an `else if (data.type === 'newtype') { ... }` branch inside `buildSlide()` before the final `return div;`
 3. Document the new type in Section 4 of this file with: layout description, required fields, CSS classes used, and use-cases
+
+Note: the `diagram` type (Section 4e, add-ons in 6b and 7b) was added this way on 2026-11-18 for `AgentOrchestration/research_desk/AgentOrchestration_reel.html`.
+
+Note: the `split`, `stats` and `bars` types (Sections 4f-4h, add-ons in 6c and 7c) were added the same way on 2026-11-18 for the same reel, to restyle bullet-only slides without removing any text (slides 2, 3, 14, 17 and 18 of that deck).
